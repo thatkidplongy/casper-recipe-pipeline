@@ -257,6 +257,24 @@ def per_fixture_line(tweak_id, p):
     return f"  {tweak_id:<12} recall {p['f']}/{p['e']} = {p['f'] / p['e']:.0%}, {p['sp']} spurious"
 
 
+def configure_logging(verbose=False):
+    """Set the pipeline's log level for a run, and report what was chosen.
+
+    Raw model responses are written to the run log, so echoing them to stdout
+    only buries the per-fixture progress a viewer is following. --verbose brings
+    them back for debugging.
+    """
+    level = "DEBUG" if verbose else "WARNING"
+    try:
+        from loguru import logger
+        logger.remove()
+        logger.add(sys.stderr, level=level,
+                   format="<level>{level: <8}</level> | {message}")
+    except Exception:
+        pass
+    return level
+
+
 def display_path(path):
     """Path for printing: relative to the repo when inside it, absolute if not."""
     path = Path(path)
@@ -356,6 +374,26 @@ def render_run_log(meta, runs, errors, raw_outputs):
             lines.append(f"- `{tid}`: {msg}")
         lines.append("")
 
+    # What was missed and what was invented, named rather than counted. A
+    # reader deciding whether to trust the number needs the disagreement itself.
+    detail = []
+    for n, run in enumerate(runs, 1):
+        for r in run:
+            if r["failed"] or (not r["missed"] and not r["spurious_finds"]):
+                continue
+            detail.append((n, r))
+    if detail:
+        lines += ["## What was missed and what was invented", ""]
+        for n, r in detail:
+            lines.append(f"**Run {n}, `{r['tweak_id']}`**")
+            lines.append("")
+            for m in r["missed"]:
+                anchor = f" (expected at `{m['anchor']}`)" if m.get("anchor") else ""
+                lines.append(f"- Not found: {m['intent']}{anchor}")
+            for find in r["spurious_finds"]:
+                lines.append(f"- Produced but not expected: `{find}`")
+            lines.append("")
+
     if raw_outputs:
         lines += ["## Raw model responses", "",
                   "Verbatim, from the first run. A summary is a claim about a "
@@ -376,12 +414,16 @@ def main(argv=None):
     ap.add_argument("--base-url", default=None,
                     help="OpenAI-compatible endpoint; defaults to LLM_BASE_URL")
     ap.add_argument("--out", default="docs/evidence/golden_set_report.json")
+    ap.add_argument("--verbose", action="store_true",
+                    help="echo raw model responses to the terminal "
+                         "(they are always written to the run log)")
     ap.add_argument("--log", default=None,
                     help="path for the Markdown run log "
                          "(default docs/evidence/golden_set_run_<timestamp>.md)")
     args = ap.parse_args(argv)
 
     sys.path.insert(0, str(REPO / "src"))
+    configure_logging(args.verbose)
     from dotenv import load_dotenv
     load_dotenv(REPO / ".env")
 

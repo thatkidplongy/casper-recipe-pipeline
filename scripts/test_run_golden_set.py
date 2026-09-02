@@ -9,7 +9,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from run_golden_set import (matches_anchor, score_fixture, aggregate,
                             per_fixture_line, run_fixtures, AllCallsFailed,
-                            live_extractor, render_run_log, display_path)
+                            live_extractor, render_run_log, display_path,
+                            configure_logging)
 
 
 def fixture(tweak_id="t", mods=(), excluded=()):
@@ -328,6 +329,51 @@ class TestCompletedRunsSurviveAnAbort(unittest.TestCase):
                              [[score_fixture(fixture("a", mods=[mod("m1", "x")]), [])]],
                              [], {})
         self.assertNotIn("incomplete", log.lower())
+
+
+class TestTerminalOutputIsWatchable(unittest.TestCase):
+    """Raw model responses are captured in the log file. Dumping them to stdout
+    as well buries the progress lines a viewer is trying to follow."""
+
+    def test_the_default_level_hides_raw_response_dumps(self):
+        self.assertEqual(configure_logging(verbose=False), "WARNING")
+
+    def test_verbose_restores_the_detail(self):
+        self.assertEqual(configure_logging(verbose=True), "DEBUG")
+
+
+class TestTheLogExplainsItself(unittest.TestCase):
+    """A demo audience cannot read a count. The log must name what was expected
+    and not found, and what was produced that nothing expected."""
+
+    def _meta(self, **over):
+        m = {"mode": "LIVE m @ e", "model": "m", "endpoint": "e", "commit": "c",
+             "started_at": "t", "runs": 1, "fixtures": 1, "dirty": False,
+             "completed_runs": 1, "aborted": None}
+        m.update(over)
+        return m
+
+    def test_a_missed_modification_is_named(self):
+        fx = fixture("a", mods=[mod("m1", "0.5 teaspoon salt"),
+                                mod("m2", "1 cup chopped walnuts")])
+        fx["expected_modifications"][1]["intent"] = "Omit the walnuts."
+        r = score_fixture(fx, [edit("0.5 teaspoon salt")])
+        log = render_run_log(self._meta(), [[r]], [], {})
+        self.assertIn("Omit the walnuts.", log,
+                      "the log must say which modification was not found")
+
+    def test_a_spurious_edit_is_shown(self):
+        fx = fixture("a", mods=[mod("m1", "0.5 teaspoon salt")])
+        r = score_fixture(fx, [edit("0.5 teaspoon salt"), edit("2 cups semisweet chocolate chips")])
+        log = render_run_log(self._meta(), [[r]], [], {})
+        self.assertIn("2 cups semisweet chocolate chips", log,
+                      "the log must show what the model produced that nothing expected")
+
+    def test_a_clean_fixture_needs_no_explanation(self):
+        fx = fixture("a", mods=[mod("m1", "0.5 teaspoon salt")])
+        r = score_fixture(fx, [edit("0.5 teaspoon salt")])
+        log = render_run_log(self._meta(), [[r]], [], {})
+        self.assertNotIn("Not found", log)
 
 
 if __name__ == "__main__":
