@@ -180,8 +180,9 @@ the near-miss it returns `is_safe=True` with only a warning.
 
 ## Finding 2: half the corpus cannot be represented, at any model quality
 
-> **The schema ceiling is removed. Live extraction accuracy is unvalidated.**
-> Details in *What I fixed*. The diagnosis below describes the behaviour as found.
+> **The schema ceiling is removed, and extraction was measured live at 85%
+> recall over 3 runs.** Details in *What I fixed* and *The live baseline*. The
+> diagnosis below describes the behaviour as found.
 
 The brief's own cue is right. *"I added an egg and halved the sugar"* is two
 discrete modifications, and reviews like that are the norm rather than the edge
@@ -325,16 +326,70 @@ expectations, spurious edits, and zero-tweak correctness. A `--stub` control
 returns the expectations verbatim and scores 100%, so a live number can be read
 against a known ceiling rather than in isolation.
 
-### The live baseline: blocked, and the attempt found a sixth defect
+### The live baseline
 
-The measurement did not happen. The API key has no credits, and every call
-returned `429 insufficient_quota`, a permanent billing state rather than a
-transient error. **There is no live pass rate in this document.** Every figure
-here comes from stubbed runs and is a floor.
+Measured against `openai/gpt-oss-20b` through Groq. Full artifact, including
+every raw model response, in `docs/evidence/golden_set_run_20260902T024448Z.md`.
 
-The failed attempt was not wasted, because how the pipeline handled it is a
-finding on its own, and a more serious one than anything the pass rate would
-have shown.
+| | |
+| --- | --- |
+| Runs completed | **3 of 5** |
+| Recall on exact modifications | **85%** (51/60) |
+| Failed extractions | **0** |
+| Spurious edits | 19 |
+| Zero-modification fixtures correct | 3 of 6 |
+
+Three runs, not the ten the standard asks for. Groq's free tier allows 200,000
+tokens per day and one run costs about 33,600, so ten runs is not possible in a
+day. The run aborted at run 4 on the daily cap, kept the three completed runs,
+and the log says so at the top. **Treat these as provisional**: the harness runs
+ten the moment there is budget, and the number is one command away.
+
+**Recall degrades with the number of modifications in a review**, which is the
+central claim of Finding 2, now measured:
+
+| Fixture | Modifications | Recall | Spurious |
+| --- | --- | --- | --- |
+| `10813-t3` | 3 | 100% | 0 |
+| `77935-t3` | 2 | 100% | 0 |
+| `77935-t4` | 2 | 100% | 0 |
+| `10813-t1` | 2 | 83% | 1 |
+| `10813-t4` | 3 | 67% | 3 |
+| `10813-t2` | **5** | **67%** | 4 |
+
+The hardest fixture is the worst, and it misses the same two every time: the
+cream of tartar and the refrigeration step, both of which belong in the
+instructions rather than the ingredients.
+
+**The fabrication finding reproduced, and it is not intermittent.** Fixture
+`77935-t2` is the review that reads *"Very good as is but when I make it again I
+will use fresh ginger"*. The model substituted fresh ginger for ground in
+**3 of 3 runs**, every time, anchored at `1.5 teaspoons ground ginger`. That is
+the defect already shipped in `data/enhanced/`, reproduced live and
+deterministic.
+
+The control holds: `19117-t2`, *"I would prefer some more apple chunks... that is
+just my preference"*, correctly returned nothing in **3 of 3 runs**. So the model
+can decline. It fails specifically on future intent phrased as a plan, and
+handles a stated preference correctly. That contrast is what makes it a finding
+rather than an anecdote, and it is why both zero-modification fixtures are in the
+golden set.
+
+**A caveat on the 19 spurious edits.** Many are the same modification anchored to
+a different line rather than an invention. `19117-t1` contributes five, all
+placement disagreements. The `77935-t2` ones are genuine fabrications. The log's
+*What was missed and what was invented* section distinguishes them by naming the
+intent, which is why that section exists. The scorer counts a placement
+disagreement twice, once as a miss and once as a spurious edit, so both recall
+and the spurious count are pessimistic. Fixing that scoring is the next change
+worth making, and it is deliberately not done here so the number is not tuned
+after seeing it.
+
+### The attempt that failed first, and the sixth defect it found
+
+Reaching that measurement took three failed attempts, and the first was the most
+instructive. Every call returned `429 insufficient_quota`, a permanent billing
+state rather than a transient error.
 
 **It retries a permanent error, blindly, forever.** `extract_modification`
 catches bare `Exception` and retries three times with no backoff and no
@@ -463,7 +518,7 @@ WARNING  Tweak 19117-t2 changed nothing (1 edits, none matched); not recorded
 That is the shape the product needed all along. More community tweaks reach the
 recipe, every one of them is real, and each is attributable to its source.
 
-### `<pending>` Every discrete modification survives
+### `23394a0` Every discrete modification survives
 
 The extractor returns a list. One review yields one `ModificationObject` per
 discrete modification, each with its own category, its own reasoning and its own
@@ -499,25 +554,25 @@ earlier prompts produced that shape and a model will occasionally still answer
 that way. Treating it as a one-element list is cheaper than a retry and loses
 nothing.
 
-> **Live extraction accuracy is unvalidated.** Everything above is the plumbing,
-> verified with stubs: given a response containing five discrete modifications,
-> all five survive extraction, application, attribution and serialisation. What
-> is NOT measured is whether a real model actually returns five for that review.
-> That is a prompt change, and by the standard this repository is built on a
-> prompt change is a behaviour change that must be rerun against the golden set
-> ten times and reported as a pass rate, never as "it worked". **The account has
-> no API credits, so that rerun has not happened.** The golden set and harness
-> are built and tested, so the measurement is one funded run away:
-> `uv run python scripts/run_golden_set.py --runs 10`. Until then, treat the
-> schema ceiling as removed and the extraction quality as unknown.
+> **Measured, not assumed.** `gpt-oss-20b` returned all five discrete
+> modifications for `10813-t2` with five separate rationales, spanning all four
+> categories. Recall on that fixture is 67% because two of the five were anchored
+> to a different line than the fixture expected, not because they were missed.
+> Across the whole set, recall is 85% over 3 runs with zero failed extractions.
+> The full numbers and every raw response are in *The live baseline* below and in
+> `docs/evidence/`. Three runs rather than ten because the provider's daily token
+> cap makes ten impossible; the figures are provisional and the harness runs ten
+> the moment there is budget.
 
 ### What these fixes do not touch
 
 - **Vote data** still does not exist. Rank order is now the featured-tweak list
   order, which is honest and explicit but is not a vote count. Finding 3's
   product question is unresolved.
-- **API error handling.** A permanent billing failure is still retried up to
-  nine times and still returns `None`, indistinguishable from an empty corpus.
+- ~~**API error handling.**~~ Fixed. Permanent errors are not retried, rate
+  limits wait as long as the API asks, a failed extraction raises rather than
+  returning empty, and generation failures retry. Zero failed extractions in the
+  measured run, against 11 of 36 before.
 - **Instruction-level matching.** `technique_change` remains unreachable.
 
 ---
@@ -528,10 +583,9 @@ nothing.
    zero applied edits.~~ **Done, `46512a7`.** What remains under this heading:
    catch typed API errors and stop on the fatal ones instead of retrying a
    billing failure for an hour.
-2. ~~Change the unit from review to modification.~~ **Done, plumbing validated
-   with stubs.** What remains is the measurement: run the golden set ten times
-   against a funded account and report the pass rate, which is the only thing
-   that shows whether a real model returns every modification.
+2. ~~Change the unit from review to modification.~~ **Done and measured**, 85%
+   recall over 3 runs. What remains: fix the scorer, which counts a placement
+   disagreement twice, and run ten repetitions once there is token budget.
 3. ~~Make selection deterministic and explainable.~~ **Done, `7c579d8`.** Every
    featured tweak is applied in rank order and attributed by id. What remains is
    the product question: decide honestly what "highest voted" can mean given
