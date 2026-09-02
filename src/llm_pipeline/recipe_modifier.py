@@ -89,16 +89,26 @@ class RecipeModifier:
             if match and index is not None:
                 original_text = modified_content[index]
                 new_text = original_text.replace(edit.find, edit.replace or "")
-                modified_content[index] = new_text
 
-                change_records.append(ChangeRecord(
-                    type="ingredient" if edit.target == "ingredients" else "instruction",
-                    from_text=original_text,
-                    to_text=new_text,
-                    operation="replace"
-                ))
+                if new_text == original_text:
+                    # The line matched loosely but `find` is not present verbatim,
+                    # so str.replace was a no-op. Reporting a change here would
+                    # tell the user a community tweak was applied when it was not.
+                    logger.warning(
+                        f"Matched '{match}' at similarity {score:.2f}, but '{edit.find}' "
+                        f"is not present verbatim so nothing changed. No change recorded."
+                    )
+                else:
+                    modified_content[index] = new_text
 
-                logger.info(f"Replaced '{edit.find}' with '{edit.replace}' (similarity: {score:.2f})")
+                    change_records.append(ChangeRecord(
+                        type="ingredient" if edit.target == "ingredients" else "instruction",
+                        from_text=original_text,
+                        to_text=new_text,
+                        operation="replace"
+                    ))
+
+                    logger.info(f"Replaced '{edit.find}' with '{edit.replace}' (similarity: {score:.2f})")
             else:
                 logger.warning(f"Could not find '{edit.find}' in {edit.target} (best similarity: {score:.2f})")
 

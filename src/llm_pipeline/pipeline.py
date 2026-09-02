@@ -167,6 +167,19 @@ class LLMAnalysisPipeline:
                 f"Applied modification: {len(change_records)} total changes made"
             )
 
+            if not change_records:
+                # Every edit missed. Publishing here would produce a recipe
+                # identical to the original, titled "(Community Enhanced)", with
+                # a citation and a stated impact for a change that never
+                # happened. A run that changed nothing is a failed run.
+                logger.error(
+                    f"No edits applied to '{recipe.title}': "
+                    f"{len(modification.edits)} edit(s) were extracted but none "
+                    f"matched the recipe. Refusing to publish an unchanged recipe "
+                    f"as enhanced."
+                )
+                return None
+
             # Step 3: Generate enhanced recipe with attribution
             logger.info("Step 3: Generating enhanced recipe with attribution...")
 
