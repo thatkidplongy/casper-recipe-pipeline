@@ -17,21 +17,54 @@ from pydantic import ValidationError
 from .models import ExtractionResult, ModificationObject, Recipe, Review
 from .prompts import build_simple_prompt
 
+# The model the README documents. Kept here so code and docs cannot drift: a
+# test asserts this string appears in README.md.
+DEFAULT_MODEL = "gpt-4o-mini"
+
 
 class TweakExtractor:
     """Extracts structured modifications from review text using LLM processing."""
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-3.5-turbo"):
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model: Optional[str] = None,
+        base_url: Optional[str] = None,
+    ):
         """
-        Initialize the TweakExtractor.
+        Initialize the TweakExtractor against any OpenAI-compatible endpoint.
+
+        Nothing about this pipeline needs OpenAI specifically. Groq, Together,
+        Fireworks, OpenRouter and a local server all speak the same API, so the
+        endpoint and model are configuration rather than constants. That means
+        the evaluation can be run without a funded OpenAI account.
+
+        Resolution order for each setting is explicit argument, then
+        environment, then default.
 
         Args:
-            api_key: OpenAI API key (defaults to OPENAI_API_KEY env var)
-            model: OpenAI model to use for extraction
+            api_key: API key. Falls back to LLM_API_KEY, then OPENAI_API_KEY.
+            model: Model id. Falls back to LLM_MODEL, then DEFAULT_MODEL.
+            base_url: API base URL. Falls back to LLM_BASE_URL, then the
+                OpenAI default. Point it at, for example,
+                https://api.groq.com/openai/v1
         """
-        self.client = OpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
-        self.model = model
-        logger.info(f"Initialized TweakExtractor with model: {model}")
+        self.model = model or os.getenv("LLM_MODEL") or DEFAULT_MODEL
+        resolved_base_url = base_url or os.getenv("LLM_BASE_URL") or None
+        resolved_key = (
+            api_key or os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY")
+        )
+
+        client_kwargs = {"api_key": resolved_key}
+        if resolved_base_url:
+            client_kwargs["base_url"] = resolved_base_url
+
+        self.client = OpenAI(**client_kwargs)
+
+        logger.info(
+            f"Initialized TweakExtractor with model: {self.model} "
+            f"(endpoint: {resolved_base_url or 'OpenAI default'})"
+        )
 
     def extract_modifications(
         self,

@@ -61,3 +61,31 @@ the handler returns `None`, which the pipeline cannot tell apart from "this
 recipe had no reviews with modifications". A billing outage and an empty corpus
 produce the same output. Whenever a handler collapses several failure
 categories into one return value, check what the caller can still distinguish.
+
+## A renamed method silently turned two test suites into live API callers
+
+**Attempts** — (1) Renamed `extract_modification` to `extract_modifications` and
+changed its return type from a single object to a list, then ran the full suite.
+The new suite passed. (2) The two older suites hung. They had stubbed the old
+method by assigning to `p.tweak_extractor.extract_modification`, and Python
+happily creates a new attribute of that name on the instance. Nothing raised.
+The real `extract_modifications` ran instead and started calling the network.
+(3) Killed the run after two minutes: 180 outbound connections to
+`api.openai.com`, all rejected by the environment proxy.
+
+**What worked** — updating both stubs to patch `extract_modifications` and
+return a list. Nothing was spent, because the proxy blocked every request and the
+account has no credits, but neither of those is a control I put there.
+
+**Signal for next time** — monkey-patching by attribute name is an unchecked
+string reference. A rename cannot break it, so it fails open: the stub silently
+stops intercepting and the real implementation runs. The failure mode is
+expensive and quiet rather than loud, which is the same missing distinction this
+whole repository is about. The system could not tell "the stub is installed" from
+"the stub is now a stray attribute and the real client is live".
+
+Cheap defences, in order of preference: patch with
+`unittest.mock.patch.object`, which raises `AttributeError` when the target does
+not exist; assert the attribute exists before assigning to it; or give the test
+suite a client that raises on any outbound call, so a stub that stops
+intercepting fails immediately instead of dialling out.

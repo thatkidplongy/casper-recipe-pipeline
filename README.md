@@ -14,19 +14,39 @@ This project uses [`uv`](https://docs.astral.sh/uv/) for fast, reliable Python p
 ## Setup
 
 ```bash
-# Install dependencies
-uv venv
-source .venv/bin/activate
-uv pip sync pyproject.toml
+uv sync
 ```
+
+Use `uv sync`, not `uv pip sync pyproject.toml`. The latter installs the seven
+declared dependencies and drops every transitive one, leaving `pydantic` and
+`openai` unimportable.
 
 ### Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root. The pipeline speaks the OpenAI API but
+is not tied to OpenAI: any OpenAI-compatible endpoint works, so the evaluation
+can be run without a funded OpenAI account.
 
 ```env
-OPENAI_API_KEY=your-openai-api-key-here
+# Required. LLM_API_KEY is checked first, then OPENAI_API_KEY.
+OPENAI_API_KEY=your-api-key-here
+
+# Optional. Defaults shown.
+LLM_MODEL=gpt-4o-mini
+# LLM_BASE_URL=                      # unset means the OpenAI default endpoint
 ```
+
+Against Groq, for example:
+
+```env
+LLM_API_KEY=gsk_your-groq-key
+LLM_BASE_URL=https://api.groq.com/openai/v1
+LLM_MODEL=llama-3.3-70b-versatile
+```
+
+Resolution order for each setting is explicit argument, then environment, then
+default. The default model id is `gpt-4o-mini`, and a test asserts that this
+README and the code agree on it.
 
 ## Usage
 
@@ -89,11 +109,24 @@ Original scraped recipes in `data/` directory contain reviews with `has_modifica
 
 The LLM Analysis Pipeline processes recipes in 3 steps:
 
-1. **Tweak Extraction**: Selects one random review with modifications and uses GPT-4o-mini to extract structured changes
-2. **Recipe Modification**: Applies changes to the original recipe using fuzzy string matching
-3. **Enhanced Recipe Generation**: Creates enhanced version with full citation tracking back to source review
+1. **Tweak Extraction**: Walks the scraped `featured_tweaks` list in ranked order and extracts *every* discrete modification each one describes. A review saying "I added an egg and halved the sugar" yields two modifications, each with its own category and rationale.
+2. **Recipe Modification**: Applies changes using fuzzy line matching. A replace that alters no text is not recorded as a change.
+3. **Enhanced Recipe Generation**: Creates the enhanced version with per-tweak attribution, so every change names the tweak it came from.
 
-Each run produces one enhanced recipe per original recipe, with complete attribution showing exactly what changed and why.
+Selection is deterministic: the same input produces the same output. A run in
+which no edit applied fails rather than publishing an unchanged recipe.
+
+## Evaluation
+
+`src/llm_pipeline/fixtures/golden_tweaks.json` holds the 12 featured tweaks
+hand-labelled into 28 discrete modifications. To measure extraction:
+
+```bash
+uv run python scripts/run_golden_set.py --runs 10
+uv run python scripts/run_golden_set.py --runs 10 --stub   # no network, control
+```
+
+See `docs/WRITEUP.md` for findings and `docs/pipeline-audit.md` for the full audit.
 
 ## Development
 

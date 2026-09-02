@@ -141,3 +141,32 @@ measures the original recipe rather than the tweak. *Apply only rank 1*:
 deterministic, but discards eleven of twelve community tweaks and keeps the
 product dependent on a ranking signal that does not exist. *Wait for real vote
 data*: blocks a correctness fix on a scraper change that is out of scope.
+
+## The extraction client is provider-agnostic
+
+**What** — `TweakExtractor` reads its model, endpoint and key from configuration
+rather than hardcoding them: `LLM_MODEL`, `LLM_BASE_URL`, and `LLM_API_KEY`
+falling back to `OPENAI_API_KEY`. Resolution order is explicit argument, then
+environment, then default. The default model id is `gpt-4o-mini`, and a test
+asserts that string appears in README.md so code and docs cannot drift apart
+again.
+
+**Why** — there are no OpenAI credits on this account, and a reviewer should be
+able to run the evaluation without a funded OpenAI account of their own. Nothing
+in this pipeline needs OpenAI specifically: Groq, Together, Fireworks,
+OpenRouter and a local server all speak the same API, so the endpoint is
+configuration, not a constant.
+
+It also closes a defect rather than working around one. The audit recorded that
+the code hardcoded `gpt-3.5-turbo` while the README documented GPT-4o-mini, so
+the documented model was not the one that ran. Making the model configurable
+with a documented, test-enforced default resolves that inconsistency instead of
+leaving it and adding a flag beside it.
+
+**Rejected** — *Skip the measurement*: the golden set exists precisely so
+extraction quality is a number rather than an opinion, and leaving it unmeasured
+because of a billing state would waste the work and contradict the standard the
+repository is built on. *Hardcode a second provider*: swapping one hardcoded
+endpoint for two is the same defect with more branches, and it would need
+editing again for the third. *Wait for credits*: blocks a reviewer on the
+author's billing, which is not a dependency an evaluation should have.

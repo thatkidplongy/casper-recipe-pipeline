@@ -13,7 +13,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from export_transcript import redact, redact_tree, render_markdown, conversational_records
+from export_transcript import (redact, redact_tree, render_markdown,
+                               conversational_records, find_credentials)
 
 PLACEHOLDER = "[REDACTED-API-KEY]"
 
@@ -26,6 +27,20 @@ class TestRedactsCredentials(unittest.TestCase):
         out = redact(text)
         self.assertNotIn(secret, out, f"secret survived redaction: {text!r} -> {out!r}")
         self.assertIn(PLACEHOLDER, out, f"no placeholder emitted for {text!r} -> {out!r}")
+
+    def test_groq_key(self):
+        """Groq keys are gsk_ with an underscore, not sk- with a hyphen.
+
+        The sk- patterns do not match them, so a Groq key would pass straight
+        into a committed transcript.
+        """
+        self.assert_scrubbed("gsk_" + "abcdefghij1234567890ABCDEFGHIJklmnopqrstuvwx")
+
+    def test_openrouter_key(self):
+        self.assert_scrubbed("sk-or-v1-" + "a" * 48)
+
+    def test_xai_key(self):
+        self.assert_scrubbed("xai-" + "b" * 48)
 
     def test_openai_legacy_key(self):
         self.assert_scrubbed("sk-" + "A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8S9t0U1v2")
@@ -276,6 +291,24 @@ class TestReadabilityOfRendering(unittest.TestCase):
             }
         ]
         self.assertIn("## User", render_markdown(records, session_id="s"))
+
+
+class TestScanSharesTheRedactorsPatterns(unittest.TestCase):
+    """A separate scan drifts from the redactor. The Groq gap existed because
+    the pre-commit check carried its own copy of the sk- pattern."""
+
+    def test_scan_finds_every_family_the_redactor_knows(self):
+        for secret in ["gsk_" + "x" * 44, "sk-" + "A" * 44, "xai-" + "z" * 44,
+                       "ghp_" + "b" * 36, "AKIA" + "IOSFODNN7EXAMPLE"]:
+            self.assertTrue(find_credentials(f"log line {secret} tail"),
+                            f"scan missed {secret[:10]}")
+
+    def test_scan_is_quiet_on_clean_text(self):
+        self.assertEqual(find_credentials("Set OPENAI_API_KEY in the environment."), [])
+
+    def test_scan_reports_what_it_found(self):
+        hits = find_credentials("key gsk_" + "q" * 44)
+        self.assertEqual(len(hits), 1)
 
 
 if __name__ == "__main__":

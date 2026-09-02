@@ -45,8 +45,15 @@ _PATTERNS = [
     re.compile(r"\bsk-ant-[A-Za-z0-9_-]{20,}"),
     # OpenAI project, service account, and admin keys.
     re.compile(r"\bsk-(?:proj|svcacct|admin)-[A-Za-z0-9_-]{20,}"),
+    # OpenRouter, which prefixes its own scheme onto sk-.
+    re.compile(r"\bsk-or-v[0-9]-[A-Za-z0-9_-]{20,}"),
     # OpenAI legacy keys.
     re.compile(r"\bsk-[A-Za-z0-9]{32,}"),
+    # Groq. Note the underscore: gsk_, not sk-. The sk- patterns above do not
+    # match it, so before this rule existed a Groq key passed straight through.
+    re.compile(r"\bgsk_[A-Za-z0-9]{20,}"),
+    # xAI.
+    re.compile(r"\bxai-[A-Za-z0-9]{20,}"),
     # GitHub classic and fine-grained tokens.
     re.compile(r"\bgh[pousr]_[A-Za-z0-9]{36,}"),
     re.compile(r"\bgithub_pat_[A-Za-z0-9_]{22,}"),
@@ -96,6 +103,18 @@ def redact(text):
 
     text = _ASSIGNMENT.sub(_hide_value, text)
     return _EMAIL.sub(EMAIL_PLACEHOLDER, text)
+
+
+def find_credentials(text):
+    """Return every credential-shaped substring in `text`.
+
+    Shares `_PATTERNS` with `redact`, so a scan can never fall behind the
+    redactor. A pre-commit check carrying its own copy of the patterns is how a
+    Groq key, which is gsk_ rather than sk-, would have reached a commit.
+    """
+    if not isinstance(text, str):
+        return []
+    return [m.group(0) for pattern in _PATTERNS for m in pattern.finditer(text)]
 
 
 def redact_tree(node):

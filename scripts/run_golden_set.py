@@ -185,7 +185,10 @@ def main(argv=None):
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--runs", type=int, default=10, help="repetitions (default 10)")
     ap.add_argument("--stub", action="store_true", help="no network; control run")
-    ap.add_argument("--model", default="gpt-4o-mini", help="model id for live runs")
+    ap.add_argument("--model", default=None,
+                    help="model id; defaults to LLM_MODEL, then the documented default")
+    ap.add_argument("--base-url", default=None,
+                    help="OpenAI-compatible endpoint; defaults to LLM_BASE_URL")
     ap.add_argument("--out", default="docs/evidence/golden_set_report.json")
     args = ap.parse_args(argv)
 
@@ -193,10 +196,11 @@ def main(argv=None):
     from dotenv import load_dotenv
     load_dotenv(REPO / ".env")
 
-    if not args.stub and not os.getenv("OPENAI_API_KEY"):
+    if not args.stub and not (os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY")):
         ap.error(
-            "OPENAI_API_KEY not found. Put it in .env at the repo root, or export it, "
-            "or pass --stub for a no-network control run."
+            "No API key found. Set LLM_API_KEY or OPENAI_API_KEY in .env at the repo "
+            "root, or export it, or pass --stub for a no-network control run. Any "
+            "OpenAI-compatible endpoint works; set LLM_BASE_URL to use one."
         )
 
     data = load_fixtures()
@@ -206,8 +210,16 @@ def main(argv=None):
         d = json.loads(f.read_text(encoding="utf-8"))
         recipes[d["recipe_id"]] = d
 
+    if args.base_url:
+        os.environ["LLM_BASE_URL"] = args.base_url
     extract = stub_extractor() if args.stub else live_extractor(args.model)
-    mode = "STUB (control, not a measurement)" if args.stub else f"LIVE {args.model}"
+    if args.stub:
+        mode = "STUB (control, not a measurement)"
+    else:
+        from llm_pipeline.tweak_extractor import DEFAULT_MODEL
+        resolved = args.model or os.getenv("LLM_MODEL") or DEFAULT_MODEL
+        endpoint = os.getenv("LLM_BASE_URL") or "OpenAI default"
+        mode = f"LIVE {resolved} @ {endpoint}"
     print(f"mode: {mode}   fixtures: {len(fixtures)}   runs: {args.runs}\n")
 
     runs = []
@@ -252,7 +264,7 @@ def main(argv=None):
     out = REPO / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(
-        {"mode": mode, "model": None if args.stub else args.model, "runs": args.runs,
+        {"mode": mode, "runs": args.runs,
          "summary": agg, "per_run": runs}, indent=2) + "\n", encoding="utf-8")
     print(f"\nreport: {out.relative_to(REPO)}")
     return 0
