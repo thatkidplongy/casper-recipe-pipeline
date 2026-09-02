@@ -77,6 +77,12 @@ class ModificationApplied(BaseModel):
     changes_made: List[ChangeRecord] = Field(
         description="Detailed list of changes made"
     )
+    source_tweak_id: Optional[str] = Field(
+        default=None, description="Which featured tweak produced these changes"
+    )
+    source_tweak_rank: Optional[int] = Field(
+        default=None, description="That tweak's position in the ranked list"
+    )
 
 
 class EnhancementSummary(BaseModel):
@@ -142,3 +148,9 @@ class Review(BaseModel):
     rating: Optional[int] = None
     username: Optional[str] = None
     has_modification: bool = False
+    tweak_id: Optional[str] = Field(
+        default=None, description="Stable id of the featured tweak this came from"
+    )
+    tweak_rank: Optional[int] = Field(
+        default=None, description="1-based position in the ranked featured-tweak list"
+    )

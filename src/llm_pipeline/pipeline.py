@@ -113,6 +113,47 @@ class LLMAnalysisPipeline:
 
         return reviews
 
+    def parse_featured_tweaks(self, recipe_data: Dict[str, Any]) -> List[Review]:
+        """Parse the ranked featured-tweak list into Review objects.
+
+        AllRecipes surfaces featured tweaks in its own order, and that order is
+        the only ranking signal the scrape captures. It is used verbatim: rank 1
+        is the first entry. When a recipe has no featured tweaks, the flagged
+        reviews are used in file order so behaviour degrades rather than
+        disappearing.
+
+        Args:
+            recipe_data: Raw recipe data from JSON
+
+        Returns:
+            Review objects in ranked order, each carrying its tweak id and rank
+        """
+        recipe_id = recipe_data.get("recipe_id", "unknown")
+        raw = recipe_data.get("featured_tweaks") or []
+        source = "featured_tweaks"
+
+        if not raw:
+            raw = [r for r in recipe_data.get("reviews", []) if r.get("has_modification")]
+            source = "flagged reviews (no featured tweaks present)"
+
+        tweaks = []
+        for rank, item in enumerate(raw, start=1):
+            if not item.get("text"):
+                continue
+            tweaks.append(
+                Review(
+                    text=item["text"],
+                    rating=item.get("rating"),
+                    username=item.get("username"),
+                    has_modification=True,
+                    tweak_id=f"{recipe_id}-t{rank}",
+                    tweak_rank=rank,
+                )
+            )
+
+        logger.info(f"Loaded {len(tweaks)} tweaks in ranked order from {source}")
+        return tweaks
+
     def process_single_recipe(
         self, recipe_file: str, save_output: bool = True
     ) -> Optional[EnhancedRecipe]:
@@ -132,59 +173,64 @@ class LLMAnalysisPipeline:
             # Step 0: Load and parse data
             recipe_data = self.load_recipe_data(recipe_file)
             recipe = self.parse_recipe_data(recipe_data)
-            reviews = self.parse_reviews_data(recipe_data)
+            tweaks = self.parse_featured_tweaks(recipe_data)
 
             logger.info(f"Loaded recipe: {recipe.title}")
-            logger.info(
-                f"Found {len(reviews)} reviews, {len([r for r in reviews if r.has_modification])} with modifications"
-            )
 
-            if not any(r.has_modification for r in reviews):
-                logger.warning("No reviews with modifications found")
+            if not tweaks:
+                logger.warning("No featured tweaks or flagged reviews found")
                 return None
 
-            # Step 1: Extract modification from one random review
-            logger.info("Step 1: Extracting modification from a single review...")
-            modification, source_review = (
-                self.tweak_extractor.extract_single_modification(reviews, recipe)
-            )
+            # Step 1: Extract from every featured tweak, in ranked order
+            logger.info("Step 1: Extracting from every featured tweak in rank order...")
+            extractions = self.tweak_extractor.extract_all_modifications(tweaks, recipe)
 
-            if not modification or not source_review:
-                logger.warning("No modification could be extracted")
+            if not extractions:
+                logger.warning("No modification could be extracted from any tweak")
                 return None
 
+            # Step 2: Apply each modification in rank order, highest first
+            logger.info("Step 2: Applying modifications in rank order...")
+            current_recipe = recipe
+            applied = []
+
+            for modification, source_review in extractions:
+                current_recipe, change_records = self.recipe_modifier.apply_modification(
+                    current_recipe, modification
+                )
+                if change_records:
+                    applied.append((modification, source_review, change_records))
+                else:
+                    # Every edit from this tweak missed. Recording it would
+                    # attribute a change to a reviewer that never reached the
+                    # recipe, so the tweak is dropped and the reason logged.
+                    logger.warning(
+                        f"Tweak {source_review.tweak_id} changed nothing "
+                        f"({len(modification.edits)} edits, none matched); not recorded"
+                    )
+
+            total = sum(len(records) for _, _, records in applied)
             logger.info(
-                f"Successfully extracted {modification.modification_type} modification"
+                f"Applied {len(applied)} of {len(extractions)} tweaks, {total} changes"
             )
 
-            # Step 2: Apply modification to recipe
-            logger.info("Step 2: Applying modification to recipe...")
-            modified_recipe, change_records = self.recipe_modifier.apply_modification(
-                recipe, modification
-            )
-
-            logger.info(
-                f"Applied modification: {len(change_records)} total changes made"
-            )
-
-            if not change_records:
-                # Every edit missed. Publishing here would produce a recipe
-                # identical to the original, titled "(Community Enhanced)", with
-                # a citation and a stated impact for a change that never
+            if not applied:
+                # No tweak reached the recipe. Publishing here would produce a
+                # recipe identical to the original, titled "(Community
+                # Enhanced)", carrying citations for changes that never
                 # happened. A run that changed nothing is a failed run.
                 logger.error(
-                    f"No edits applied to '{recipe.title}': "
-                    f"{len(modification.edits)} edit(s) were extracted but none "
-                    f"matched the recipe. Refusing to publish an unchanged recipe "
-                    f"as enhanced."
+                    f"No edits applied to '{recipe.title}': {len(extractions)} tweak(s) "
+                    f"were extracted but none matched the recipe. Refusing to publish "
+                    f"an unchanged recipe as enhanced."
                 )
                 return None
 
-            # Step 3: Generate enhanced recipe with attribution
+            # Step 3: Generate enhanced recipe with per-tweak attribution
             logger.info("Step 3: Generating enhanced recipe with attribution...")
 
             enhanced_recipe = self.enhanced_generator.generate_enhanced_recipe(
-                recipe, modified_recipe, modification, source_review, change_records
+                recipe, current_recipe, applied
             )
 
             logger.info(f"Generated enhanced recipe: {enhanced_recipe.title}")

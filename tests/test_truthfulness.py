@@ -96,13 +96,9 @@ class TestNoPublishWhenNothingApplied(unittest.TestCase):
     """Case 2: zero applied edits must fail the run, not publish a recipe."""
 
     def _pipeline_with(self, modification, outdir):
+        """Every tweak yields the same modification, so the whole run turns on it."""
         p = LLMAnalysisPipeline(output_dir=outdir)
-        review = None
-        for r in p.parse_reviews_data(json.loads(APPLE.read_text(encoding="utf-8"))):
-            if r.has_modification:
-                review = r
-                break
-        p.tweak_extractor.extract_single_modification = lambda reviews, recipe: (modification, review)
+        p.tweak_extractor.extract_modification = lambda review, recipe, **kw: modification
         return p
 
     def test_a_modification_whose_edits_all_miss_does_not_publish(self):

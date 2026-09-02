@@ -7,7 +7,7 @@ comprehensive enhanced recipe objects.
 """
 
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from loguru import logger
 
@@ -72,6 +72,8 @@ class EnhancedRecipeGenerator:
             modification_type=modification.modification_type,
             reasoning=modification.reasoning,
             changes_made=change_records,
+            source_tweak_id=source_review.tweak_id,
+            source_tweak_rank=source_review.tweak_rank,
         )
 
     def calculate_enhancement_summary(
@@ -87,7 +89,13 @@ class EnhancedRecipeGenerator:
             EnhancementSummary with aggregate statistics
         """
         total_changes = sum(len(mod.changes_made) for mod in modifications_applied)
-        change_types = list(set(mod.modification_type for mod in modifications_applied))
+        # dict.fromkeys deduplicates while preserving insertion order, so the
+        # types come out in tweak-rank order. set() reorders between processes
+        # because string hashing is randomised, which made two identical runs
+        # produce different files.
+        change_types = list(
+            dict.fromkeys(mod.modification_type for mod in modifications_applied)
+        )
 
         # Generate expected impact summary
         impact_descriptions = []
@@ -112,43 +120,33 @@ class EnhancedRecipeGenerator:
         self,
         original_recipe: Recipe,
         modified_recipe: Recipe,
-        modification: ModificationObject,
-        source_review: Review,
-        change_records: List[ChangeRecord],
+        applied: List[Tuple[ModificationObject, Review, List[ChangeRecord]]],
     ) -> EnhancedRecipe:
         """
         Generate a complete enhanced recipe with attribution.
 
         Args:
             original_recipe: Original unmodified recipe
-            modified_recipe: Recipe with modifications applied
-            modification: Single modification that was applied
-            source_review: Review that suggested the modification
-            change_records: Changes made for the modification
+            modified_recipe: Recipe with every modification applied
+            applied: One (modification, source review, change records) triple per
+                featured tweak that produced a change, in ranked order
 
         Returns:
-            Complete EnhancedRecipe with attribution
+            Complete EnhancedRecipe with per-tweak attribution
         """
         logger.info(f"Generating enhanced recipe for: {original_recipe.title}")
 
-        # Create modification applied record
-        modification_applied = self.create_modification_applied(
-            modification, source_review, change_records
-        )
-        modifications_applied = [modification_applied]
+        modifications_applied = [
+            self.create_modification_applied(mod, review, records)
+            for mod, review, records in applied
+        ]
 
-        # Calculate enhancement summary
         enhancement_summary = self.calculate_enhancement_summary(modifications_applied)
 
-        # Generate enhanced recipe ID and title
-        enhanced_recipe_id = f"{original_recipe.recipe_id}_enhanced"
-        enhanced_title = f"{original_recipe.title} (Community Enhanced)"
-
-        # Create the enhanced recipe
         enhanced_recipe = EnhancedRecipe(
-            recipe_id=enhanced_recipe_id,
+            recipe_id=f"{original_recipe.recipe_id}_enhanced",
             original_recipe_id=original_recipe.recipe_id,
-            title=enhanced_title,
+            title=f"{original_recipe.title} (Community Enhanced)",
             ingredients=modified_recipe.ingredients,
             instructions=modified_recipe.instructions,
             modifications_applied=modifications_applied,
@@ -164,7 +162,7 @@ class EnhancedRecipeGenerator:
 
         logger.info(
             f"Generated enhanced recipe with {enhancement_summary.total_changes} changes "
-            f"from {len(modifications_applied)} modifications"
+            f"from {len(modifications_applied)} tweaks"
         )
 
         return enhanced_recipe

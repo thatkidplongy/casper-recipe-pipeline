@@ -110,39 +110,45 @@ class TweakExtractor:
 
         return None
 
-    def extract_single_modification(
+    def extract_all_modifications(
         self, reviews: list[Review], recipe: Recipe
-    ) -> tuple[ModificationObject, Review] | tuple[None, None]:
-        """
-        Extract modification from a single randomly selected review.
+    ) -> list[tuple[ModificationObject, Review]]:
+        """Extract a modification from every review, in the order given.
+
+        Deterministic by construction: no sampling, no shuffling. The caller
+        supplies the ranking, and this walks it. A review that yields nothing is
+        skipped and logged rather than aborting the recipe, so one bad
+        extraction cannot discard the rest of the community's tweaks.
 
         Args:
-            reviews: List of reviews to choose from
+            reviews: Reviews to process, already in ranked order
             recipe: Original recipe being modified
 
         Returns:
-            Tuple of (ModificationObject, source_Review) if successful, (None, None) otherwise
+            List of (ModificationObject, source Review) in the input order
         """
-        import random
+        candidates = [r for r in reviews if r.has_modification]
 
-        # Filter to reviews with modifications
-        modification_reviews = [r for r in reviews if r.has_modification]
-
-        if not modification_reviews:
+        if not candidates:
             logger.warning("No reviews with modifications found")
-            return None, None
+            return []
 
-        # Select one random review
-        selected_review = random.choice(modification_reviews)
-        logger.info(f"Selected review: {selected_review.text[:100]}...")
+        logger.info(f"Extracting from {len(candidates)} tweaks in ranked order")
 
-        modification = self.extract_modification(selected_review, recipe)
-        if modification:
-            logger.info("Successfully extracted modification from selected review")
-            return modification, selected_review
-        else:
-            logger.warning("Failed to extract modification from selected review")
-            return None, None
+        extracted = []
+        for review in candidates:
+            label = review.tweak_id or review.text[:40]
+            modification = self.extract_modification(review, recipe)
+            if modification:
+                extracted.append((modification, review))
+                logger.info(
+                    f"Tweak {label}: extracted {modification.modification_type} "
+                    f"with {len(modification.edits)} edits"
+                )
+            else:
+                logger.warning(f"Tweak {label}: no modification could be extracted")
+
+        return extracted
 
     def test_extraction(
         self, review_text: str, recipe_data: dict
