@@ -170,3 +170,47 @@ repository is built on. *Hardcode a second provider*: swapping one hardcoded
 endpoint for two is the same defect with more branches, and it would need
 editing again for the third. *Wait for credits*: blocks a reviewer on the
 author's billing, which is not a dependency an evaluation should have.
+
+## A failed extraction raises; only a real empty answer returns empty
+
+**What** — `extract_modifications` raises `ExtractionError` when no valid
+extraction could be obtained, and returns `[]` only when the model read the
+review and correctly found no modification. Permanent API errors are not
+retried at all. `extract_all_modifications` catches per review, so one
+unanswerable tweak does not discard a recipe's other tweaks.
+
+**Why** — the two states were indistinguishable, and that is the defect this
+whole project is about. The evaluation harness proved it: with every call
+failing, it scored the two zero-modification fixtures 2 out of 2 correct,
+because a total outage returns nothing and nothing is what those fixtures
+expect. A caller that cannot tell "the answer is none" from "there is no
+answer" will eventually report the second as the first.
+
+**Rejected** — *Return a sentinel value*: callers forget to check it, which is
+how the original `None` return produced a recipe count that silently dropped.
+*Return a result object with an `ok` flag*: correct, but it changes every call
+site for a case that should be exceptional, and an unchecked flag fails open the
+same way. *Keep returning `[]` and have the harness count calls*: puts the
+distinction in one caller rather than in the function that knows the truth, so
+the next caller reintroduces the bug.
+
+## The evaluation writes a self-contained run log
+
+**What** — every run writes `docs/evidence/golden_set_run_<timestamp>.md`:
+provenance (commit, model, endpoint, UTC time), the summary, per-fixture
+results for every run, and the raw model responses verbatim. It records when
+the working tree was dirty and when a run was cut short. Everything passes
+through the transcript redactor before writing.
+
+**Why** — a measurement nobody can reproduce is an anecdote. The raw responses
+are the point: a summary is a claim about a response, and the response is the
+evidence for that claim. The dirty-tree warning exists because a commit hash
+next to a number implies the number came from that code, and quietly implying
+something false is the failure mode this repository documents.
+
+**Rejected** — *Rely on terminal scrollback*: not durable, not shareable, and
+lost the moment a window closes. *JSON only*: fine for analysis, unreadable as
+evidence by a person deciding whether to trust the result. *Log the summary
+without raw responses*: smaller, but it asks the reader to trust the scorer,
+which is precisely what should be checkable given the scorer has already been
+wrong once.
