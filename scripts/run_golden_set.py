@@ -22,9 +22,14 @@ What is measured, per fixture:
 import argparse
 import json
 import os
+import subprocess
 import sys
+from datetime import datetime, timezone
 from difflib import SequenceMatcher
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from export_transcript import redact  # shared redactor, so the log cannot leak
 
 REPO = Path(__file__).resolve().parent.parent
 FIXTURES = REPO / "src" / "llm_pipeline" / "fixtures" / "golden_tweaks.json"
@@ -188,7 +193,13 @@ def _edits_of(modification):
     return list(modification.get("edits") or [])
 
 
-def live_extractor(model):
+def live_extractor(model, raw_sink=None):
+    """Build the live extraction callable.
+
+    Args:
+        raw_sink: optional dict; each fixture's raw model response is stored
+            under its tweak_id, so the run log can show what actually came back.
+    """
     from llm_pipeline.tweak_extractor import TweakExtractor
     from llm_pipeline.models import Recipe, Review
 
@@ -204,8 +215,12 @@ def live_extractor(model):
                         has_modification=True)
         # extract_modifications returns a list, one entry per discrete
         # modification, so the edits of all of them are flattened here.
-        return [e for mod in ex.extract_modifications(review, recipe)
-                for e in _edits_of(mod)]
+        try:
+            mods = ex.extract_modifications(review, recipe)
+        finally:
+            if raw_sink is not None and ex.last_raw_output:
+                raw_sink.setdefault(fixture["tweak_id"], ex.last_raw_output)
+        return [e for mod in mods for e in _edits_of(mod)]
 
     return run
 
@@ -242,6 +257,103 @@ def per_fixture_line(tweak_id, p):
     return f"  {tweak_id:<12} recall {p['f']}/{p['e']} = {p['f'] / p['e']:.0%}, {p['sp']} spurious"
 
 
+def display_path(path):
+    """Path for printing: relative to the repo when inside it, absolute if not."""
+    path = Path(path)
+    try:
+        return str(path.relative_to(REPO))
+    except ValueError:
+        return str(path)
+
+
+def _git(*args):
+    """Best-effort git query; returns None outside a repository."""
+    try:
+        out = subprocess.run(["git", *args], cwd=REPO, capture_output=True,
+                             text=True, timeout=10)
+        return out.stdout.strip() if out.returncode == 0 else None
+    except Exception:
+        return None
+
+
+def render_run_log(meta, runs, errors, raw_outputs):
+    """Render a self-contained record of one measurement.
+
+    Everything is passed through the transcript redactor, so a key that reached
+    an endpoint string or an error message cannot reach the committed log.
+    """
+    agg = aggregate(runs)
+    lines = [
+        "# Golden set run",
+        "",
+        "Produced by `scripts/run_golden_set.py`. Credentials are redacted.",
+        "",
+        "## Provenance",
+        "",
+        "| | |",
+        "| --- | --- |",
+        f"| Started | {meta['started_at']} |",
+        f"| Commit | `{meta['commit']}` |",
+        f"| Mode | {meta['mode']} |",
+        f"| Model | `{meta['model']}` |",
+        f"| Endpoint | {meta['endpoint']} |",
+        f"| Fixtures | {meta['fixtures']} |",
+        f"| Runs | {meta['runs']} |",
+        "",
+    ]
+    if meta.get("dirty"):
+        lines += ["> **The working tree had uncommitted changes when this ran.** "
+                  "The commit above does not fully describe the code that produced "
+                  "these numbers.", ""]
+
+    lines += [
+        "## Summary",
+        "",
+        "| | |",
+        "| --- | --- |",
+        f"| Recall on exact modifications | {agg['recall']:.1%} "
+        f"({agg['exact_found']}/{agg['exact_expected']}) |",
+        f"| Underspecified recovered (not required) | "
+        f"{agg['underspec_found']}/{agg['underspec_expected']} |",
+        f"| Spurious edits | {agg['spurious']} |",
+        f"| Zero-modification fixtures correct | "
+        f"{agg['zero_tweaks_correct']}/{agg['zero_tweaks']} |",
+        f"| Failed extractions | {agg['failed']} |",
+        "",
+    ]
+    if agg["failed"]:
+        lines += ["> **Degraded run.** Some extractions failed, so recall "
+                  "understates the model and these figures are not a clean "
+                  "measurement.", ""]
+
+    lines += ["## Per fixture, per run", "",
+              "| Run | Fixture | Exact found | Spurious | Zero-tweak | Failed |",
+              "| --- | --- | --- | --- | --- | --- |"]
+    for n, run in enumerate(runs, 1):
+        for r in run:
+            zero = "-" if not r["is_zero_tweak"] else (
+                "correct" if r["zero_tweak_correct"] else "INVENTED")
+            lines.append(
+                f"| {n} | `{r['tweak_id']}` | {r['exact_found']}/{r['exact_expected']} "
+                f"| {r['spurious']} | {zero} | {'YES' if r['failed'] else ''} |")
+    lines.append("")
+
+    if errors:
+        lines += ["## Failures", ""]
+        for tid, msg in errors:
+            lines.append(f"- `{tid}`: {msg}")
+        lines.append("")
+
+    if raw_outputs:
+        lines += ["## Raw model responses", "",
+                  "Verbatim, from the first run. A summary is a claim about a "
+                  "response; this is the response.", ""]
+        for tid, raw in raw_outputs.items():
+            lines += [f"### `{tid}`", "", "```json", raw.strip(), "```", ""]
+
+    return redact("\n".join(lines)) + "\n"
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -252,6 +364,9 @@ def main(argv=None):
     ap.add_argument("--base-url", default=None,
                     help="OpenAI-compatible endpoint; defaults to LLM_BASE_URL")
     ap.add_argument("--out", default="docs/evidence/golden_set_report.json")
+    ap.add_argument("--log", default=None,
+                    help="path for the Markdown run log "
+                         "(default docs/evidence/golden_set_run_<timestamp>.md)")
     args = ap.parse_args(argv)
 
     sys.path.insert(0, str(REPO / "src"))
@@ -274,7 +389,9 @@ def main(argv=None):
 
     if args.base_url:
         os.environ["LLM_BASE_URL"] = args.base_url
-    extract = stub_extractor() if args.stub else live_extractor(args.model)
+    raw_outputs = {}
+    extract = (stub_extractor() if args.stub
+               else live_extractor(args.model, raw_sink=raw_outputs))
     if args.stub:
         mode = "STUB (control, not a measurement)"
     else:
@@ -282,6 +399,7 @@ def main(argv=None):
         # while requests went to another.
         resolved_model, resolved_endpoint = live_extractor.resolved
         mode = f"LIVE {resolved_model} @ {resolved_endpoint}"
+    started_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     print(f"mode: {mode}   fixtures: {len(fixtures)}   runs: {args.runs}\n")
 
     runs = []
@@ -308,7 +426,7 @@ def main(argv=None):
             return 2
 
         runs.append(results)
-        all_errors.extend((n, tid, msg) for tid, msg in errors)
+        all_errors.extend((tid, msg) for tid, msg in errors)
         a = aggregate([results])
         suffix = f"  FAILED CALLS {a['failed']}" if a["failed"] else ""
         print(f"  run {n:>2}: recall {a['recall']:.0%}  "
@@ -329,8 +447,8 @@ def main(argv=None):
     if agg["failed"]:
         print("  DEGRADED RUN. Some extractions failed, so recall understates the\n"
               "  model and the figures above are not a clean measurement.")
-        for n, tid, msg in all_errors[:5]:
-            print(f"    run {n} {tid}: {msg}")
+        for tid, msg in all_errors[:5]:
+            print(f"    {tid}: {msg}")
     if args.stub:
         print("  STUB RUN. Every number here is a ceiling, not a measurement.")
 
@@ -349,9 +467,28 @@ def main(argv=None):
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(
         {"mode": mode, "runs": args.runs, "summary": agg,
-         "errors": [{"run": n, "tweak_id": t, "error": m} for n, t, m in all_errors],
+         "errors": [{"tweak_id": t, "error": m} for t, m in all_errors],
          "per_run": runs}, indent=2) + "\n", encoding="utf-8")
-    print(f"\nreport: {out.relative_to(REPO)}")
+    print(f"\nreport: {display_path(out)}")
+
+    meta = {
+        "mode": mode,
+        "model": "stub" if args.stub else live_extractor.resolved[0],
+        "endpoint": "none" if args.stub else live_extractor.resolved[1],
+        "commit": _git("rev-parse", "--short", "HEAD") or "unknown",
+        "started_at": started_at,
+        "runs": args.runs,
+        "fixtures": len(fixtures),
+        "dirty": bool(_git("status", "--porcelain")),
+    }
+    log_path = REPO / (args.log or
+                       f"docs/evidence/golden_set_run_"
+                       f"{started_at.replace(':', '').replace('-', '')}.md")
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_path.write_text(render_run_log(meta, runs, all_errors, raw_outputs),
+                        encoding="utf-8")
+    print(f"run log: {display_path(log_path)}")
+
     return 1 if agg["failed"] else 0
 
 

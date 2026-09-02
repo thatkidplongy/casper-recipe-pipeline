@@ -131,6 +131,11 @@ class TweakExtractor:
 
         self.client = OpenAI(**client_kwargs)
 
+        # The most recent raw model response, kept so a caller can record what
+        # actually came back. A summary of a response is a claim about it; the
+        # response itself is evidence.
+        self.last_raw_output: Optional[str] = None
+
         # Report the client's own base_url rather than re-deriving it from the
         # environment. The SDK reads OPENAI_BASE_URL by itself, so a derived
         # value can claim "OpenAI default" while requests go elsewhere.
@@ -192,6 +197,7 @@ class TweakExtractor:
                 )
 
                 raw_output = response.choices[0].message.content
+                self.last_raw_output = raw_output
                 logger.debug(f"LLM raw output: {raw_output}")
 
                 if not raw_output:

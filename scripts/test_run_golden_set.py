@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from run_golden_set import (matches_anchor, score_fixture, aggregate,
                             per_fixture_line, run_fixtures, AllCallsFailed,
-                            live_extractor)
+                            live_extractor, render_run_log, display_path)
 
 
 def fixture(tweak_id="t", mods=(), excluded=()):
@@ -225,6 +225,71 @@ class TestTheHarnessCallsAMethodThatExists(unittest.TestCase):
         self.assertEqual(missing, set(),
                          f"harness calls TweakExtractor.{missing}, not defined in "
                          f"tweak_extractor.py; attribute lookup fails only at call time")
+
+
+class TestTheRunLogIsDemonstrableEvidence(unittest.TestCase):
+    """A terminal scrollback is not evidence. The log must stand alone: what was
+    run, against which model and endpoint, at which commit, and what came back."""
+
+    def _log(self, **over):
+        meta = {"mode": "LIVE m @ https://api.groq.com/openai/v1/", "model": "m",
+                "endpoint": "https://api.groq.com/openai/v1/", "commit": "abc1234",
+                "started_at": "2026-09-02T09:55:00Z", "runs": 2, "fixtures": 2,
+                "dirty": False}
+        meta.update(over)
+        results = [
+            [score_fixture(fixture("a", mods=[mod("m1", "1 cup white sugar")]),
+                           [edit("1 cup white sugar")]),
+             score_fixture(fixture("z", excluded=[{"quote": "q", "reason": "future_intent"}]), [])],
+        ]
+        raw = {"a": '{"modifications": [{"modification_type": "quantity_adjustment"}]}'}
+        return render_run_log(meta, results, [], raw)
+
+    def test_it_records_what_was_run_against_what(self):
+        log = self._log()
+        for needed in ("abc1234", "https://api.groq.com/openai/v1/", "2026-09-02T09:55:00Z"):
+            self.assertIn(needed, log, f"provenance missing: {needed}")
+
+    def test_it_records_each_fixture_result(self):
+        log = self._log()
+        self.assertIn("a", log)
+        self.assertIn("z", log)
+
+    def test_it_includes_the_raw_model_output(self):
+        self.assertIn("modification_type", self._log(),
+                      "the raw response is the evidence; a summary is a claim about it")
+
+    def test_it_warns_when_the_tree_was_dirty(self):
+        self.assertIn("uncommitted", self._log(dirty=True).lower(),
+                      "a result from an unrecorded tree is not reproducible")
+
+    def test_credentials_never_reach_the_log(self):
+        secret = "gsk_" + "z" * 44
+        log = self._log(endpoint=f"https://api.groq.com/openai/v1/?key={secret}")
+        self.assertNotIn(secret, log)
+
+    def test_a_failed_fixture_is_visible_as_failed(self):
+        meta = {"mode": "LIVE", "model": "m", "endpoint": "e", "commit": "c",
+                "started_at": "t", "runs": 1, "fixtures": 1, "dirty": False}
+        results = [[score_fixture(fixture("a", mods=[mod("m1", "x")]), [], failed=True)]]
+        log = render_run_log(meta, results, [("a", "RuntimeError: boom")], {})
+        self.assertIn("boom", log)
+
+
+class TestPathsOutsideTheRepoDoNotCrash(unittest.TestCase):
+    """--log and --out accept any path. relative_to raises for anything outside
+    the repository, so the run would finish its work and then die printing where
+    it put the results."""
+
+    def test_a_path_inside_the_repo_is_shown_relative(self):
+        from pathlib import Path
+        repo = Path(__file__).resolve().parent.parent
+        self.assertEqual(display_path(repo / "docs" / "x.md"), "docs/x.md")
+
+    def test_a_path_outside_the_repo_is_shown_absolutely(self):
+        from pathlib import Path
+        out = display_path(Path("/tmp/elsewhere/x.md"))
+        self.assertIn("elsewhere", out, "an outside path must still be printable")
 
 
 if __name__ == "__main__":

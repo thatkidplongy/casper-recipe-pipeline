@@ -126,6 +126,17 @@ uv run python scripts/run_golden_set.py --runs 10
 uv run python scripts/run_golden_set.py --runs 10 --stub   # no network, control
 ```
 
+Every run writes two artifacts to `docs/evidence/`:
+
+- `golden_set_run_<timestamp>.md` — a self-contained record: the commit, model
+  and endpoint it ran against, per-fixture results for every run, and the raw
+  model responses verbatim. Credentials are redacted. Commit this as evidence.
+- `golden_set_report.json` — the same data as JSON for further analysis.
+
+Override the log path with `--log`. If the working tree has uncommitted changes,
+the log says so, because a number produced from unrecorded code is not
+reproducible.
+
 See `docs/WRITEUP.md` for findings and `docs/pipeline-audit.md` for the full audit.
 
 ## Development
