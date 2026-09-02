@@ -30,9 +30,29 @@ first job is knowing which ones matter.
 
 ---
 
-## Finding 1: the output is untruthful in both directions
+## Finding 1: the system cannot tell "nothing to do" from "something is broken", and it always reports the first
 
-This is the whole story, and everything else is downstream of it.
+This is the whole story. Everything else in this document is downstream of it.
+
+There is no field anywhere in the output, and no distinct return value anywhere
+in the code, separating a modification that was **applied** from one that was
+**attempted and missed**, from one that was **invented**, from a run that
+**failed outright**. All four end the same way: a plausible-looking file, or a
+quietly smaller number in the summary report.
+
+The single missing distinction shows three faces:
+
+1. **It applies a change nobody suggested.** A review saying "Very good as is"
+   produces a ginger substitution in the shipped output.
+2. **It claims changes it never made.** An unchanged recipe is published as
+   "Community Enhanced" with a citation and a stated impact, in half of all runs.
+3. **It reports a billing outage as an empty corpus.** An API account with no
+   credits presents as every recipe simply having no community enhancements.
+   Detail in the measurement section below.
+
+The first two are set out here. The third arrived by accident while trying to
+measure the model, and is the clearest proof that the problem is structural
+rather than a modelling shortfall: no prompt change affects it at all.
 
 ### It invents changes nobody made
 
