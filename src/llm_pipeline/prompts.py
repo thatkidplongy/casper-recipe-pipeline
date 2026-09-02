@@ -12,7 +12,12 @@ When a user shares their experience modifying a recipe, you need to:
 2. Understand why they made those changes
 3. Convert their modifications into structured edit operations
 
-You must output valid JSON that matches the ModificationObject schema.
+A review often describes SEVERAL discrete modifications. "I added an egg and
+halved the sugar" is two: one addition and one quantity adjustment. Each gets its
+own entry, with its own category and its own reasoning. Do not merge them, and do
+not stop after the first.
+
+You must output valid JSON: an object with a "modifications" array.
 
 Categories:
 - "ingredient_substitution": Replacing one ingredient with another
@@ -195,7 +200,11 @@ Now extract from this review:
 def build_simple_prompt(
     review_text: str, title: str, ingredients: list, instructions: list
 ) -> str:
-    """Build a simple prompt without examples for faster processing."""
+    """Build the extraction prompt.
+
+    Asks for every discrete modification separately. A review describing four
+    numbered tweaks must come back as four entries, not one.
+    """
     return f"""{SYSTEM_PROMPT}
 
 Original Recipe:
@@ -205,19 +214,40 @@ Instructions: {instructions}
 
 User Review: "{review_text}"
 
-Extract the recipe modifications from this review. The user has made changes to improve the recipe.
+Extract EVERY discrete modification the reviewer actually made. Separate them:
+one entry per change, each with its own category and its own reasoning.
+
+Worked example. The review "I added an egg and halved the sugar because they were
+too sweet" contains TWO discrete modifications, so it returns two entries: an
+"addition" for the egg, and a "quantity_adjustment" for the sugar. Returning one
+entry would lose a change the reviewer made.
+
+Rules:
+- One entry per discrete change. Four numbered tweaks means four entries.
+- Only changes the reviewer actually made. A preference they did not act on
+  ("I would prefer more apple"), something they plan for next time ("next time I
+  will use fresh ginger"), or advice offered to other cooks is NOT a
+  modification. If the reviewer describes no change they made, return an empty
+  list.
+- Do not invent an amount the reviewer did not give. If they say "extra soy
+  sauce" with no quantity, describe the change without fabricating a number.
+- Copy `find` text verbatim from the recipe above so it can be located.
 
 Output a JSON object with this structure:
 {{
-    "modification_type": "quantity_adjustment|ingredient_substitution|technique_change|addition|removal",
-    "reasoning": "Brief explanation of why this modification improves the recipe",
-    "edits": [
+    "modifications": [
         {{
-            "target": "ingredients|instructions",
-            "operation": "replace|add_after|remove",
-            "find": "exact text to find",
-            "replace": "replacement text (for replace operations)",
-            "add": "text to add (for add_after operations)"
+            "modification_type": "quantity_adjustment|ingredient_substitution|technique_change|addition|removal",
+            "reasoning": "Why this specific change improves the recipe",
+            "edits": [
+                {{
+                    "target": "ingredients|instructions",
+                    "operation": "replace|add_after|remove",
+                    "find": "exact text to find, copied from the recipe",
+                    "replace": "replacement text (for replace operations)",
+                    "add": "text to add (for add_after operations)"
+                }}
+            ]
         }}
     ]
 }}

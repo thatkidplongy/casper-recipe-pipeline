@@ -35007,5 +35007,2173 @@
     "type": "atis-latch",
     "atis": "",
     "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "parentUuid": "1eb7c349-0ca1-4a7d-8f6c-a2e5e6e816ec",
+    "isSidechain": false,
+    "promptId": "d2282c07-b547-4101-ac73-71aea9c5663f",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_01G77BX7Eb9Vt4x9ou68XWDE",
+          "type": "tool_result",
+          "content": "writeup updated\nturns       : 525\njson        : trajectory/80af422b-0560-5694-af18-e04269f1c968.json (2435958 bytes)\nmarkdown    : trajectory/80af422b-0560-5694-af18-e04269f1c968.md (702542 bytes)\n\nleak check: CLEAN",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "2959e57a-97c8-464f-aee3-49ec6268de3d",
+    "timestamp": "2026-09-02T01:06:02.780Z",
+    "toolUseResult": {
+      "stdout": "writeup updated\nturns       : 525\njson        : trajectory/80af422b-0560-5694-af18-e04269f1c968.json (2435958 bytes)\nmarkdown    : trajectory/80af422b-0560-5694-af18-e04269f1c968.md (702542 bytes)\n\nleak check: CLEAN",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "1eb7c349-0ca1-4a7d-8f6c-a2e5e6e816ec",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "2959e57a-97c8-464f-aee3-49ec6268de3d",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14994360 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "de94b61a-96c4-402a-96f6-655c939691c3",
+    "timestamp": "2026-09-02T01:06:02.786Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "de94b61a-96c4-402a-96f6-655c939691c3",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CediTjqkJfC5aHHaT7TVX",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_017bJ55n6TJqVUomjCKti1D1",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\ngit diff -- docs/WRITEUP.md\necho\necho \"################ DECISIONS + TRAJECTORY ################\"\ngit diff --stat",
+            "description": "Show the writeup diff"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 2066,
+        "cache_read_input_tokens": 425443,
+        "output_tokens": 143,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 2066,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 143,
+            "cache_read_input_tokens": 425443,
+            "cache_creation_input_tokens": 2066,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 2066
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CediThNAWeYGG4caAok9k",
+    "type": "assistant",
+    "uuid": "a593353f-0642-44ca-a5b0-c0d327eb53bb",
+    "timestamp": "2026-09-02T01:06:06.788Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "a593353f-0642-44ca-a5b0-c0d327eb53bb",
+    "isSidechain": false,
+    "promptId": "d2282c07-b547-4101-ac73-71aea9c5663f",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_017bJ55n6TJqVUomjCKti1D1",
+          "type": "tool_result",
+          "content": "diff --git a/docs/WRITEUP.md b/docs/WRITEUP.md\nindex 45fce08..11b4f46 100644\n--- a/docs/WRITEUP.md\n+++ b/docs/WRITEUP.md\n@@ -15,7 +15,11 @@ None of that is fixable by improving the prompt.\n \n ## What I did\n \n-Four hours, roughly in thirds.\n+The guideline was four hours. **I went past it to land the two fixes.** The\n+diagnosis, the golden set and the harness fit inside the window; the fixes did\n+not, and stopping with a diagnosis and no repaired code seemed the worse\n+outcome. Recording it here rather than leaving it to be noticed in the commit\n+timestamps.\n \n 1. **Read the pipeline end to end** and mapped every assumption the code makes\n    that the brief does not support. Findings in `docs/pipeline-audit.md`.\n@@ -24,14 +28,20 @@ Four hours, roughly in thirds.\n 3. **Built a measurement instrument.** Hand-labelled the 12 AllRecipes featured\n    tweaks into a golden set of 28 discrete modifications, and wrote a harness\n    that scores extraction against it over repeated runs.\n+4. **Fixed the two highest-value defects**, test-first, once the diagnosis said\n+   which ones mattered. See *What I fixed* below.\n \n-I deliberately did not fix anything. With this many interacting defects, the\n-first job is knowing which ones matter.\n+Diagnosis came before any fix on purpose. With this many interacting defects,\n+knowing which ones matter is the whole job; two of them turned out to be a few\n+lines each.\n \n ---\n \n ## Finding 1: the system cannot tell \"nothing to do\" from \"something is broken\", and it always reports the first\n \n+> **Faces 1 and 2 are fixed.** Face 3, the API error handling, is not. Details in\n+> *What I fixed*. The diagnosis below describes the behaviour as found.\n+\n This is the whole story. Everything else in this document is downstream of it.\n \n There is no field anywhere in the output, and no distinct return value anywhere\n@@ -144,6 +154,9 @@ apply them already exists, unused, in `apply_modifications_batch`.\n \n ## Finding 3: \"highest voted\" does not exist in the data\n \n+> **The random selection is fixed. The missing vote data is not, and cannot be\n+> from inside this repository.** Details in *What I fixed*.\n+\n The product premise is applying the *highest voted community-tested*\n modification. There is no vote, helpful, or upvote count on any review in\n `data/`. The scraper documents dropping it, in a comment:\n@@ -309,21 +322,122 @@ already shipped in `data/enhanced/` is reproduced with a count against it.\n \n \n \n+---\n+\n+## What I fixed\n+\n+Two changes, both test-first, both validatable offline with no API key.\n+\n+### `46512a7` Never report a change that did not happen\n+\n+`RecipeModifier.apply_edit` now records a replace only when the text actually\n+differs, and logs a warning naming the similarity score when it does not.\n+`process_single_recipe` refuses to publish when no edit applied, rather than\n+producing an unchanged recipe titled \"(Community Enhanced)\".\n+\n+Measured over the same eight-run sweep:\n+\n+| | Before | After this fix |\n+| --- | --- | --- |\n+| Apple cake zero-change publishes | 4 of 8 | 0 |\n+| Cookie false change records | 2 | 0 |\n+| Changes claimed vs actually made | 66 / 64 | 54 / 54 |\n+| **Recipes published per run** | **4.00** | **3.38** |\n+\n+**Published output dropped, and that is the fix working.** Unchanged recipes now\n+fail loudly instead of shipping. Apple cake went from publishing every run to\n+publishing half of them, and the soup lost one run in eight to the same guard.\n+A platform that ships fewer recipes but tells the truth about all of them is\n+strictly better than one that fills the gap with fabrications.\n+\n+### `7c579d8` Deterministic, complete, attributable selection\n+\n+`random.choice` is gone. The pipeline reads the scraped `featured_tweaks` list,\n+the ranking signal that existed in the data and was never read, and applies\n+every entry in that order. Each modification records `source_tweak_id` and\n+`source_tweak_rank`, so the output says which tweak produced which change.\n+\n+| | Before | After |\n+| --- | --- | --- |\n+| Tweaks applied per run | 1 of 4, at random | 4 of 4, always |\n+| Changes per run, cookies | 1 to 4 | 9 |\n+| Three runs byte-identical | no | yes, `created_at` aside |\n+| 3-star tweak included | 25% of runs | every run, and named |\n+\n+**A third source of nondeterminism surfaced only at the end**, and it is the\n+most instructive thing in this section. After the selection fix, all ten unit\n+tests passed and three real runs still produced different files.\n+`enhancement_summary.change_types` was built with `list(set(...))`, and Python\n+randomises string hashing per process, so set iteration order varies between\n+runs. The unit tests compared ingredients and tweak ids, not the summary, so\n+they were green over a live defect. Only whole-artifact comparison across\n+separate processes caught it.\n+\n+The lesson generalises: **a determinism test that checks selected fields is not\n+a determinism test.**\n+\n+### The two fixes together\n+\n+Applying every tweak instead of one recovers the output that the first fix gave\n+up, without weakening it:\n+\n+| | Original | After `46512a7` | After both |\n+| --- | --- | --- | --- |\n+| Recipes published per run | 4.00 | 3.38 | 4.00 |\n+| Changes actually applied per run | 8.0 | 6.8 | **18.0** |\n+| False change records | 2 | 0 | 0 |\n+| Runs byte-identical | no | no | yes |\n+\n+The recovery is legitimate rather than a relaxed guard. The guard still fires,\n+it just no longer discards a whole recipe when one tweak misses. Apple cake now\n+publishes with its rank 1 tweak applied while rank 2 is dropped and logged:\n+\n+```\n+WARNING  Tweak 19117-t2 changed nothing (1 edits, none matched); not recorded\n+```\n+\n+That is the shape the product needed all along. More community tweaks reach the\n+recipe, every one of them is real, and each is attributable to its source.\n+\n+### What these fixes do not touch\n+\n+- The **schema ceiling** in Finding 2, which is deliberately deferred. One review\n+  still yields one `modification_type` and one `reasoning`, so six of twelve\n+  tweaks remain unrepresentable.\n+\n+  The reason for deferring it is a process rule rather than a scheduling\n+  accident. Splitting one review into several modification objects requires\n+  changing the extraction prompt, and a prompt change is a behaviour change: it\n+  has to be rerun against the golden set ten times and reported as a pass rate,\n+  never as \"it worked\". **The account has no API credits, so that rerun cannot\n+  happen.** Shipping a prompt change I could not measure would contradict the\n+  standard this repository is built on, and it would be exactly the kind of\n+  unverified confidence this document criticises everywhere else.\n+\n+  The golden set and the harness are built and tested, so the measurement is one\n+  funded run away. That is the right place to stop.\n+- **Vote data** still does not exist. Rank order is now the featured-tweak list\n+  order, which is honest and explicit but is not a vote count. Finding 3's\n+  product question is unresolved.\n+- **API error handling.** A permanent billing failure is still retried up to\n+  nine times and still returns `None`, indistinguishable from an empty corpus.\n+- **Instruction-level matching.** `technique_change` remains unreachable.\n+\n ---\n \n ## What I would do next, in order\n \n-1. **Make failure loud.** Never emit a change record for text that did not\n-   change; never publish with zero applied edits; catch typed API errors and\n-   stop on the fatal ones instead of retrying a billing failure for an hour.\n-   Converts every silent failure in this document into a visible one. Smallest\n-   change, largest gain.\n+1. ~~Never emit a change record for text that did not change; never publish with\n+   zero applied edits.~~ **Done, `46512a7`.** What remains under this heading:\n+   catch typed API errors and stop on the fatal ones instead of retrying a\n+   billing failure for an hour.\n 2. **Change the unit from review to modification.** *N* modification objects per\n    review, each with its own type and rationale. Unblocks the per-line\n    explanation the product promises.\n-3. **Make selection deterministic and explainable.** Record the candidate set,\n-   the criterion and the choice in the output. Decide honestly what \"highest\n-   voted\" can mean given data that has no votes.\n+3. ~~Make selection deterministic and explainable.~~ **Done, `7c579d8`.** Every\n+   featured tweak is applied in rank order and attributed by id. What remains is\n+   the product question: decide honestly what \"highest voted\" can mean given\n+   data that has no votes.\n 4. **Replace whole-string fuzzy matching** with anchoring that understands\n    quantities and units, and match within a line rather than across a list.\n    Currently every instruction-level edit is unreachable, which kills\n\n################ DECISIONS + TRAJECTORY ################\n docs/DECISIONS.md                                  |   26 +\n docs/WRITEUP.md                                    |  136 +-\n .../80af422b-0560-5694-af18-e04269f1c968.json      | 7095 ++++++++++++++++++++\n trajectory/80af422b-0560-5694-af18-e04269f1c968.md | 1708 +++++\n 4 files changed, 8954 insertions(+), 11 deletions(-)",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "85a59390-0123-4df9-acde-86ce52c82738",
+    "timestamp": "2026-09-02T01:06:06.889Z",
+    "toolUseResult": {
+      "stdout": "diff --git a/docs/WRITEUP.md b/docs/WRITEUP.md\nindex 45fce08..11b4f46 100644\n--- a/docs/WRITEUP.md\n+++ b/docs/WRITEUP.md\n@@ -15,7 +15,11 @@ None of that is fixable by improving the prompt.\n \n ## What I did\n \n-Four hours, roughly in thirds.\n+The guideline was four hours. **I went past it to land the two fixes.** The\n+diagnosis, the golden set and the harness fit inside the window; the fixes did\n+not, and stopping with a diagnosis and no repaired code seemed the worse\n+outcome. Recording it here rather than leaving it to be noticed in the commit\n+timestamps.\n \n 1. **Read the pipeline end to end** and mapped every assumption the code makes\n    that the brief does not support. Findings in `docs/pipeline-audit.md`.\n@@ -24,14 +28,20 @@ Four hours, roughly in thirds.\n 3. **Built a measurement instrument.** Hand-labelled the 12 AllRecipes featured\n    tweaks into a golden set of 28 discrete modifications, and wrote a harness\n    that scores extraction against it over repeated runs.\n+4. **Fixed the two highest-value defects**, test-first, once the diagnosis said\n+   which ones mattered. See *What I fixed* below.\n \n-I deliberately did not fix anything. With this many interacting defects, the\n-first job is knowing which ones matter.\n+Diagnosis came before any fix on purpose. With this many interacting defects,\n+knowing which ones matter is the whole job; two of them turned out to be a few\n+lines each.\n \n ---\n \n ## Finding 1: the system cannot tell \"nothing to do\" from \"something is broken\", and it always reports the first\n \n+> **Faces 1 and 2 are fixed.** Face 3, the API error handling, is not. Details in\n+> *What I fixed*. The diagnosis below describes the behaviour as found.\n+\n This is the whole story. Everything else in this document is downstream of it.\n \n There is no field anywhere in the output, and no distinct return value anywhere\n@@ -144,6 +154,9 @@ apply them already exists, unused, in `apply_modifications_batch`.\n \n ## Finding 3: \"highest voted\" does not exist in the data\n \n+> **The random selection is fixed. The missing vote data is not, and cannot be\n+> from inside this repository.** Details in *What I fixed*.\n+\n The product premise is applying the *highest voted community-tested*\n modification. There is no vote, helpful, or upvote count on any review in\n `data/`. The scraper documents dropping it, in a comment:\n@@ -309,21 +322,122 @@ already shipped in `data/enhanced/` is reproduced with a count against it.\n \n \n \n+---\n+\n+## What I fixed\n+\n+Two changes, both test-first, both validatable offline with no API key.\n+\n+### `46512a7` Never report a change that did not happen\n+\n+`RecipeModifier.apply_edit` now records a replace only when the text actually\n+differs, and logs a warning naming the similarity score when it does not.\n+`process_single_recipe` refuses to publish when no edit applied, rather than\n+producing an unchanged recipe titled \"(Community Enhanced)\".\n+\n+Measured over the same eight-run sweep:\n+\n+| | Before | After this fix |\n+| --- | --- | --- |\n+| Apple cake zero-change publishes | 4 of 8 | 0 |\n+| Cookie false change records | 2 | 0 |\n+| Changes claimed vs actually made | 66 / 64 | 54 / 54 |\n+| **Recipes published per run** | **4.00** | **3.38** |\n+\n+**Published output dropped, and that is the fix working.** Unchanged recipes now\n+fail loudly instead of shipping. Apple cake went from publishing every run to\n+publishing half of them, and the soup lost one run in eight to the same guard.\n+A platform that ships fewer recipes but tells the truth about all of them is\n+strictly better than one that fills the gap with fabrications.\n+\n+### `7c579d8` Deterministic, complete, attributable selection\n+\n+`random.choice` is gone. The pipeline reads the scraped `featured_tweaks` list,\n+the ranking signal that existed in the data and was never read, and applies\n+every entry in that order. Each modification records `source_tweak_id` and\n+`source_tweak_rank`, so the output says which tweak produced which change.\n+\n+| | Before | After |\n+| --- | --- | --- |\n+| Tweaks applied per run | 1 of 4, at random | 4 of 4, always |\n+| Changes per run, cookies | 1 to 4 | 9 |\n+| Three runs byte-identical | no | yes, `created_at` aside |\n+| 3-star tweak included | 25% of runs | every run, and named |\n+\n+**A third source of nondeterminism surfaced only at the end**, and it is the\n+most instructive thing in this section. After the selection fix, all ten unit\n+tests passed and three real runs still produced different files.\n+`enhancement_summary.change_types` was built with `list(set(...))`, and Python\n+randomises string hashing per process, so set iteration order varies between\n+runs. The unit tests compared ingredients and tweak ids, not the summary, so\n+they were green over a live defect. Only whole-artifact comparison across\n+separate processes caught it.\n+\n+The lesson generalises: **a determinism test that checks selected fields is not\n+a determinism test.**\n+\n+### The two fixes together\n+\n+Applying every tweak instead of one recovers the output that the first fix gave\n+up, without weakening it:\n+\n+| | Original | After `46512a7` | After both |\n+| --- | --- | --- | --- |\n+| Recipes published per run | 4.00 | 3.38 | 4.00 |\n+| Changes actually applied per run | 8.0 | 6.8 | **18.0** |\n+| False change records | 2 | 0 | 0 |\n+| Runs byte-identical | no | no | yes |\n+\n+The recovery is legitimate rather than a relaxed guard. The guard still fires,\n+it just no longer discards a whole recipe when one tweak misses. Apple cake now\n+publishes with its rank 1 tweak applied while rank 2 is dropped and logged:\n+\n+```\n+WARNING  Tweak 19117-t2 changed nothing (1 edits, none matched); not recorded\n+```\n+\n+That is the shape the product needed all along. More community tweaks reach the\n+recipe, every one of them is real, and each is attributable to its source.\n+\n+### What these fixes do not touch\n+\n+- The **schema ceiling** in Finding 2, which is deliberately deferred. One review\n+  still yields one `modification_type` and one `reasoning`, so six of twelve\n+  tweaks remain unrepresentable.\n+\n+  The reason for deferring it is a process rule rather than a scheduling\n+  accident. Splitting one review into several modification objects requires\n+  changing the extraction prompt, and a prompt change is a behaviour change: it\n+  has to be rerun against the golden set ten times and reported as a pass rate,\n+  never as \"it worked\". **The account has no API credits, so that rerun cannot\n+  happen.** Shipping a prompt change I could not measure would contradict the\n+  standard this repository is built on, and it would be exactly the kind of\n+  unverified confidence this document criticises everywhere else.\n+\n+  The golden set and the harness are built and tested, so the measurement is one\n+  funded run away. That is the right place to stop.\n+- **Vote data** still does not exist. Rank order is now the featured-tweak list\n+  order, which is honest and explicit but is not a vote count. Finding 3's\n+  product question is unresolved.\n+- **API error handling.** A permanent billing failure is still retried up to\n+  nine times and still returns `None`, indistinguishable from an empty corpus.\n+- **Instruction-level matching.** `technique_change` remains unreachable.\n+\n ---\n \n ## What I would do next, in order\n \n-1. **Make failure loud.** Never emit a change record for text that did not\n-   change; never publish with zero applied edits; catch typed API errors and\n-   stop on the fatal ones instead of retrying a billing failure for an hour.\n-   Converts every silent failure in this document into a visible one. Smallest\n-   change, largest gain.\n+1. ~~Never emit a change record for text that did not change; never publish with\n+   zero applied edits.~~ **Done, `46512a7`.** What remains under this heading:\n+   catch typed API errors and stop on the fatal ones instead of retrying a\n+   billing failure for an hour.\n 2. **Change the unit from review to modification.** *N* modification objects per\n    review, each with its own type and rationale. Unblocks the per-line\n    explanation the product promises.\n-3. **Make selection deterministic and explainable.** Record the candidate set,\n-   the criterion and the choice in the output. Decide honestly what \"highest\n-   voted\" can mean given data that has no votes.\n+3. ~~Make selection deterministic and explainable.~~ **Done, `7c579d8`.** Every\n+   featured tweak is applied in rank order and attributed by id. What remains is\n+   the product question: decide honestly what \"highest voted\" can mean given\n+   data that has no votes.\n 4. **Replace whole-string fuzzy matching** with anchoring that understands\n    quantities and units, and match within a line rather than across a list.\n    Currently every instruction-level edit is unreachable, which kills\n\n################ DECISIONS + TRAJECTORY ################\n docs/DECISIONS.md                                  |   26 +\n docs/WRITEUP.md                                    |  136 +-\n .../80af422b-0560-5694-af18-e04269f1c968.json      | 7095 ++++++++++++++++++++\n trajectory/80af422b-0560-5694-af18-e04269f1c968.md | 1708 +++++\n 4 files changed, 8954 insertions(+), 11 deletions(-)",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "a593353f-0642-44ca-a5b0-c0d327eb53bb",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "85a59390-0123-4df9-acde-86ce52c82738",
+    "isSidechain": false,
+    "attachment": {
+      "type": "task_reminder",
+      "content": [],
+      "itemCount": 0
+    },
+    "type": "attachment",
+    "uuid": "45a5b5a7-b4b3-42f6-98e7-35c9fc180607",
+    "timestamp": "2026-09-02T01:06:06.942Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "45a5b5a7-b4b3-42f6-98e7-35c9fc180607",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14994083 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "303d3b65-c59c-4ae4-80a4-d509d10308b0",
+    "timestamp": "2026-09-02T01:06:06.943Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "303d3b65-c59c-4ae4-80a4-d509d10308b0",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CediU393oce3yYcGxgR7r",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_018bEPwj1YUYrrC9BBgcRPqr",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\ngit add -A\ngit commit -q -F - <<'MSG'\ndocs: record the two fixes, their measured effect, and the deferral of F2\n\ndocs/WRITEUP.md gains a \"What I fixed\" section covering both commits with\nbefore and after tables, and states plainly that the four hour guideline\nwas exceeded to land them.\n\nPublished output is reported honestly rather than favourably. The first\nfix dropped recipes published per run from 4.00 to 3.38, because\nunchanged recipes now fail loudly instead of shipping. Apple cake went\nfrom publishing every run to half of them. The second fix returns it to\n4.00 by applying every featured tweak rather than one, which is a\nrecovery rather than a relaxed guard: the guard still fires per tweak,\nit just no longer discards a whole recipe when one tweak misses. Changes\nactually applied per run went from 8.0 to 18.0 with zero false records.\n\nF2, the schema change letting one review carry several modifications, is\ndeferred and the reason is recorded. It requires an extraction prompt\nchange, a prompt change is a behaviour change that must be rerun against\nthe golden set ten times and reported as a pass rate, and the account has\nno API credits. Shipping a prompt change that could not be measured would\ncontradict the standard the repository is built on.\n\ndocs/DECISIONS.md records the ranking decision with its rejected\nalternatives. trajectory/ regenerated at 525 turns, verified clean.\n\nCo-Authored-By: Claude Opus 5 <[REDACTED-EMAIL]>\nClaude-Session: https://claude.ai/code/session_01KAmWceHupGNmbNRxaHghpN\nMSG\ngit push -u origin main 2>&1 | tail -2\necho\ngit log --oneline -4 | sed 's/^/  /'\necho\necho \"=== final state ===\"\necho \"  tests:\"; for t in tests/test_selection.py tests/test_truthfulness.py; do printf \"    %-32s \" \"$t\"; .venv/bin/python $t 2>&1|tail -1; done\nfor t in scripts/test_export_transcript.py scripts/test_run_golden_set.py; do printf \"    %-32s \" \"$t\"; python3 $t 2>&1|tail -1; done\necho \"  working tree: $(git status --porcelain | wc -l) uncommitted files\"\necho \"  main vs origin: $(git rev-list --left-right --count origin/main...HEAD | awk '{print \"behind \"$1\", ahead \"$2}')\"",
+            "description": "Commit and push the documentation updates"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 3731,
+        "cache_read_input_tokens": 427509,
+        "output_tokens": 919,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 3731,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 919,
+            "cache_read_input_tokens": 427509,
+            "cache_creation_input_tokens": 3731,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 3731
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CediU11ov8Bc9oTxaxUxn",
+    "type": "assistant",
+    "uuid": "456200ed-780f-43f6-b185-64fb5623b417",
+    "timestamp": "2026-09-02T01:06:20.426Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "456200ed-780f-43f6-b185-64fb5623b417",
+    "isSidechain": false,
+    "promptId": "d2282c07-b547-4101-ac73-71aea9c5663f",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_018bEPwj1YUYrrC9BBgcRPqr",
+          "type": "tool_result",
+          "content": "   7c579d8..b2f01dc  main -> main\nbranch 'main' set up to track 'origin/main'.\n\n  b2f01dc docs: record the two fixes, their measured effect, and the deferral of F2\n  7c579d8 feat(selection): process featured tweaks deterministically in ranked order\n  46512a7 fix(pipeline): never emit a change record for an edit that changed nothing\n  4e44a6d docs: log the retry defect, reframe the writeup, refresh the trajectory\n\n=== final state ===\n  tests:\n    tests/test_selection.py          OK\n    tests/test_truthfulness.py       OK\n    scripts/test_export_transcript.py OK\n    scripts/test_run_golden_set.py   OK\n  working tree: 0 uncommitted files\n  main vs origin: behind 0, ahead 0",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "c4535fac-58b6-4c25-af8f-61e1d9fb622f",
+    "timestamp": "2026-09-02T01:06:25.423Z",
+    "toolUseResult": {
+      "stdout": "   7c579d8..b2f01dc  main -> main\nbranch 'main' set up to track 'origin/main'.\n\n  b2f01dc docs: record the two fixes, their measured effect, and the deferral of F2\n  7c579d8 feat(selection): process featured tweaks deterministically in ranked order\n  46512a7 fix(pipeline): never emit a change record for an edit that changed nothing\n  4e44a6d docs: log the retry defect, reframe the writeup, refresh the trajectory\n\n=== final state ===\n  tests:\n    tests/test_selection.py          OK\n    tests/test_truthfulness.py       OK\n    scripts/test_export_transcript.py OK\n    scripts/test_run_golden_set.py   OK\n  working tree: 0 uncommitted files\n  main vs origin: behind 0, ahead 0",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false,
+      "gitOperation": {
+        "push": {
+          "branch": "main"
+        }
+      }
+    },
+    "classifierMetaLines": "{\"meta\":{\"repoVisibility\":{\"remote\":\"thatkidplongy/casper-recipe-pipeline\",\"branch\":\"main\",\"visibility\":\"unknown\"}}}\n",
+    "sourceToolAssistantUUID": "456200ed-780f-43f6-b185-64fb5623b417",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "c4535fac-58b6-4c25-af8f-61e1d9fb622f",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14989576 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "577bf460-aacd-4e07-8cd0-6e54942a19d5",
+    "timestamp": "2026-09-02T01:06:25.428Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "577bf460-aacd-4e07-8cd0-6e54942a19d5",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CediVQTES2Zfg2z5bWKio",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Pushed as `b2f01dc`. Working tree clean, `main` level with origin, all 62 tests green.\n\nOne correction to what you asked for, because the measurement disagreed with the framing and I would rather show you than quietly adopt it.\n\n**Published output drops after the first fix, then comes back after the second.** Recipes per run went 4.00, then 3.38, then 4.00. I reported all three rather than just the drop, because reporting only the middle number would misdescribe the current state of the code.\n\nThe recovery is not a weakened guard, and the writeup says so explicitly. The guard still fires per tweak. It simply no longer discards an entire recipe because one tweak missed. Apple cake now publishes with its rank 1 tweak applied while rank 2 is dropped and logged:\n\n```\nWARNING  Tweak 19117-t2 changed nothing (1 edits, none matched); not recorded\n```\n\nThe number that actually matters moved a long way:\n\n| | Original | After the first fix | After both |\n| --- | --- | --- | --- |\n| Recipes published per run | 4.00 | 3.38 | 4.00 |\n| Changes actually applied per run | 8.0 | 6.8 | 18.0 |\n| False change records | 2 | 0 | 0 |\n| Runs byte-identical | no | no | yes |\n\nSame number of recipes as at the start, more than twice the community tweaks reaching them, none of them fabricated, and every run reproducible.\n\n**F2 is deferred with the reason stated.** The schema change needs an extraction prompt change, a prompt change is a behaviour change that has to be rerun against the golden set ten times and reported as a pass rate, and the account has no credits. Shipping a prompt change I could not measure would contradict the standard this repository is built on, and it would be the same unverified confidence the document criticises everywhere else. The golden set and harness are built and tested, so that measurement is one funded run away.\n\n**The time overrun is stated at the top of the writeup**, in the first paragraph a reviewer reads, rather than left to be inferred from commit timestamps.\n\nThe transcript export is regenerated at 525 turns and verified clean of credentials and email addresses. It will be one turn stale by the time you read this, which is unavoidable while the session is live. Rerun `python3 scripts/export_transcript.py` and commit as your last action if you want it to include the end.\n\nEverything except the video is on `main`."
+        }
+      ],
+      "stop_reason": "end_turn",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1224,
+        "cache_read_input_tokens": 431240,
+        "output_tokens": 789,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1224,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 789,
+            "cache_read_input_tokens": 431240,
+            "cache_creation_input_tokens": 1224,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1224
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CediVN5MtzwXPQRVhePKE",
+    "type": "assistant",
+    "uuid": "37ef60ba-d5e4-4523-8462-7e685a4c7a8d",
+    "timestamp": "2026-09-02T01:06:38.735Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "type": "last-prompt",
+    "lastPrompt": "Update docs/WRITEUP.md with the two fixes and the before and after table, including that published output drops because unchanged recipes now fail loudly instead of shipping. Note that F2, the schema…",
+    "leafUuid": "37ef60ba-d5e4-4523-8462-7e685a4c7a8d",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "type": "atis-latch",
+    "atis": "",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "type": "queue-operation",
+    "operation": "enqueue",
+    "timestamp": "2026-09-02T01:07:00.927Z",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "content": "Now F2, the one the brief actually hints at. ModificationObject holds one modification_type and one reasoning, so \"I added an egg and halved the sugar\" loses everything after the first change. Six of the twelve fixtures span more than one category, so half the corpus is structurally unrepresentable.\n\nRed: add the eval case that fails today using 10813-t2, which spans four categories across five discrete modifications. Show it failing.\n\nGreen: the extractor returns a list of discrete modifications, each with its own type, reasoning and edits. Keep the output shape backward compatible, modifications_applied is already a list on EnhancedRecipe. Update the prompt to ask for all of them. Validate the plumbing with stubs.\n\nSkip the options discussion, take that approach. Timebox 30 minutes. Full diff before commit, and say explicitly in the writeup that live extraction accuracy is unvalidated pending credits.\n\nCommit as feat(extraction): extract all discrete modifications per review"
+  },
+  {
+    "type": "queue-operation",
+    "operation": "dequeue",
+    "timestamp": "2026-09-02T01:07:00.928Z",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "parentUuid": "37ef60ba-d5e4-4523-8462-7e685a4c7a8d",
+    "isSidechain": false,
+    "type": "system",
+    "subtype": "stop_hook_summary",
+    "hookCount": 1,
+    "hookInfos": [
+      {
+        "command": "~/.claude/stop-hook-git-check.sh",
+        "durationMs": 28
+      }
+    ],
+    "hookErrors": [],
+    "hookAdditionalContext": [],
+    "preventedContinuation": false,
+    "stopReason": "",
+    "hasOutput": false,
+    "level": "suggestion",
+    "timestamp": "2026-09-02T01:06:40.868Z",
+    "uuid": "9f10a3c7-4809-4243-bd52-c3d4b98bbdc2",
+    "toolUseID": "c8e115c1-fcec-45c2-93e6-5ab8d9fc43af",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "9f10a3c7-4809-4243-bd52-c3d4b98bbdc2",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": "Now F2, the one the brief actually hints at. ModificationObject holds one modification_type and one reasoning, so \"I added an egg and halved the sugar\" loses everything after the first change. Six of the twelve fixtures span more than one category, so half the corpus is structurally unrepresentable.\n\nRed: add the eval case that fails today using 10813-t2, which spans four categories across five discrete modifications. Show it failing.\n\nGreen: the extractor returns a list of discrete modifications, each with its own type, reasoning and edits. Keep the output shape backward compatible, modifications_applied is already a list on EnhancedRecipe. Update the prompt to ask for all of them. Validate the plumbing with stubs.\n\nSkip the options discussion, take that approach. Timebox 30 minutes. Full diff before commit, and say explicitly in the writeup that live extraction accuracy is unvalidated pending credits.\n\nCommit as feat(extraction): extract all discrete modifications per review"
+    },
+    "uuid": "8f7948a1-4587-421a-9d4d-9bd600652bff",
+    "timestamp": "2026-09-02T01:07:00.938Z",
+    "permissionMode": "auto",
+    "origin": {
+      "kind": "human"
+    },
+    "promptSource": "sdk",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "8f7948a1-4587-421a-9d4d-9bd600652bff",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>15000000 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "b50f2486-06fb-459c-8d80-a9d2d882516b",
+    "timestamp": "2026-09-02T01:07:00.938Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "b50f2486-06fb-459c-8d80-a9d2d882516b",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CediY2MnRQViuWZy5pxrc",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAISzRYKpgEIERgCKkAUKT+QwLMRJ4eSeY7tspjvF4Je/EDLxCffO102ROpc9QZfRrrec9VUrxEiSCnrwZ3HxQ9HyezPhJTzngDMzha/Mg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiRkYWVmOWUwMS0zYTE3LTQ1ZjQtYjU0My0yNDE5NjA5MzhhYzFyEHzBOx7moX0qEUHOc4ImvQSIAQGoAcTt3dQGsAECEgzBODyKJdI5sszZC8kaDMoOBY0QSOP5m94RGSIwbuL6mdVFMzlHMDlf12XUkzReL9A9akuAePmUms8c9B3qK0JFqBBk+T+STUmHyZAfKtMUDPVJnTkmUCLydz27jaP2HKCkuT9Dla3eJeUf2ZslnqKZdUbgk49uSFJXEMrd31VJvRZAcPDeCgfjztCavYo0cYyLNCOdoSMEeYqDrQEqU2SmVnWqs0FRheVcPlLDJ9ew0u/yX70ifEXw1sgv4FAjFxu42cViE9RpAkhRyuz7B4Rm62K7sVyGyItXIm/Lq44oHy9+0BybvYv31McahCnRDH5CKgyreaZ7mWLLf2KPWzNyX66N2Hfnh9JbvqFpqW/NHVEadomYOOvm9oC0KG+HQgQr/YtCJhe5QBGeC40GMFJXZSkQ3DfxPCY8oP6+thGynXy+59hYU8WzGYMkzvuNAOIkFml+xfN5+qEUDkEJKiDO+qFqZqrLYJBqNccrS/0XIiziXNLxovwtcHe2XUBy4ja5fUVOQjf2fiEXli5WPFZ1dCWKK9hu5ZIDpXojklQqUXyIuxAkgMoOCTy/1q4WvYvFRERgbqbzsG3Js8RiYkm7y/mdEgB9bLy3QMGuIYdD4GVrq7a52paww0am9+/YlOX7EW8fGkDTTap5kYAKLtKpB0optJKm3wbu5hcF2Mqqwqc2ItG1varv4+XJbptZJIO/kOk/2o8UCFU4fEO2u3PBiKE0qMGgMuO17MJqqBWwYz2RYCyZv9CP8hLyhmUzZMD4+tWMJnhjN2a9982MIeAoOb8QisLUsWK6Iywudg44MqjkHAgJ7RAVONf+BhDk9Oc5uGxT0olUyw3boYsrvB9iU8g/k1PG8ttxeCmK0MSbRlEaLv8NvLD5GdQA3CyFFNrA5CFfBiqt5R2N3rzVepJo4eZ0OA6ISMWKLIk6AhvI5fYFcEplegfl7knJn9SovN16jVSZqJL31kenTCpBL5aRzCWX/xVT4f4Uqmdv4v9A78O6f07wmcuPf0iyE7yzhh8+fP3YSuC4mOt/h8q8RoWQHZosACdw3U4LkZbJHbOHTU5QG3BHIetlGLTujv9mQqrcSH+ElUeOEbyx9g6FEweo695t1B0Mc1MnNI2k+CYm335iWIKLzPe5Fqp2KNKu5wWUOMOKUJ4Te/FZXfCdOqEYcy7CF5Ne7D3xs7UVel9NarSGW3ef5PGGf4k6LKhupogiMASf60qu5siZXOn3lVod62++Dnm8/IR0Y5cTOwdpB0d5/dPm+FAV43HDEhM/RYxmsIL5YssUPtpRbY3VMHyH3Ud8cEtQ8j9pSQNUGlXqd6/5EkK28fLFJCAJqRH9QbPTkUg+xJyV6CcSd+4kx9yjXtOF41t7WsLXULrHsrpfkS2daBqQsbUMNuiNgh8S3e6CRHQGU89pXMOZDqrxxiyxfz4y5gYkrsqytfLjKWHk4C9gXA5tHxofTdyi+6pDGg2mn/SHW9jmXfZer2NCBfiNnnuPAutCxEi7OQ14SGGzXt/9tGT6Xc02f6Gt9BbGi7TtCYrsxDVFD2z+E4EDIOzKp6cFoKpEfOIkSMhPL5Mr1EnM2YuIR7mMVLKNdgKlKGJi7jG2iBGdZ4KLMIwN8Gw9+333M2qn0idEnWJW7xt/P5KtZ3dAPbZA0BqCgLVN0OzMTDWeTMC9AV0USnzWVNKPscyesPqrodGYuhZ/goWYjugpktku/FbE0wpNzkDHuJ6tRNAp5Rsu1zY/r99ke+c0j7H88sIF1wVHAUUvAiVwF6Hi7AqTyS96kwtDjne9VV1B3ctD3dzMePI8Xp08U0pr81iPaoyQBGg9Ikxm+uocZbE/0QGWnEzfyep11V9aRdXKLMRovskMQYC3cYmgvHLhNbB15yK6dJUYQND/fiKffEX6BNt66KAorec7NLKN0kskWrvwaRpUJEnb4zRpiWk4JWixqJ2Pk9JC8WNCEZhR3FpFQnUFsLOXY0HRgu49Au2bCN7uQ9wJvPaWN7b8iWG+wKVuOao5M/Zpuq2dndzHIcTkensVcgB7XLzZRgv86egfoen3W2V1+ItfYQcEciZ/uVp6MYCrLdcSH/USpuC8tQtY6TyJabTspbIkFoBYsiSAPuh0wQvDncEhx3olMydTWQoimgIrtaiTzxOTBqX8wuMVcpfGkDTIWEB+nPHSeRWLuMrnQH/7fe+OehZo+hqPhYazIN3kijN0gWQyl6Mp1FoOhGkDSCiEDfg/WxQiHUsWoANc8aBn/BnUxQXZFGrESaAiX1JPKnx9Va8+oOw31i++DPS/6jBHNHYHh5+7fc3hTA3QVG5DlF6RBu2xaBCzg3E1Ig8YF0P83AYMt3LqbKv4LWM2PwzrWnMo5AoB4poAXxRe9N6XqWlQZ2Hlc3L6NWgoRCADY/JYI7yqsSw2FwnrCiWD1utgtm76XS/uLo9Sa7Fsqkryw/kYKyks/aeLpI24Wrg9YSIEbirmNfIf+o80KquW5K2eZb+Yjk9dTdiWN+PcrMeZmLth3nTgmsSTci4WJgHlXBiAQzq+rBDtBImjpj1+4RhzjQ1wpH8ZHrYOwXq9qCqVED0cbzFs9AxfP6AHH69t8ywJQgKxiTsie90rnEztmfTp3c1iO8oKqs56GKjX5PGL4sq9fgs/p+b/n7YatYja5v67kRjpREKfDghAKZuRuB7DoiuBgwaYooCI/T21xPiuyuHTby5MdK4jvXIFqpeuE2eF6yul4H57x3YA5CcfJyXPNwgGBCsoDjiELWd/r0l5H+Amp3waS20m2q4+5DZL/4vvd0KLFXUbqGTI+HrWzidcaDCi7SMnXnwe6UqaJDZBop5P1GQSu06H7rIm5P/fIq0u7ASwjP+nSe3Mr0g/IFPGZe6sui7ltpqsRbPGVImc5P5BThoM2t5qF4hg31RvlwZh3Ag1eK3fpck1u25pPE5At5GdLtSfGeJgDoCyAf9DADLsehJ0r5V76GmJTYqWUk6nO2h4g9KPMj7sCEF3T715cVZ0ZhB4n19RQRaB4agJ3H4BUTB8U51+BFMp8XsRUn+6OtZdWULCRycbKVPuuVIhlAXdBugzdZB4bMhwnM0yt0RP4DEJBKu5lGbbzgUb1TS5RfYr9oYUZfI5N9GIX5eXAujopXyQ2NOBYgEW3A0iwaEbAap4kDA9yZ1DL0azkKskG6ELFvnlfhLv17gdKVsagg5DppxxoGyjJi5Vp95T9cEcLEMhFKwk2k9CVHvQ1MZRgfIjT8aM1qjG7LQadOaqiXEfvOu59hh41afrdDr9a6jWWGmQfzOkMQDuDvEZ/pm0+n9sX5PvH6hA1FfdZTQ9KDTraS6TQBJSfvpQ7hPcquFPU//au3j7NV9Hb85ZlftgXTpMVDBRq41Q7LHxOcJwA8Og3m0WUzMe6DkBj1L/cCar62T0QZFrZXP4OszA+MjE+M2mHtOn23FEBSkvxRANa8zgOXMsfNZtggnISjKZT6OOmCbUEKyKi7gRx4XAqB/JXkZEZZw64KcF1CfweHcmRWLIVNNEmzbI45mq0nMCLiviXXtZ9zlXu7aqyjMsC44W3ARjSAZRTh+OX1b+JPegdAxZ+tCI+dezZGEQ3omOqypTuQMfKJmGv8XOe+sR8tUZ5Ub5oCCGsef0GAE="
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 345,
+        "cache_read_input_tokens": 433253,
+        "output_tokens": 4503,
+        "output_tokens_details": {
+          "thinking_tokens": 962
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 345,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 4503,
+            "cache_read_input_tokens": 433253,
+            "cache_creation_input_tokens": 345,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 345
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CediXz3svGrbKyNTDgYtU",
+    "type": "assistant",
+    "uuid": "8c7f6bfc-1ea7-4275-a49e-6ff063183ce6",
+    "timestamp": "2026-09-02T01:07:16.158Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "8c7f6bfc-1ea7-4275-a49e-6ff063183ce6",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CediY2MnRQViuWZy5pxrc",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "F2. Red first, using fixture `10813-t2` and its five modifications across four categories."
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 345,
+        "cache_read_input_tokens": 433253,
+        "output_tokens": 4503,
+        "output_tokens_details": {
+          "thinking_tokens": 962
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 345,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 4503,
+            "cache_read_input_tokens": 433253,
+            "cache_creation_input_tokens": 345,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 345
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 1,
+    "requestId": "req_011CediXz3svGrbKyNTDgYtU",
+    "type": "assistant",
+    "uuid": "0e5f6c8a-45e1-4170-b9b7-393123f2e27f",
+    "timestamp": "2026-09-02T01:07:16.825Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "0e5f6c8a-45e1-4170-b9b7-393123f2e27f",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CediY2MnRQViuWZy5pxrc",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01D6mWVM88NjERwHZ8P9mBMG",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\ncat > tests/test_multi_modification.py <<'PY'\n\"\"\"One review can describe several discrete modifications.\n\nFixture 10813-t2 is the worst case in the corpus. The reviewer lists four\nnumbered tweaks that decompose into five discrete modifications spanning four\ncategories:\n\n    (1) half cup of sugar and one-and-a-half cups of brown sugar\n        -> quantity_adjustment x2\n    (2) omitted the water                  -> removal\n    (3) added a teaspoon of cream of tartar -> addition\n    (4) refrigerated the batter            -> technique_change\n\nModificationObject carries one modification_type and one reasoning, so\neverything after the first category is lost. Six of the twelve fixtures span\nmore than one category, so half the corpus is structurally unrepresentable.\n\nRun: .venv/bin/python tests/test_multi_modification.py\n\"\"\"\n\nimport json\nimport os\nimport sys\nimport tempfile\nimport types\nimport unittest\nfrom pathlib import Path\n\nREPO = Path(__file__).resolve().parent.parent\nsys.path.insert(0, str(REPO / \"src\"))\nos.environ.setdefault(\"OPENAI_API_KEY\", \"test-value-never-sent-anywhere\")\n\nfrom loguru import logger\nlogger.remove()\n\nfrom llm_pipeline.models import Recipe, Review\nfrom llm_pipeline.pipeline import LLMAnalysisPipeline\nfrom llm_pipeline.prompts import build_simple_prompt\nfrom llm_pipeline.tweak_extractor import TweakExtractor\n\nFIXTURES = json.loads((REPO / \"src\" / \"llm_pipeline\" / \"fixtures\" / \"golden_tweaks.json\")\n                      .read_text(encoding=\"utf-8\"))\nT2 = next(f for f in FIXTURES[\"fixtures\"] if f[\"tweak_id\"] == \"10813-t2\")\nCOOKIES = json.loads((REPO / \"data\" / \"recipe_10813_best-chocolate-chip-cookies.json\")\n                     .read_text(encoding=\"utf-8\"))\n\n# What a competent model returns for 10813-t2: one object per discrete\n# modification, each with its own type and its own reasoning.\nFIVE = {\"modifications\": [\n    {\"modification_type\": \"quantity_adjustment\",\n     \"reasoning\": \"Halving the white sugar shifts the ratio toward brown sugar.\",\n     \"edits\": [{\"target\": \"ingredients\", \"operation\": \"replace\",\n                \"find\": \"1 cup white sugar\", \"replace\": \"0.5 cup white sugar\"}]},\n    {\"modification_type\": \"quantity_adjustment\",\n     \"reasoning\": \"More brown sugar gives a chewier, more flavourful cookie.\",\n     \"edits\": [{\"target\": \"ingredients\", \"operation\": \"replace\",\n                \"find\": \"1 cup packed brown sugar\", \"replace\": \"1.5 cups packed brown sugar\"}]},\n    {\"modification_type\": \"removal\",\n     \"reasoning\": \"Omitting the water reduces spread.\",\n     \"edits\": [{\"target\": \"ingredients\", \"operation\": \"remove\",\n                \"find\": \"2 teaspoons hot water\"}]},\n    {\"modification_type\": \"addition\",\n     \"reasoning\": \"Cream of tartar helps the cookies hold their shape.\",\n     \"edits\": [{\"target\": \"ingredients\", \"operation\": \"add_after\",\n                \"find\": \"0.5 teaspoon salt\", \"add\": \"1 teaspoon cream of tartar\"}]},\n    {\"modification_type\": \"technique_change\",\n     \"reasoning\": \"Chilling the dough stops it spreading when baked.\",\n     \"edits\": [{\"target\": \"instructions\", \"operation\": \"replace\",\n                \"find\": \"Drop spoonfuls of dough 2 inches apart onto ungreased baking sheets.\",\n                \"replace\": \"Refrigerate the dough at least 1 hour, then drop spoonfuls of dough 2 inches apart onto ungreased baking sheets.\"}]},\n]}\n\n\ndef stub_client(payload):\n    def create(**kwargs):\n        return types.SimpleNamespace(choices=[types.SimpleNamespace(\n            message=types.SimpleNamespace(content=json.dumps(payload)))])\n    return create\n\n\ndef recipe():\n    return Recipe(recipe_id=COOKIES[\"recipe_id\"], title=COOKIES[\"title\"],\n                  ingredients=COOKIES[\"ingredients\"], instructions=COOKIES[\"instructions\"])\n\n\ndef review():\n    return Review(text=T2[\"review_text\"], rating=T2[\"review_rating\"],\n                  has_modification=True, tweak_id=\"10813-t2\", tweak_rank=2)\n\n\nclass TestExtractorReturnsEveryModification(unittest.TestCase):\n    def setUp(self):\n        self.ex = TweakExtractor()\n        self.ex.client.chat.completions.create = stub_client(FIVE)\n\n    def test_all_five_discrete_modifications_are_returned(self):\n        mods = self.ex.extract_modifications(review(), recipe())\n        self.assertEqual(len(mods), 5,\n                         \"a review describing five modifications must yield five\")\n\n    def test_each_modification_keeps_its_own_type(self):\n        types_ = [m.modification_type for m in self.ex.extract_modifications(review(), recipe())]\n        self.assertEqual(sorted(set(types_)),\n                         [\"addition\", \"quantity_adjustment\", \"removal\", \"technique_change\"],\n                         \"all four categories must survive\")\n\n    def test_each_modification_keeps_its_own_reasoning(self):\n        reasons = [m.reasoning for m in self.ex.extract_modifications(review(), recipe())]\n        self.assertEqual(len(set(reasons)), 5, \"each modification explains itself\")\n        self.assertTrue(any(\"cream of tartar\" in r for r in reasons))\n\n    def test_a_single_object_response_is_still_accepted(self):\n        \"\"\"Backward compatibility with the old one-object response shape.\"\"\"\n        self.ex.client.chat.completions.create = stub_client(FIVE[\"modifications\"][0])\n        mods = self.ex.extract_modifications(review(), recipe())\n        self.assertEqual(len(mods), 1)\n        self.assertEqual(mods[0].modification_type, \"quantity_adjustment\")\n\n    def test_an_empty_list_is_accepted_for_a_review_describing_no_change(self):\n        \"\"\"Fixtures 19117-t2 and 77935-t2 expect exactly this.\"\"\"\n        self.ex.client.chat.completions.create = stub_client({\"modifications\": []})\n        self.assertEqual(self.ex.extract_modifications(review(), recipe()), [])\n\n\nclass TestPromptAsksForAllOfThem(unittest.TestCase):\n    def test_the_prompt_requests_a_list_of_discrete_modifications(self):\n        p = build_simple_prompt(\"r\", \"t\", [\"i\"], [\"s\"])\n        self.assertIn('\"modifications\"', p, \"the prompt must ask for a list\")\n        low = p.lower()\n        self.assertTrue(\"discrete\" in low or \"separate\" in low,\n                        \"the prompt must say modifications are separated\")\n\n    def test_the_prompt_gives_the_worked_multi_modification_example(self):\n        p = build_simple_prompt(\"r\", \"t\", [\"i\"], [\"s\"])\n        self.assertIn(\"halved the sugar\", p.lower())\n\n\nclass TestPipelineCarriesEveryModification(unittest.TestCase):\n    def test_one_review_becomes_several_attributed_modifications(self):\n        with tempfile.TemporaryDirectory() as d:\n            p = LLMAnalysisPipeline(output_dir=d)\n            p.tweak_extractor.client.chat.completions.create = stub_client(FIVE)\n            # Only tweak 2 is interesting here; the others return nothing.\n            original = p.tweak_extractor.extract_modifications\n            p.tweak_extractor.extract_modifications = (\n                lambda rv, rc, **kw: original(rv, rc) if rv.tweak_id == \"10813-t2\" else [])\n            result = p.process_single_recipe(\n                str(REPO / \"data\" / \"recipe_10813_best-chocolate-chip-cookies.json\"))\n\n            self.assertEqual(len(result.modifications_applied), 5,\n                             \"each discrete modification is its own attributed entry\")\n            self.assertTrue(all(m.source_tweak_id == \"10813-t2\"\n                                for m in result.modifications_applied),\n                            \"all five cite the same source tweak\")\n            self.assertEqual(\n                sorted(set(m.modification_type for m in result.modifications_applied)),\n                [\"addition\", \"quantity_adjustment\", \"removal\", \"technique_change\"])\n\n    def test_every_change_reaches_the_recipe(self):\n        with tempfile.TemporaryDirectory() as d:\n            p = LLMAnalysisPipeline(output_dir=d)\n            p.tweak_extractor.client.chat.completions.create = stub_client(FIVE)\n            original = p.tweak_extractor.extract_modifications\n            p.tweak_extractor.extract_modifications = (\n                lambda rv, rc, **kw: original(rv, rc) if rv.tweak_id == \"10813-t2\" else [])\n            r = p.process_single_recipe(\n                str(REPO / \"data\" / \"recipe_10813_best-chocolate-chip-cookies.json\"))\n            self.assertIn(\"0.5 cup white sugar\", r.ingredients)\n            self.assertIn(\"1.5 cups packed brown sugar\", r.ingredients)\n            self.assertIn(\"1 teaspoon cream of tartar\", r.ingredients)\n            self.assertNotIn(\"2 teaspoons hot water\", r.ingredients)\n            self.assertTrue(any(\"Refrigerate the dough\" in s for s in r.instructions),\n                            \"the technique change must reach the instructions\")\n\n\nif __name__ == \"__main__\":\n    unittest.main(verbosity=2)\nPY\necho \"=== RED ===\"\n.venv/bin/python tests/test_multi_modification.py 2>&1 | grep -E \"^(FAIL|ERROR|Ran|OK|FAILED)\" | head",
+            "description": "Write the F2 failing eval case and show it failing"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 345,
+        "cache_read_input_tokens": 433253,
+        "output_tokens": 4503,
+        "output_tokens_details": {
+          "thinking_tokens": 962
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 345,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 4503,
+            "cache_read_input_tokens": 433253,
+            "cache_creation_input_tokens": 345,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 345
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 2,
+    "requestId": "req_011CediXz3svGrbKyNTDgYtU",
+    "type": "assistant",
+    "uuid": "0423f48d-70cd-42de-8909-a10aa3e873c0",
+    "timestamp": "2026-09-02T01:07:47.289Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "0423f48d-70cd-42de-8909-a10aa3e873c0",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_01D6mWVM88NjERwHZ8P9mBMG",
+          "type": "tool_result",
+          "content": "=== RED ===\nERROR: test_a_single_object_response_is_still_accepted (__main__.TestExtractorReturnsEveryModification.test_a_single_object_response_is_still_accepted)\nERROR: test_all_five_discrete_modifications_are_returned (__main__.TestExtractorReturnsEveryModification.test_all_five_discrete_modifications_are_returned)\nERROR: test_an_empty_list_is_accepted_for_a_review_describing_no_change (__main__.TestExtractorReturnsEveryModification.test_an_empty_list_is_accepted_for_a_review_describing_no_change)\nERROR: test_each_modification_keeps_its_own_reasoning (__main__.TestExtractorReturnsEveryModification.test_each_modification_keeps_its_own_reasoning)\nERROR: test_each_modification_keeps_its_own_type (__main__.TestExtractorReturnsEveryModification.test_each_modification_keeps_its_own_type)\nERROR: test_every_change_reaches_the_recipe (__main__.TestPipelineCarriesEveryModification.test_every_change_reaches_the_recipe)\nERROR: test_one_review_becomes_several_attributed_modifications (__main__.TestPipelineCarriesEveryModification.test_one_review_becomes_several_attributed_modifications)\nFAIL: test_the_prompt_gives_the_worked_multi_modification_example (__main__.TestPromptAsksForAllOfThem.test_the_prompt_gives_the_worked_multi_modification_example)\nFAIL: test_the_prompt_requests_a_list_of_discrete_modifications (__main__.TestPromptAsksForAllOfThem.test_the_prompt_requests_a_list_of_discrete_modifications)\nRan 9 tests in 0.505s",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "3ee0c417-ab92-47a4-9840-e1a27002d806",
+    "timestamp": "2026-09-02T01:07:49.823Z",
+    "toolUseResult": {
+      "stdout": "=== RED ===\nERROR: test_a_single_object_response_is_still_accepted (__main__.TestExtractorReturnsEveryModification.test_a_single_object_response_is_still_accepted)\nERROR: test_all_five_discrete_modifications_are_returned (__main__.TestExtractorReturnsEveryModification.test_all_five_discrete_modifications_are_returned)\nERROR: test_an_empty_list_is_accepted_for_a_review_describing_no_change (__main__.TestExtractorReturnsEveryModification.test_an_empty_list_is_accepted_for_a_review_describing_no_change)\nERROR: test_each_modification_keeps_its_own_reasoning (__main__.TestExtractorReturnsEveryModification.test_each_modification_keeps_its_own_reasoning)\nERROR: test_each_modification_keeps_its_own_type (__main__.TestExtractorReturnsEveryModification.test_each_modification_keeps_its_own_type)\nERROR: test_every_change_reaches_the_recipe (__main__.TestPipelineCarriesEveryModification.test_every_change_reaches_the_recipe)\nERROR: test_one_review_becomes_several_attributed_modifications (__main__.TestPipelineCarriesEveryModification.test_one_review_becomes_several_attributed_modifications)\nFAIL: test_the_prompt_gives_the_worked_multi_modification_example (__main__.TestPromptAsksForAllOfThem.test_the_prompt_gives_the_worked_multi_modification_example)\nFAIL: test_the_prompt_requests_a_list_of_discrete_modifications (__main__.TestPromptAsksForAllOfThem.test_the_prompt_requests_a_list_of_discrete_modifications)\nRan 9 tests in 0.505s",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "0423f48d-70cd-42de-8909-a10aa3e873c0",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "3ee0c417-ab92-47a4-9840-e1a27002d806",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14995152 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "4f0cd2d9-616a-4fb6-ad33-068ac0860c2c",
+    "timestamp": "2026-09-02T01:07:49.830Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "4f0cd2d9-616a-4fb6-ad33-068ac0860c2c",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CedibcyDjmLrDkQivScZf",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "All 9 red. Implementing: prompt, model, extractor."
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 5161,
+        "cache_read_input_tokens": 433598,
+        "output_tokens": 3343,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 5161,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 3343,
+            "cache_read_input_tokens": 433598,
+            "cache_creation_input_tokens": 5161,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 5161
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CedibatTRPGihXej1QpAN",
+    "type": "assistant",
+    "uuid": "0d25fddb-1b75-467e-adf1-b3eebff09c53",
+    "timestamp": "2026-09-02T01:07:54.020Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "0d25fddb-1b75-467e-adf1-b3eebff09c53",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CedibcyDjmLrDkQivScZf",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01Sk7PaMzCaNqnWvSgWzARap",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\n.venv/bin/python - <<'PY'\nimport pathlib\n\n# ---- prompts.py: ask for every discrete modification ----\np = pathlib.Path(\"src/llm_pipeline/prompts.py\"); s = p.read_text()\ns = s.replace('''You must output valid JSON that matches the ModificationObject schema.''',\n'''A review often describes SEVERAL discrete modifications. \"I added an egg and\nhalved the sugar\" is two: one addition and one quantity adjustment. Each gets its\nown entry, with its own category and its own reasoning. Do not merge them, and do\nnot stop after the first.\n\nYou must output valid JSON: an object with a \"modifications\" array.''')\nold = s[s.index(\"def build_simple_prompt(\"):]\nnew = '''def build_simple_prompt(\n    review_text: str, title: str, ingredients: list, instructions: list\n) -> str:\n    \"\"\"Build the extraction prompt.\n\n    Asks for every discrete modification separately. A review describing four\n    numbered tweaks must come back as four entries, not one.\n    \"\"\"\n    return f\"\"\"{SYSTEM_PROMPT}\n\nOriginal Recipe:\nTitle: {title}\nIngredients: {ingredients}\nInstructions: {instructions}\n\nUser Review: \"{review_text}\"\n\nExtract EVERY discrete modification the reviewer actually made. Separate them:\none entry per change, each with its own category and its own reasoning.\n\nWorked example. The review \"I added an egg and halved the sugar because they were\ntoo sweet\" contains TWO discrete modifications, so it returns two entries: an\n\"addition\" for the egg, and a \"quantity_adjustment\" for the sugar. Returning one\nentry would lose a change the reviewer made.\n\nRules:\n- One entry per discrete change. Four numbered tweaks means four entries.\n- Only changes the reviewer actually made. A preference they did not act on\n  (\"I would prefer more apple\"), something they plan for next time (\"next time I\n  will use fresh ginger\"), or advice offered to other cooks is NOT a\n  modification. If the reviewer describes no change they made, return an empty\n  list.\n- Do not invent an amount the reviewer did not give. If they say \"extra soy\n  sauce\" with no quantity, describe the change without fabricating a number.\n- Copy `find` text verbatim from the recipe above so it can be located.\n\nOutput a JSON object with this structure:\n{{\n    \"modifications\": [\n        {{\n            \"modification_type\": \"quantity_adjustment|ingredient_substitution|technique_change|addition|removal\",\n            \"reasoning\": \"Why this specific change improves the recipe\",\n            \"edits\": [\n                {{\n                    \"target\": \"ingredients|instructions\",\n                    \"operation\": \"replace|add_after|remove\",\n                    \"find\": \"exact text to find, copied from the recipe\",\n                    \"replace\": \"replacement text (for replace operations)\",\n                    \"add\": \"text to add (for add_after operations)\"\n                }}\n            ]\n        }}\n    ]\n}}\n\nFocus on concrete changes the user actually made, not general suggestions.\"\"\"\n'''\np.write_text(s.replace(old, new, 1))\n\n# ---- models.py: the response envelope ----\nm = pathlib.Path(\"src/llm_pipeline/models.py\"); s = m.read_text()\ns = s.replace('''class SourceReview(BaseModel):''',\n'''class ExtractionResult(BaseModel):\n    \"\"\"One review's full extraction: every discrete modification it described.\n\n    A review commonly describes several. \"I added an egg and halved the sugar\" is\n    two, each with its own category and rationale, so the response is a list\n    rather than a single object.\n    \"\"\"\n\n    modifications: List[ModificationObject] = Field(\n        default_factory=list,\n        description=\"One entry per discrete modification; empty if none were made\",\n    )\n\n\nclass SourceReview(BaseModel):''')\nm.write_text(s)\nprint(\"prompt and model patched\")\nPY\n.venv/bin/python - <<'PY'\nimport pathlib\nt = pathlib.Path(\"src/llm_pipeline/tweak_extractor.py\"); s = t.read_text()\ns = s.replace(\"from .models import ModificationObject, Recipe, Review\",\n              \"from .models import ExtractionResult, ModificationObject, Recipe, Review\")\n\nold = s[s.index(\"    def extract_modification(\"):s.index(\"    def extract_all_modifications(\")]\nnew = '''    def extract_modifications(\n        self,\n        review: Review,\n        recipe: Recipe,\n        max_retries: int = 2,\n    ) -> list[ModificationObject]:\n        \"\"\"\n        Extract every discrete modification a review describes.\n\n        A review commonly describes several changes with different rationales,\n        so this returns a list. An empty list is a valid, meaningful answer: it\n        means the reviewer described no change they actually made.\n\n        Args:\n            review: Review object containing modification text\n            recipe: Original recipe being modified\n            max_retries: Number of retry attempts if parsing fails\n\n        Returns:\n            One ModificationObject per discrete modification, in the order the\n            model returned them. Empty list if none, or if extraction failed.\n        \"\"\"\n        if not review.has_modification:\n            logger.warning(\"Review has no modification flag set\")\n            return []\n\n        prompt = build_simple_prompt(\n            review.text, recipe.title, recipe.ingredients, recipe.instructions\n        )\n\n        logger.debug(\n            \"Extracting modifications from review: {}...\".format(review.text[:100])\n        )\n\n        raw_output = None\n        for attempt in range(max_retries + 1):\n            try:\n                response = self.client.chat.completions.create(\n                    model=self.model,\n                    messages=[{\"role\": \"user\", \"content\": prompt}],\n                    response_format={\"type\": \"json_object\"},\n                    temperature=0.1,  # Low temperature for consistent extractions\n                    max_tokens=2000,  # A multi-modification review needs headroom\n                )\n\n                raw_output = response.choices[0].message.content\n                logger.debug(f\"LLM raw output: {raw_output}\")\n\n                if not raw_output:\n                    logger.warning(f\"Attempt {attempt + 1}: Empty response from LLM\")\n                    continue\n\n                modifications = self._parse(json.loads(raw_output))\n\n                logger.info(\n                    f\"Extracted {len(modifications)} discrete modification(s): \"\n                    f\"{[m.modification_type for m in modifications]}\"\n                )\n                return modifications\n\n            except json.JSONDecodeError as e:\n                logger.warning(f\"Attempt {attempt + 1}: Failed to parse JSON: {e}\")\n                if attempt == max_retries:\n                    logger.error(f\"Max retries reached. Raw output: {raw_output}\")\n\n            except ValidationError as e:\n                logger.warning(f\"Attempt {attempt + 1}: Validation error: {e}\")\n                if attempt == max_retries:\n                    logger.error(f\"Max retries reached. Raw output: {raw_output}\")\n\n            except Exception as e:\n                logger.error(f\"Attempt {attempt + 1}: Unexpected error: {e}\")\n                if attempt == max_retries:\n                    return []\n\n        return []\n\n    @staticmethod\n    def _parse(payload: dict) -> list[ModificationObject]:\n        \"\"\"Accept the list response, and a bare single object for compatibility.\n\n        Earlier versions of this prompt returned one modification per review, and\n        a model will still occasionally answer in that shape. Treating it as a\n        one-element list is cheaper than a retry and loses nothing.\n        \"\"\"\n        if \"modifications\" in payload:\n            return ExtractionResult(**payload).modifications\n        if \"modification_type\" in payload:\n            return [ModificationObject(**payload)]\n        return ExtractionResult(**payload).modifications\n\n'''\ns = s.replace(old, new, 1)\n\n# extract_all_modifications now flattens\ns = s.replace('''        extracted = []\n        for review in candidates:\n            label = review.tweak_id or review.text[:40]\n            modification = self.extract_modification(review, recipe)\n            if modification:\n                extracted.append((modification, review))\n                logger.info(\n                    f\"Tweak {label}: extracted {modification.modification_type} \"\n                    f\"with {len(modification.edits)} edits\"\n                )\n            else:\n                logger.warning(f\"Tweak {label}: no modification could be extracted\")\n\n        return extracted''',\n'''        extracted = []\n        for review in candidates:\n            label = review.tweak_id or review.text[:40]\n            modifications = self.extract_modifications(review, recipe)\n            if modifications:\n                extracted.extend((mod, review) for mod in modifications)\n                logger.info(\n                    f\"Tweak {label}: {len(modifications)} discrete modification(s) \"\n                    f\"{[m.modification_type for m in modifications]}\"\n                )\n            else:\n                logger.warning(\n                    f\"Tweak {label}: no modifications extracted \"\n                    f\"(the reviewer may have described no change they made)\"\n                )\n\n        return extracted''')\n\n# test_extraction helper\ns = s.replace('''        return self.extract_modification(review, recipe)''',\n              '''        return self.extract_modifications(review, recipe)''')\ns = s.replace('''    def test_extraction(\n        self, review_text: str, recipe_data: dict\n    ) -> Optional[ModificationObject]:''',\n'''    def test_extraction(\n        self, review_text: str, recipe_data: dict\n    ) -> list[ModificationObject]:''')\nt.write_text(s)\nprint(\"extractor patched\")\nPY\necho \"=== GREEN? ===\"\n.venv/bin/python tests/test_multi_modification.py 2>&1 | tail -4",
+            "description": "Update prompt, model and extractor for multi-modification extraction"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 5161,
+        "cache_read_input_tokens": 433598,
+        "output_tokens": 3343,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 5161,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 3343,
+            "cache_read_input_tokens": 433598,
+            "cache_creation_input_tokens": 5161,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 5161
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 1,
+    "requestId": "req_011CedibatTRPGihXej1QpAN",
+    "type": "assistant",
+    "uuid": "92b55b25-0bdb-40c6-9679-8bd40fa8de7e",
+    "timestamp": "2026-09-02T01:08:26.396Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "type": "last-prompt",
+    "lastPrompt": "Now F2, the one the brief actually hints at. ModificationObject holds one modification_type and one reasoning, so \"I added an egg and halved the sugar\" loses everything after the first change. Six of…",
+    "leafUuid": "92b55b25-0bdb-40c6-9679-8bd40fa8de7e",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "type": "atis-latch",
+    "atis": "",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "parentUuid": "92b55b25-0bdb-40c6-9679-8bd40fa8de7e",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_01Sk7PaMzCaNqnWvSgWzARap",
+          "type": "tool_result",
+          "content": "prompt and model patched\nextractor patched\n=== GREEN? ===\n----------------------------------------------------------------------\nRan 9 tests in 0.483s\n\nFAILED (failures=1)",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "b7f9f2f4-a9d4-4668-91d2-b77f9a6e7e83",
+    "timestamp": "2026-09-02T01:08:29.078Z",
+    "toolUseResult": {
+      "stdout": "prompt and model patched\nextractor patched\n=== GREEN? ===\n----------------------------------------------------------------------\nRan 9 tests in 0.483s\n\nFAILED (failures=1)",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "92b55b25-0bdb-40c6-9679-8bd40fa8de7e",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "b7f9f2f4-a9d4-4668-91d2-b77f9a6e7e83",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14991151 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "c1e7c674-db5d-4564-b6ba-69ee22e593b1",
+    "timestamp": "2026-09-02T01:08:29.084Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "c1e7c674-db5d-4564-b6ba-69ee22e593b1",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CedieWj1p2jJM7dxScLRa",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01UeQnbVAAS4uCKFzADB1P8V",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\n.venv/bin/python tests/test_multi_modification.py 2>&1 | grep -A8 \"^FAIL:\"",
+            "description": "Inspect the remaining failure"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 3434,
+        "cache_read_input_tokens": 438759,
+        "output_tokens": 136,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 3434,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 136,
+            "cache_read_input_tokens": 438759,
+            "cache_creation_input_tokens": 3434,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 3434
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CedieUovCsoitDjA4Tou1",
+    "type": "assistant",
+    "uuid": "b2b049fe-6b9e-4fa8-8168-289773a43061",
+    "timestamp": "2026-09-02T01:08:33.102Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "b2b049fe-6b9e-4fa8-8168-289773a43061",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_01UeQnbVAAS4uCKFzADB1P8V",
+          "type": "tool_result",
+          "content": "FAIL: test_each_modification_keeps_its_own_reasoning (__main__.TestExtractorReturnsEveryModification.test_each_modification_keeps_its_own_reasoning)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/user/casper-recipe-pipeline/tests/test_multi_modification.py\", line 109, in test_each_modification_keeps_its_own_reasoning\n    self.assertTrue(any(\"cream of tartar\" in r for r in reasons))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true\n\n----------------------------------------------------------------------",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "cedcc6fd-6f50-4b90-aee8-31e39bfb430b",
+    "timestamp": "2026-09-02T01:08:35.540Z",
+    "toolUseResult": {
+      "stdout": "FAIL: test_each_modification_keeps_its_own_reasoning (__main__.TestExtractorReturnsEveryModification.test_each_modification_keeps_its_own_reasoning)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/user/casper-recipe-pipeline/tests/test_multi_modification.py\", line 109, in test_each_modification_keeps_its_own_reasoning\n    self.assertTrue(any(\"cream of tartar\" in r for r in reasons))\n    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: False is not true\n\n----------------------------------------------------------------------",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "b2b049fe-6b9e-4fa8-8168-289773a43061",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "cedcc6fd-6f50-4b90-aee8-31e39bfb430b",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14990924 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "ca7c557e-4832-4a8c-88c8-e4fc4c67b9a7",
+    "timestamp": "2026-09-02T01:08:35.546Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "ca7c557e-4832-4a8c-88c8-e4fc4c67b9a7",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011Cediezy8mQTqPk3gNuj7u",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAISsgQKpgEIERgCKkAiYU2YaHVJM8pnS21nkLWFMEZqsOhAUrMHC4x3/ESc0RVHJNZOtTWY++tWWHF3cQEsyUPVUsbij67VRO3YGIp7Mg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiRkYWVmOWUwMS0zYTE3LTQ1ZjQtYjU0My0yNDE5NjA5MzhhYzFyEHzBOx7moX0qEUHOc4ImvQSIAQGoAZju3dQGsAECEgz+izsnTA5tgnz3HUcaDDRFytCgqT8T8ixB2CIwzTWGUXurB/9aUR19m2ypB0E3S6FgcljJxOiemJ/EuyIlpdl7XmhO9jNTaX0I6+dNKrgC6b9hIhfRz+rB1tgpBWQJOJypNF55hTWlLTYYkUieJ5/iSX2XBCpGNqRzRVXp0/BCuH3izwIR399QO7zkbhFNrYiuRhj7uC6e63iVSFKtKiQme/wL9ya+cv0jt9/4vdpZ1VG218MBQ0RyaPzWnFgzvmI+W+neakMgP7cPAoN//IaYeUAowdgxHC0xodW9AAMBvDWxraFK6eB9eB795xGsofeVGuGlIo6+Zsp4clsWuZlEBohO6b8LxxIkxfBRWyacIUiBdKS2g9sKcC8tSHh2KGeyS0UAM9RdeGkKuh8wO+ELEGdfcStYFyEEunLOJT9J82DZChKnT+YaD8qu5RB525szOUmkLHn93JPiOlA36P/HMvxEGi6uCs2bwCVOBsQXdEYcFH4k1s51Tb8P9pD6lAWWIHUY4iadGAE="
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 429,
+        "cache_read_input_tokens": 442193,
+        "output_tokens": 600,
+        "output_tokens_details": {
+          "thinking_tokens": 116
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 429,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 600,
+            "cache_read_input_tokens": 442193,
+            "cache_creation_input_tokens": 429,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 429
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CediexT5b3VQBK7zmG9vW",
+    "type": "assistant",
+    "uuid": "00085e4f-ab59-43c2-92a8-2b11f353ede1",
+    "timestamp": "2026-09-02T01:08:40.074Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "00085e4f-ab59-43c2-92a8-2b11f353ede1",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011Cediezy8mQTqPk3gNuj7u",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "My test assertion is case-sensitive and the fixture reasoning starts with a capital. Test bug, not a code bug."
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 429,
+        "cache_read_input_tokens": 442193,
+        "output_tokens": 600,
+        "output_tokens_details": {
+          "thinking_tokens": 116
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 429,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 600,
+            "cache_read_input_tokens": 442193,
+            "cache_creation_input_tokens": 429,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 429
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 1,
+    "requestId": "req_011CediexT5b3VQBK7zmG9vW",
+    "type": "assistant",
+    "uuid": "dc6c2131-5c23-46a1-a1d1-b0e944eef6e6",
+    "timestamp": "2026-09-02T01:08:40.908Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "dc6c2131-5c23-46a1-a1d1-b0e944eef6e6",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011Cediezy8mQTqPk3gNuj7u",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_014r8QVisLBtCrjucahFGDE1",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\npython3 - <<'PY'\nimport pathlib\np = pathlib.Path(\"tests/test_multi_modification.py\"); s = p.read_text()\ns = s.replace('self.assertTrue(any(\"cream of tartar\" in r for r in reasons))',\n              'self.assertTrue(any(\"cream of tartar\" in r.lower() for r in reasons),\\n'\n              '                        \"the reasoning must be specific to its own change\")')\np.write_text(s)\nPY\necho \"=== GREEN ===\"\n.venv/bin/python tests/test_multi_modification.py 2>&1 | tail -3\necho\necho \"=== other suites: any regression? ===\"\nfor t in tests/test_selection.py tests/test_truthfulness.py; do printf \"  %-32s \" \"$t\"; .venv/bin/python $t 2>&1|tail -1; done\nfor t in scripts/test_export_transcript.py scripts/test_run_golden_set.py; do printf \"  %-32s \" \"$t\"; python3 $t 2>&1|tail -1; done",
+            "description": "Fix the test assertion and check for regressions"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 429,
+        "cache_read_input_tokens": 442193,
+        "output_tokens": 600,
+        "output_tokens_details": {
+          "thinking_tokens": 116
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 429,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 600,
+            "cache_read_input_tokens": 442193,
+            "cache_creation_input_tokens": 429,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 429
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 2,
+    "requestId": "req_011CediexT5b3VQBK7zmG9vW",
+    "type": "assistant",
+    "uuid": "25d21209-6c15-4ec7-9497-fc23cb95434d",
+    "timestamp": "2026-09-02T01:08:43.850Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "25d21209-6c15-4ec7-9497-fc23cb95434d",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "type": "tool_result",
+          "content": "Exit code 143\nCommand timed out after 2m 0s\n=== GREEN ===\nRan 9 tests in 0.534s\n\nOK\n\n=== other suites: any regression? ===\n  tests/test_selection.py\n\n[agent-proxy] While this command ran, 180 connections through the agent proxy failed:\n- api.openai.com:443 — connect_rejected (the egress proxy denied the CONNECT (organization policy) or could not reach the destination) ×20\n(oldest 160 not shown)\nFor details: curl -sS http://127.0.0.1:42459/__agentproxy/status",
+          "is_error": true,
+          "tool_use_id": "toolu_014r8QVisLBtCrjucahFGDE1"
+        }
+      ]
+    },
+    "uuid": "9178aa1d-6614-4c7b-9caa-04b3de27f2e6",
+    "timestamp": "2026-09-02T01:10:45.222Z",
+    "toolUseResult": "Error: Exit code 143\nCommand timed out after 2m 0s\n=== GREEN ===\nRan 9 tests in 0.534s\n\nOK\n\n=== other suites: any regression? ===\n  tests/test_selection.py\n\n[agent-proxy] While this command ran, 180 connections through the agent proxy failed:\n- api.openai.com:443 — connect_rejected (the egress proxy denied the CONNECT (organization policy) or could not reach the destination) ×20\n(oldest 160 not shown)\nFor details: curl -sS http://127.0.0.1:42459/__agentproxy/status",
+    "sourceToolAssistantUUID": "25d21209-6c15-4ec7-9497-fc23cb95434d",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "9178aa1d-6614-4c7b-9caa-04b3de27f2e6",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14990031 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "652c55d2-20c3-421a-a835-8ead0a9c3816",
+    "timestamp": "2026-09-02T01:10:45.229Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "652c55d2-20c3-421a-a835-8ead0a9c3816",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CedipYiM727GkA6UUamub",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAISkgsKpgEIERgCKkBlPSvLfJDXp7KUmJtGJwZXat7HtE9/7ildkq0NUnUjbhnixANOOkJZo5jrwL/b9MtTHK1PKCMuHPby9VWvHOr0Mg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiRkYWVmOWUwMS0zYTE3LTQ1ZjQtYjU0My0yNDE5NjA5MzhhYzFyEHzBOx7moX0qEUHOc4ImvQSIAQGoAZ3v3dQGsAECEgzIkDEH38BwzGnwYbMaDOqsnmxwrL7jpMfEKSIwTj6HSS69ayb3F6MiGs+EqniQrfMPk2YNlysjqRBn747LKNlj3bX5VLP832Oqm605KpgJQ9yI3GyvWgMPpAU7BE/S6ZvfkhXT+J/Wvh1zKDRqm3ZmZMqs+lQYmQIMQLqkoXvACy2FMxv8hN514Vqe1gmvj/IY3EIXOJ5AM9oLyaVxFhu8/0yPWF9hvUx5RyXX5Dn5311cwFW2xPBMuvroWHoZeIdNIWCHaV85/ptbXTV69UsrtNfrQsHaPSAO0olIv9gtVaBN0pTBW4GPjcB3Qti8Chigp14ShVsi4BZYIf03dhRhNGjbzg6W+vpwhrCREqOjWwz5/VsoE3udm8JvZ0VsXN9ahSnw0j2HoO7WZnP6JTirOM+Jap28QDAHlf86rzTOmxLjzOmn15CjriPpuZQHoLkdSWduGgaPXo47GSZv55AAIS3L4p5Egy3shmEr76cvHupPFJdD2+ouwAtIHNsjYIv5u9W2Iho+Vgdti4+u+yJNc0BsUAogRrKCgwymDjNypuBfy/Tecbi+N9i5LCJDrJAU9VlvGHoL50r0oOYNF8G7XzyFm1RLjmCDT61mNdU15LOxitbhzNq2Y7tLW4V2FowyZyRjJIv/SsyQoOm92a4gX1n6OowQg5NIfym5D+REvO++1Nu8dJlpHW0aYnNA+dYgrCoLrlHDntcJem+SryI2KTHPFLVybgRsny95QGLNgKjQL31Va6gS8Q99CYCrIHaE7PPnNQ/hb+qRvB+y8hcmUE+hKEYlmUugv7Qf+TThHJI5OU48iTAeRP4YlXNN4LlRFHAL4YhbHBPxFc4OgpjGNJTBahCZi2mG5t9p+OBhxegSF7bkoikiW9nOqCe+4UmNg6MTC/WLmKZY+p91anIGzzFFjYNDwoniY/R7rcbXrIOHzO1zA7hLh3301hW/67VRun6SmdDpCssBccwd5EuledEfYOdG+05jpF+cEFewdzSA1UgokpU0zwaWooD/IdGak5hpqEcBVdyN0tZfZAi0iKa/n/F9K+QDZC7NJnVmbQSkGPpAtXFalhOFgHOc1QvxREp+EChCvQi0QIIqXYXGsBCz+/OPD1uITYxHGIz/MHGFuzNRR8hTdnrF6QxxWPSFgFrP54mM4lcdwzb5LNAecdgx/paT4s9PIhJElt+DOGfpeGqUpPSnD35UQROLx3IRUqktuN1a/SakAISwtI/nt8rtdtZKyg/rEdcakcuvOxTGc3ccSNZrVwQG5BeRldrEAD1xNRKi5SRb9zfqua1UJq3qO/J2fr9pVIPo4op9t/Gyfl7WeloPUj0LV4ItuFPYv6ubGUXbH7kjFvUBGDnSyppVL5C+3Mpc6qsiwRSyL4SX2mToOuov8rEtzoqw60JLgJ8Mv4ymPZQ8yhZj3nhz/zIMsX/7OuJ8zOwKqDCE7wjJMB5j9vPjwaOfKBNavr30tmAR5mmmjSOq0PKE4Sp3L2cmUr6N9Js5jyxyrdqPvB7ICzqQ/gDi4CpTi5sLOx8khkwwbqjq0QA9EvcLTqj2tnnVuckb7kwJ8JUxTDN8TmM2LAwViAn2zhCHD+00jISUyftMSUNyIpYprIjMSiZRIlUl4Sp+CDBckaXu6nXJLA0rLJ6G5CLd41cHfT2ammsOVPGbmjiJGAE="
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 828,
+        "cache_read_input_tokens": 442622,
+        "output_tokens": 1043,
+        "output_tokens_details": {
+          "thinking_tokens": 411
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 828,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1043,
+            "cache_read_input_tokens": 442622,
+            "cache_creation_input_tokens": 828,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 828
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CedipWuDH7dyDmFTUoS8Z",
+    "type": "assistant",
+    "uuid": "48768098-95f7-4eca-bfd9-90bbc107c819",
+    "timestamp": "2026-09-02T01:10:53.518Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "48768098-95f7-4eca-bfd9-90bbc107c819",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CedipYiM727GkA6UUamub",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "F2 is green at 9 of 9, but the older suites now stub a method that no longer exists, so they fell through to real network calls. All blocked by the proxy, nothing spent. Fixing the stubs."
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 828,
+        "cache_read_input_tokens": 442622,
+        "output_tokens": 1043,
+        "output_tokens_details": {
+          "thinking_tokens": 411
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 828,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1043,
+            "cache_read_input_tokens": 442622,
+            "cache_creation_input_tokens": 828,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 828
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 1,
+    "requestId": "req_011CedipWuDH7dyDmFTUoS8Z",
+    "type": "assistant",
+    "uuid": "86971f71-9293-490d-a924-7eec4cb278d6",
+    "timestamp": "2026-09-02T01:10:54.882Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "86971f71-9293-490d-a924-7eec4cb278d6",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CedipYiM727GkA6UUamub",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01LPaDFJmLCt8JZJ5gv8HMgA",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\npython3 - <<'PY'\nimport pathlib\ns = pathlib.Path(\"tests/test_selection.py\")\nt = s.read_text()\nt = t.replace(\n    \"    p.tweak_extractor.extract_modification = lambda review, recipe, **kw: canned(review.text)\",\n    \"    mods = lambda review, recipe, **kw: [m for m in [canned(review.text)] if m]\\n\"\n    \"    p.tweak_extractor.extract_modifications = mods\")\ns.write_text(t)\n\ns = pathlib.Path(\"tests/test_truthfulness.py\")\nt = s.read_text()\nt = t.replace(\n    \"        p.tweak_extractor.extract_modification = lambda review, recipe, **kw: modification\",\n    \"        p.tweak_extractor.extract_modifications = lambda review, recipe, **kw: [modification]\")\ns.write_text(t)\nprint(\"stubs updated\")\nPY\necho \"=== all suites ===\"\nfor t in tests/test_multi_modification.py tests/test_selection.py tests/test_truthfulness.py; do printf \"  %-36s \" \"$t\"; timeout 60 .venv/bin/python $t 2>&1|tail -1; done\nfor t in scripts/test_export_transcript.py scripts/test_run_golden_set.py; do printf \"  %-36s \" \"$t\"; timeout 60 python3 $t 2>&1|tail -1; done",
+            "description": "Update stale stubs and run all suites"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 828,
+        "cache_read_input_tokens": 442622,
+        "output_tokens": 1043,
+        "output_tokens_details": {
+          "thinking_tokens": 411
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 828,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1043,
+            "cache_read_input_tokens": 442622,
+            "cache_creation_input_tokens": 828,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 828
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 2,
+    "requestId": "req_011CedipWuDH7dyDmFTUoS8Z",
+    "type": "assistant",
+    "uuid": "453a9f86-9b65-45d9-bac6-1923a1ad1ad1",
+    "timestamp": "2026-09-02T01:10:59.045Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "453a9f86-9b65-45d9-bac6-1923a1ad1ad1",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_01LPaDFJmLCt8JZJ5gv8HMgA",
+          "type": "tool_result",
+          "content": "stubs updated\n=== all suites ===\n  tests/test_multi_modification.py     OK\n  tests/test_selection.py              OK\n  tests/test_truthfulness.py           OK\n  scripts/test_export_transcript.py    OK\n  scripts/test_run_golden_set.py       OK",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "07bcf26f-2cc9-4835-838d-999b6c6fdf3c",
+    "timestamp": "2026-09-02T01:11:03.396Z",
+    "toolUseResult": {
+      "stdout": "stubs updated\n=== all suites ===\n  tests/test_multi_modification.py     OK\n  tests/test_selection.py              OK\n  tests/test_truthfulness.py           OK\n  scripts/test_export_transcript.py    OK\n  scripts/test_run_golden_set.py       OK",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "453a9f86-9b65-45d9-bac6-1923a1ad1ad1",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "07bcf26f-2cc9-4835-838d-999b6c6fdf3c",
+    "isSidechain": false,
+    "attachment": {
+      "type": "task_reminder",
+      "content": [],
+      "itemCount": 0
+    },
+    "type": "attachment",
+    "uuid": "3b4cb544-2895-44d5-9c05-85756aa1cf8a",
+    "timestamp": "2026-09-02T01:11:03.411Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "3b4cb544-2895-44d5-9c05-85756aa1cf8a",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14988760 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "2f524c5d-2bf7-4142-a4de-032d4477d9a8",
+    "timestamp": "2026-09-02T01:11:03.411Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "2f524c5d-2bf7-4142-a4de-032d4477d9a8",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011Cediqu3kEbVXqLifzueRf",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAISrwoKpgEIERgCKkD3a9+vt5hqt/Z5lLycQidkRbdUjbMPmo4EtnHB0P4sWHFl+TBy/O6/YPqKhCGINfz4otEUb1RhDmVuwOiohij9Mg1jbGF1ZGUtb3B1cy01OAFCCHRoaW5raW5nWiRkYWVmOWUwMS0zYTE3LTQ1ZjQtYjU0My0yNDE5NjA5MzhhYzFyEHzBOx7moX0qEUHOc4ImvQSIAQGoAa/v3dQGsAECEgzfa/ePxuQzcxkiD0caDGwMMIr9HLiq/e4LZSIwNf3g5ZdqgvyVAKiWThe9AZt2GGRoJhrk511/CMnmq/2cxTffEZsatEOUCGUj9A2XKrUIQqtGz9HXzbKzu3qz/sNEKraridtDNgTsVPtTODHa7SQopeFk7zATCOXP1VOtGhuKn1115NVVMSLyHyHU5liR3hmom+q4Ijjte3Iwfnjbl15O8ozojuNhnS/EHKSiZ/BZGXGLgDgI2bm3bEv4LV2rpepoZfBLnGEdQqChuhnAMm1NCWOFPImhoeeJ2EGWuRkmZyg5HzPDczW3F6D8u7zzUKtSR5NDZw38lq8yUwt5rsC3HFedwbCzCCokYIBtOVlq/oGta9ke9plPNzGb8sKvhj6ZatDjjMl7td0tvOecKmsfHs8/TYJGWXqpjGXQ/2FDSGwDhuGdPD1QMjvJbudGfysNXOzdoWvMe2ffhcxRRg1f8rN336x4MrlnyQGvlKST73PuOZ5CXdFm+B0GbJslJcdH1NE9mTRQtBBqs8pLlg5ZyPYRoqf/KWI2CaAsBNfEApo1EpCk/V+d+9fR270YIHJIC2ev0W7F5oXaEFXUuQ7SSa7w8zYa6IOwVZUGWY2AT6ClNDM+qVo57FT7WOlV398kfB3En4+eVySoYOI4Hw704gwQtBk2WXac2IWMj33UxBwEDc9sMhzXeLC5xDKpPGloFY2zevSFH/r/BmliB/xt9B7qc2VdXMA0q1yiuxo2+3Yq16xnculm8OPDVl1GknoT/5AWFHQ0wmBFNu+dimyqao9nPBJAp1YSb32cd3HRCs1pStNkCj39mrc5/YOAvOY9d52PuWAd0+kBULPmorROQ2xYyw8wMt925e+NFtJJY9CpBtTXYKVGQNq2k41G4PeiiDRYXP4Dz233VtJka3ZLOScgVjQkty9e75FYpjmHKn+cRx+nuWpHErW6TYq6yu7RcLvzYVNNLVbCQ0NwP2gqVNbAc+3XCYoJNVZ7DPQ36yNBLC5BFIYVHUbT2ODvKoHsocriL5AH15/SYukPQ0hkaseN3uQ+xAL94HYgXnXj1gnDdLGzWIWnnVPfCcuNXSTBEIGpsCGI1z53PfyC18JiqUTZeoiMXYt1q+DO3VgkIeW4S346F0rtF3mn6GjinPh7E3cPQq2J3j+9i3PHqDzDUtPU7YjnkmNiIaCNn0HNjrzdyYXth519u1BECWc/4kvjaHaj8Aeh8gTCD0smYds+Ae/ecCVmj4Bt1XYTBaIC91N1VkDCqWHCSmqJ9/FZSx2kMrjDXCZMMksOU6WyDces1Fr22cMGWVnAxfqll46meIOl53S6EzjfZ9WR6fl0i8NDtAl4sMwt6LpwToLXDo35Awi9no6PTHUN7aJVkCLmVRp8zdHi+NPEAFhNKiR77uDnD5ylxlQIjcuIpdehv6KISQCxXIeu8MVf/FknxIAIVytrW0KnW2CeaNC2+GKfp8Af+LU9nQkRRZ1SwBce0YuZB59EoiD/aalvMWJlq2dJhV3eJl1+hnuHg7ro2iqi5hOltEcvGAE="
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1298,
+        "cache_read_input_tokens": 443450,
+        "output_tokens": 1439,
+        "output_tokens_details": {
+          "thinking_tokens": 374
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1298,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1439,
+            "cache_read_input_tokens": 443450,
+            "cache_creation_input_tokens": 1298,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1298
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CediqrUTvXToUaE8TUH6E",
+    "type": "assistant",
+    "uuid": "a7889216-a2f5-4d5f-bc90-4a69ca2fc2ee",
+    "timestamp": "2026-09-02T01:11:11.554Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "a7889216-a2f5-4d5f-bc90-4a69ca2fc2ee",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011Cediqu3kEbVXqLifzueRf",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "All green. Verifying end to end, including the backward-compatible response shape."
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1298,
+        "cache_read_input_tokens": 443450,
+        "output_tokens": 1439,
+        "output_tokens_details": {
+          "thinking_tokens": 374
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1298,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1439,
+            "cache_read_input_tokens": 443450,
+            "cache_creation_input_tokens": 1298,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1298
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 1,
+    "requestId": "req_011CediqrUTvXToUaE8TUH6E",
+    "type": "assistant",
+    "uuid": "f4e53933-d558-4d6a-8f11-267783b31d99",
+    "timestamp": "2026-09-02T01:11:12.229Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "f4e53933-d558-4d6a-8f11-267783b31d99",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011Cediqu3kEbVXqLifzueRf",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01TCFQGCzs8P3FjoNyycKiWs",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\nS=/tmp/claude-0/-home-user-casper-recipe-pipeline/80af422b-0560-5694-af18-e04269f1c968/scratchpad\necho \"=== old single-object response shape still works (backward compat) ===\"\nfor i in 1 2; do rm -rf $S/f2_$i; timeout 90 .venv/bin/python $S/run_all.py $S/f2_$i 2>&1 | tail -1; done\n.venv/bin/python - <<'EOF'\nimport json, glob\nS=\"/tmp/claude-0/-home-user-casper-recipe-pipeline/80af422b-0560-5694-af18-e04269f1c968/scratchpad\"\ndef snap(p):\n    o={}\n    for f in glob.glob(f\"{S}/{p}/enhanced_*.json\"):\n        d=json.load(open(f)); d.pop(\"created_at\",None); o[d[\"original_recipe_id\"]]=json.dumps(d,sort_keys=True)\n    return o\nprint(f\"  deterministic across runs: {snap('f2_1')==snap('f2_2')}\")\nEOF\necho\necho \"=== the real gain: 10813-t2 through the whole pipeline ===\"\ntimeout 90 .venv/bin/python - <<'EOF'\nimport json, os, sys, tempfile, types\nsys.path.insert(0, \"src\"); os.environ.setdefault(\"OPENAI_API_KEY\",\"stub\")\nfrom loguru import logger; logger.remove()\nsys.path.insert(0, \"tests\")\nfrom test_multi_modification import FIVE, stub_client\nfrom llm_pipeline.pipeline import LLMAnalysisPipeline\nwith tempfile.TemporaryDirectory() as d:\n    p = LLMAnalysisPipeline(output_dir=d)\n    p.tweak_extractor.client.chat.completions.create = stub_client(FIVE)\n    orig = p.tweak_extractor.extract_modifications\n    p.tweak_extractor.extract_modifications = lambda rv,rc,**kw: orig(rv,rc) if rv.tweak_id==\"10813-t2\" else []\n    r = p.process_single_recipe(\"data/recipe_10813_best-chocolate-chip-cookies.json\")\n    print(f\"  one review -> {len(r.modifications_applied)} attributed modifications, \"\n          f\"{r.enhancement_summary.total_changes} changes\")\n    for m in r.modifications_applied:\n        print(f\"    {m.source_tweak_id} {m.modification_type:<22} {m.reasoning[:52]}\")\n    print(f\"  change_types: {r.enhancement_summary.change_types}\")\n    print(f\"  instruction edit landed: {any('Refrigerate the dough' in s for s in r.instructions)}\")\nEOF",
+            "description": "Verify backward compatibility and demonstrate the multi-modification gain"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1298,
+        "cache_read_input_tokens": 443450,
+        "output_tokens": 1439,
+        "output_tokens_details": {
+          "thinking_tokens": 374
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1298,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1439,
+            "cache_read_input_tokens": 443450,
+            "cache_creation_input_tokens": 1298,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1298
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 2,
+    "requestId": "req_011CediqrUTvXToUaE8TUH6E",
+    "type": "assistant",
+    "uuid": "ef3be9e6-b551-423b-9e39-6e7651ee414d",
+    "timestamp": "2026-09-02T01:11:21.803Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "ef3be9e6-b551-423b-9e39-6e7651ee414d",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_01TCFQGCzs8P3FjoNyycKiWs",
+          "type": "tool_result",
+          "content": "=== old single-object response shape still works (backward compat) ===\nRESULT: 4 of 6 recipes produced an enhanced recipe\nRESULT: 4 of 6 recipes produced an enhanced recipe\n  deterministic across runs: True\n\n=== the real gain: 10813-t2 through the whole pipeline ===\n  one review -> 5 attributed modifications, 5 changes\n    10813-t2 quantity_adjustment    Halving the white sugar shifts the ratio toward brow\n    10813-t2 quantity_adjustment    More brown sugar gives a chewier, more flavourful co\n    10813-t2 removal                Omitting the water reduces spread.\n    10813-t2 addition               Cream of tartar helps the cookies hold their shape.\n    10813-t2 technique_change       Chilling the dough stops it spreading when baked.\n  change_types: ['quantity_adjustment', 'removal', 'addition', 'technique_change']\n  instruction edit landed: True",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "5265706b-4e5c-4110-999a-f4884140d50a",
+    "timestamp": "2026-09-02T01:11:25.920Z",
+    "toolUseResult": {
+      "stdout": "=== old single-object response shape still works (backward compat) ===\nRESULT: 4 of 6 recipes produced an enhanced recipe\nRESULT: 4 of 6 recipes produced an enhanced recipe\n  deterministic across runs: True\n\n=== the real gain: 10813-t2 through the whole pipeline ===\n  one review -> 5 attributed modifications, 5 changes\n    10813-t2 quantity_adjustment    Halving the white sugar shifts the ratio toward brow\n    10813-t2 quantity_adjustment    More brown sugar gives a chewier, more flavourful co\n    10813-t2 removal                Omitting the water reduces spread.\n    10813-t2 addition               Cream of tartar helps the cookies hold their shape.\n    10813-t2 technique_change       Chilling the dough stops it spreading when baked.\n  change_types: ['quantity_adjustment', 'removal', 'addition', 'technique_change']\n  instruction edit landed: True",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "ef3be9e6-b551-423b-9e39-6e7651ee414d",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "5265706b-4e5c-4110-999a-f4884140d50a",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14987066 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "ea68d351-c662-4400-adc2-07fd9702be64",
+    "timestamp": "2026-09-02T01:11:25.926Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "type": "last-prompt",
+    "lastPrompt": "Now F2, the one the brief actually hints at. ModificationObject holds one modification_type and one reasoning, so \"I added an egg and halved the sugar\" loses everything after the first change. Six of…",
+    "leafUuid": "ea68d351-c662-4400-adc2-07fd9702be64",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "type": "atis-latch",
+    "atis": "",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "parentUuid": "ea68d351-c662-4400-adc2-07fd9702be64",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CedisYcUr2fFj9wJd5CSb",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_018pG1A8d4GMRgrQ2XYDvPNL",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\n.venv/bin/python - <<'PY'\nimport pathlib\nw = pathlib.Path(\"docs/WRITEUP.md\"); s = w.read_text()\n\ns = s.replace('''4. **Fixed the two highest-value defects**, test-first, once the diagnosis said\n   which ones mattered. See *What I fixed* below.''',\n'''4. **Fixed the three highest-value defects**, test-first, once the diagnosis said\n   which ones mattered. See *What I fixed* below.''')\n\ns = s.replace('''## Finding 2: half the corpus cannot be represented, at any model quality''',\n'''## Finding 2: half the corpus cannot be represented, at any model quality\n\n> **The schema ceiling is removed. Live extraction accuracy is unvalidated.**\n> Details in *What I fixed*. The diagnosis below describes the behaviour as found.''')\n\nold = '''### What these fixes do not touch\n\n- The **schema ceiling** in Finding 2, which is deliberately deferred. One review\n  still yields one `modification_type` and one `reasoning`, so six of twelve\n  tweaks remain unrepresentable.\n\n  The reason for deferring it is a process rule rather than a scheduling\n  accident. Splitting one review into several modification objects requires\n  changing the extraction prompt, and a prompt change is a behaviour change: it\n  has to be rerun against the golden set ten times and reported as a pass rate,\n  never as \"it worked\". **The account has no API credits, so that rerun cannot\n  happen.** Shipping a prompt change I could not measure would contradict the\n  standard this repository is built on, and it would be exactly the kind of\n  unverified confidence this document criticises everywhere else.\n\n  The golden set and the harness are built and tested, so the measurement is one\n  funded run away. That is the right place to stop.\n- **Vote data**'''\nnew = '''### `<pending>` Every discrete modification survives\n\nThe extractor returns a list. One review yields one `ModificationObject` per\ndiscrete modification, each with its own category, its own reasoning and its own\nedits, and each is attributed separately in the output under the same\n`source_tweak_id`.\n\nValidated through the whole pipeline on fixture `10813-t2`, the worst case in the\ncorpus:\n\n| | Before | After |\n| --- | --- | --- |\n| Modifications recorded from that review | 1 | **5** |\n| Categories surviving | 1 | **4** |\n| Distinct rationales | 1 | **5** |\n| Instruction-level change reaching the recipe | no | yes |\n\n```\n10813-t2  quantity_adjustment   Halving the white sugar shifts the ratio toward brown\n10813-t2  quantity_adjustment   More brown sugar gives a chewier, more flavourful cookie\n10813-t2  removal               Omitting the water reduces spread\n10813-t2  addition              Cream of tartar helps the cookies hold their shape\n10813-t2  technique_change      Chilling the dough stops it spreading when baked\n```\n\nThe prompt now states the rule the brief hints at, in the brief's own terms: \"I\nadded an egg and halved the sugar\" is two modifications, not one. It also carries\nthe exclusion rules the golden set encodes, so preferences, future intentions and\nadvice to others are not extracted, and it instructs the model not to invent an\namount the reviewer never gave.\n\nThe response parser accepts a bare single object as well as the list, because\nearlier prompts produced that shape and a model will occasionally still answer\nthat way. Treating it as a one-element list is cheaper than a retry and loses\nnothing.\n\n> **Live extraction accuracy is unvalidated.** Everything above is the plumbing,\n> verified with stubs: given a response containing five discrete modifications,\n> all five survive extraction, application, attribution and serialisation. What\n> is NOT measured is whether a real model actually returns five for that review.\n> That is a prompt change, and by the standard this repository is built on a\n> prompt change is a behaviour change that must be rerun against the golden set\n> ten times and reported as a pass rate, never as \"it worked\". **The account has\n> no API credits, so that rerun has not happened.** The golden set and harness\n> are built and tested, so the measurement is one funded run away:\n> `uv run python scripts/run_golden_set.py --runs 10`. Until then, treat the\n> schema ceiling as removed and the extraction quality as unknown.\n\n### What these fixes do not touch\n\n- **Vote data**'''\nassert old in s; s = s.replace(old, new, 1)\n\ns = s.replace('''2. **Change the unit from review to modification.** *N* modification objects per\n   review, each with its own type and rationale. Unblocks the per-line\n   explanation the product promises.''',\n'''2. ~~Change the unit from review to modification.~~ **Done, plumbing validated\n   with stubs.** What remains is the measurement: run the golden set ten times\n   against a funded account and report the pass rate, which is the only thing\n   that shows whether a real model returns every modification.''')\nw.write_text(s)\nprint(\"writeup updated\")\nPY\ngit diff --stat\necho\necho \"################ SRC DIFF ################\"\ngit diff -- src/llm_pipeline/tweak_extractor.py src/llm_pipeline/models.py",
+            "description": "Update the writeup and show the source diff"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1796,
+        "cache_read_input_tokens": 444748,
+        "output_tokens": 1841,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 1796,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1841,
+            "cache_read_input_tokens": 444748,
+            "cache_creation_input_tokens": 1796,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 1796
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CedisWsJmnQgB4ZJ1Fwop",
+    "type": "assistant",
+    "uuid": "c69bfe2c-3c9f-4c64-b959-6830b8b18db1",
+    "timestamp": "2026-09-02T01:11:48.298Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "c69bfe2c-3c9f-4c64-b959-6830b8b18db1",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_018pG1A8d4GMRgrQ2XYDvPNL",
+          "type": "tool_result",
+          "content": "writeup updated\n docs/WRITEUP.md                     | 75 +++++++++++++++++++++++++++----------\n src/llm_pipeline/models.py          | 14 +++++++\n src/llm_pipeline/prompts.py         | 52 +++++++++++++++++++------\n src/llm_pipeline/tweak_extractor.py | 75 +++++++++++++++++++++++--------------\n tests/test_selection.py             |  3 +-\n tests/test_truthfulness.py          |  2 +-\n 6 files changed, 160 insertions(+), 61 deletions(-)\n\n################ SRC DIFF ################\ndiff --git a/src/llm_pipeline/models.py b/src/llm_pipeline/models.py\nindex 2c5fa20..1eee8f2 100644\n--- a/src/llm_pipeline/models.py\n+++ b/src/llm_pipeline/models.py\n@@ -45,6 +45,20 @@ class ModificationObject(BaseModel):\n     edits: List[ModificationEdit] = Field(description=\"List of atomic edits to apply\")\n \n \n+class ExtractionResult(BaseModel):\n+    \"\"\"One review's full extraction: every discrete modification it described.\n+\n+    A review commonly describes several. \"I added an egg and halved the sugar\" is\n+    two, each with its own category and rationale, so the response is a list\n+    rather than a single object.\n+    \"\"\"\n+\n+    modifications: List[ModificationObject] = Field(\n+        default_factory=list,\n+        description=\"One entry per discrete modification; empty if none were made\",\n+    )\n+\n+\n class SourceReview(BaseModel):\n     \"\"\"Reference to the original review that suggested the modification.\"\"\"\n \ndiff --git a/src/llm_pipeline/tweak_extractor.py b/src/llm_pipeline/tweak_extractor.py\nindex 5c13119..a819245 100644\n--- a/src/llm_pipeline/tweak_extractor.py\n+++ b/src/llm_pipeline/tweak_extractor.py\n@@ -14,7 +14,7 @@ from loguru import logger\n from openai import OpenAI\n from pydantic import ValidationError\n \n-from .models import ModificationObject, Recipe, Review\n+from .models import ExtractionResult, ModificationObject, Recipe, Review\n from .prompts import build_simple_prompt\n \n \n@@ -33,14 +33,18 @@ class TweakExtractor:\n         self.model = model\n         logger.info(f\"Initialized TweakExtractor with model: {model}\")\n \n-    def extract_modification(\n+    def extract_modifications(\n         self,\n         review: Review,\n         recipe: Recipe,\n         max_retries: int = 2,\n-    ) -> Optional[ModificationObject]:\n+    ) -> list[ModificationObject]:\n         \"\"\"\n-        Extract a structured modification from a review.\n+        Extract every discrete modification a review describes.\n+\n+        A review commonly describes several changes with different rationales,\n+        so this returns a list. An empty list is a valid, meaningful answer: it\n+        means the reviewer described no change they actually made.\n \n         Args:\n             review: Review object containing modification text\n@@ -48,21 +52,22 @@ class TweakExtractor:\n             max_retries: Number of retry attempts if parsing fails\n \n         Returns:\n-            ModificationObject if extraction successful, None otherwise\n+            One ModificationObject per discrete modification, in the order the\n+            model returned them. Empty list if none, or if extraction failed.\n         \"\"\"\n         if not review.has_modification:\n             logger.warning(\"Review has no modification flag set\")\n-            return None\n+            return []\n \n-        # Build the prompt - use simple prompt to avoid format string issues\n         prompt = build_simple_prompt(\n             review.text, recipe.title, recipe.ingredients, recipe.instructions\n         )\n \n         logger.debug(\n-            \"Extracting modification from review: {}...\".format(review.text[:100])\n+            \"Extracting modifications from review: {}...\".format(review.text[:100])\n         )\n \n+        raw_output = None\n         for attempt in range(max_retries + 1):\n             try:\n                 response = self.client.chat.completions.create(\n@@ -70,26 +75,23 @@ class TweakExtractor:\n                     messages=[{\"role\": \"user\", \"content\": prompt}],\n                     response_format={\"type\": \"json_object\"},\n                     temperature=0.1,  # Low temperature for consistent extractions\n-                    max_tokens=1000,\n+                    max_tokens=2000,  # A multi-modification review needs headroom\n                 )\n \n                 raw_output = response.choices[0].message.content\n                 logger.debug(f\"LLM raw output: {raw_output}\")\n \n-                # Check if we got a response\n                 if not raw_output:\n                     logger.warning(f\"Attempt {attempt + 1}: Empty response from LLM\")\n                     continue\n \n-                # Parse and validate the JSON response\n-                modification_data = json.loads(raw_output)\n-                modification = ModificationObject(**modification_data)\n+                modifications = self._parse(json.loads(raw_output))\n \n                 logger.info(\n-                    f\"Successfully extracted {modification.modification_type} \"\n-                    f\"modification with {len(modification.edits)} edits\"\n+                    f\"Extracted {len(modifications)} discrete modification(s): \"\n+                    f\"{[m.modification_type for m in modifications]}\"\n                 )\n-                return modification\n+                return modifications\n \n             except json.JSONDecodeError as e:\n                 logger.warning(f\"Attempt {attempt + 1}: Failed to parse JSON: {e}\")\n@@ -99,16 +101,28 @@ class TweakExtractor:\n             except ValidationError as e:\n                 logger.warning(f\"Attempt {attempt + 1}: Validation error: {e}\")\n                 if attempt == max_retries:\n-                    logger.error(\n-                        f\"Max retries reached. Invalid data: {modification_data}\"\n-                    )\n+                    logger.error(f\"Max retries reached. Raw output: {raw_output}\")\n \n             except Exception as e:\n                 logger.error(f\"Attempt {attempt + 1}: Unexpected error: {e}\")\n                 if attempt == max_retries:\n-                    return None\n+                    return []\n+\n+        return []\n \n-        return None\n+    @staticmethod\n+    def _parse(payload: dict) -> list[ModificationObject]:\n+        \"\"\"Accept the list response, and a bare single object for compatibility.\n+\n+        Earlier versions of this prompt returned one modification per review, and\n+        a model will still occasionally answer in that shape. Treating it as a\n+        one-element list is cheaper than a retry and loses nothing.\n+        \"\"\"\n+        if \"modifications\" in payload:\n+            return ExtractionResult(**payload).modifications\n+        if \"modification_type\" in payload:\n+            return [ModificationObject(**payload)]\n+        return ExtractionResult(**payload).modifications\n \n     def extract_all_modifications(\n         self, reviews: list[Review], recipe: Recipe\n@@ -138,21 +152,24 @@ class TweakExtractor:\n         extracted = []\n         for review in candidates:\n             label = review.tweak_id or review.text[:40]\n-            modification = self.extract_modification(review, recipe)\n-            if modification:\n-                extracted.append((modification, review))\n+            modifications = self.extract_modifications(review, recipe)\n+            if modifications:\n+                extracted.extend((mod, review) for mod in modifications)\n                 logger.info(\n-                    f\"Tweak {label}: extracted {modification.modification_type} \"\n-                    f\"with {len(modification.edits)} edits\"\n+                    f\"Tweak {label}: {len(modifications)} discrete modification(s) \"\n+                    f\"{[m.modification_type for m in modifications]}\"\n                 )\n             else:\n-                logger.warning(f\"Tweak {label}: no modification could be extracted\")\n+                logger.warning(\n+                    f\"Tweak {label}: no modifications extracted \"\n+                    f\"(the reviewer may have described no change they made)\"\n+                )\n \n         return extracted\n \n     def test_extraction(\n         self, review_text: str, recipe_data: dict\n-    ) -> Optional[ModificationObject]:\n+    ) -> list[ModificationObject]:\n         \"\"\"\n         Test extraction with raw text and recipe data.\n \n@@ -171,4 +188,4 @@ class TweakExtractor:\n             instructions=recipe_data.get(\"instructions\", []),\n         )\n \n-        return self.extract_modification(review, recipe)\n+        return self.extract_modifications(review, recipe)",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "4df615eb-a9dc-4005-a816-736f826102b8",
+    "timestamp": "2026-09-02T01:11:49.992Z",
+    "toolUseResult": {
+      "stdout": "writeup updated\n docs/WRITEUP.md                     | 75 +++++++++++++++++++++++++++----------\n src/llm_pipeline/models.py          | 14 +++++++\n src/llm_pipeline/prompts.py         | 52 +++++++++++++++++++------\n src/llm_pipeline/tweak_extractor.py | 75 +++++++++++++++++++++++--------------\n tests/test_selection.py             |  3 +-\n tests/test_truthfulness.py          |  2 +-\n 6 files changed, 160 insertions(+), 61 deletions(-)\n\n################ SRC DIFF ################\ndiff --git a/src/llm_pipeline/models.py b/src/llm_pipeline/models.py\nindex 2c5fa20..1eee8f2 100644\n--- a/src/llm_pipeline/models.py\n+++ b/src/llm_pipeline/models.py\n@@ -45,6 +45,20 @@ class ModificationObject(BaseModel):\n     edits: List[ModificationEdit] = Field(description=\"List of atomic edits to apply\")\n \n \n+class ExtractionResult(BaseModel):\n+    \"\"\"One review's full extraction: every discrete modification it described.\n+\n+    A review commonly describes several. \"I added an egg and halved the sugar\" is\n+    two, each with its own category and rationale, so the response is a list\n+    rather than a single object.\n+    \"\"\"\n+\n+    modifications: List[ModificationObject] = Field(\n+        default_factory=list,\n+        description=\"One entry per discrete modification; empty if none were made\",\n+    )\n+\n+\n class SourceReview(BaseModel):\n     \"\"\"Reference to the original review that suggested the modification.\"\"\"\n \ndiff --git a/src/llm_pipeline/tweak_extractor.py b/src/llm_pipeline/tweak_extractor.py\nindex 5c13119..a819245 100644\n--- a/src/llm_pipeline/tweak_extractor.py\n+++ b/src/llm_pipeline/tweak_extractor.py\n@@ -14,7 +14,7 @@ from loguru import logger\n from openai import OpenAI\n from pydantic import ValidationError\n \n-from .models import ModificationObject, Recipe, Review\n+from .models import ExtractionResult, ModificationObject, Recipe, Review\n from .prompts import build_simple_prompt\n \n \n@@ -33,14 +33,18 @@ class TweakExtractor:\n         self.model = model\n         logger.info(f\"Initialized TweakExtractor with model: {model}\")\n \n-    def extract_modification(\n+    def extract_modifications(\n         self,\n         review: Review,\n         recipe: Recipe,\n         max_retries: int = 2,\n-    ) -> Optional[ModificationObject]:\n+    ) -> list[ModificationObject]:\n         \"\"\"\n-        Extract a structured modification from a review.\n+        Extract every discrete modification a review describes.\n+\n+        A review commonly describes several changes with different rationales,\n+        so this returns a list. An empty list is a valid, meaningful answer: it\n+        means the reviewer described no change they actually made.\n \n         Args:\n             review: Review object containing modification text\n@@ -48,21 +52,22 @@ class TweakExtractor:\n             max_retries: Number of retry attempts if parsing fails\n \n         Returns:\n-            ModificationObject if extraction successful, None otherwise\n+            One ModificationObject per discrete modification, in the order the\n+            model returned them. Empty list if none, or if extraction failed.\n         \"\"\"\n         if not review.has_modification:\n             logger.warning(\"Review has no modification flag set\")\n-            return None\n+            return []\n \n-        # Build the prompt - use simple prompt to avoid format string issues\n         prompt = build_simple_prompt(\n             review.text, recipe.title, recipe.ingredients, recipe.instructions\n         )\n \n         logger.debug(\n-            \"Extracting modification from review: {}...\".format(review.text[:100])\n+            \"Extracting modifications from review: {}...\".format(review.text[:100])\n         )\n \n+        raw_output = None\n         for attempt in range(max_retries + 1):\n             try:\n                 response = self.client.chat.completions.create(\n@@ -70,26 +75,23 @@ class TweakExtractor:\n                     messages=[{\"role\": \"user\", \"content\": prompt}],\n                     response_format={\"type\": \"json_object\"},\n                     temperature=0.1,  # Low temperature for consistent extractions\n-                    max_tokens=1000,\n+                    max_tokens=2000,  # A multi-modification review needs headroom\n                 )\n \n                 raw_output = response.choices[0].message.content\n                 logger.debug(f\"LLM raw output: {raw_output}\")\n \n-                # Check if we got a response\n                 if not raw_output:\n                     logger.warning(f\"Attempt {attempt + 1}: Empty response from LLM\")\n                     continue\n \n-                # Parse and validate the JSON response\n-                modification_data = json.loads(raw_output)\n-                modification = ModificationObject(**modification_data)\n+                modifications = self._parse(json.loads(raw_output))\n \n                 logger.info(\n-                    f\"Successfully extracted {modification.modification_type} \"\n-                    f\"modification with {len(modification.edits)} edits\"\n+                    f\"Extracted {len(modifications)} discrete modification(s): \"\n+                    f\"{[m.modification_type for m in modifications]}\"\n                 )\n-                return modification\n+                return modifications\n \n             except json.JSONDecodeError as e:\n                 logger.warning(f\"Attempt {attempt + 1}: Failed to parse JSON: {e}\")\n@@ -99,16 +101,28 @@ class TweakExtractor:\n             except ValidationError as e:\n                 logger.warning(f\"Attempt {attempt + 1}: Validation error: {e}\")\n                 if attempt == max_retries:\n-                    logger.error(\n-                        f\"Max retries reached. Invalid data: {modification_data}\"\n-                    )\n+                    logger.error(f\"Max retries reached. Raw output: {raw_output}\")\n \n             except Exception as e:\n                 logger.error(f\"Attempt {attempt + 1}: Unexpected error: {e}\")\n                 if attempt == max_retries:\n-                    return None\n+                    return []\n+\n+        return []\n \n-        return None\n+    @staticmethod\n+    def _parse(payload: dict) -> list[ModificationObject]:\n+        \"\"\"Accept the list response, and a bare single object for compatibility.\n+\n+        Earlier versions of this prompt returned one modification per review, and\n+        a model will still occasionally answer in that shape. Treating it as a\n+        one-element list is cheaper than a retry and loses nothing.\n+        \"\"\"\n+        if \"modifications\" in payload:\n+            return ExtractionResult(**payload).modifications\n+        if \"modification_type\" in payload:\n+            return [ModificationObject(**payload)]\n+        return ExtractionResult(**payload).modifications\n \n     def extract_all_modifications(\n         self, reviews: list[Review], recipe: Recipe\n@@ -138,21 +152,24 @@ class TweakExtractor:\n         extracted = []\n         for review in candidates:\n             label = review.tweak_id or review.text[:40]\n-            modification = self.extract_modification(review, recipe)\n-            if modification:\n-                extracted.append((modification, review))\n+            modifications = self.extract_modifications(review, recipe)\n+            if modifications:\n+                extracted.extend((mod, review) for mod in modifications)\n                 logger.info(\n-                    f\"Tweak {label}: extracted {modification.modification_type} \"\n-                    f\"with {len(modification.edits)} edits\"\n+                    f\"Tweak {label}: {len(modifications)} discrete modification(s) \"\n+                    f\"{[m.modification_type for m in modifications]}\"\n                 )\n             else:\n-                logger.warning(f\"Tweak {label}: no modification could be extracted\")\n+                logger.warning(\n+                    f\"Tweak {label}: no modifications extracted \"\n+                    f\"(the reviewer may have described no change they made)\"\n+                )\n \n         return extracted\n \n     def test_extraction(\n         self, review_text: str, recipe_data: dict\n-    ) -> Optional[ModificationObject]:\n+    ) -> list[ModificationObject]:\n         \"\"\"\n         Test extraction with raw text and recipe data.\n \n@@ -171,4 +188,4 @@ class TweakExtractor:\n             instructions=recipe_data.get(\"instructions\", []),\n         )\n \n-        return self.extract_modification(review, recipe)\n+        return self.extract_modifications(review, recipe)",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "c69bfe2c-3c9f-4c64-b959-6830b8b18db1",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "4df615eb-a9dc-4005-a816-736f826102b8",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14984868 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "99b5eb9d-de34-49a4-8bba-b6e9401f6ed3",
+    "timestamp": "2026-09-02T01:11:50.000Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "99b5eb9d-de34-49a4-8bba-b6e9401f6ed3",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CediuKkPDBhCxGneXeGzC",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01WmGs1jqcY6ssv8s5bASrN3",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\necho \"################ PROMPT DIFF ################\"\ngit diff -- src/llm_pipeline/prompts.py\necho\necho \"################ TEST STUB DIFF ################\"\ngit diff -- tests/",
+            "description": "Show the prompt and test stub diffs"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 4812,
+        "cache_read_input_tokens": 446544,
+        "output_tokens": 167,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 4812,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 167,
+            "cache_read_input_tokens": 446544,
+            "cache_creation_input_tokens": 4812,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 4812
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011CediuHpYcin7yNzbTiUcx",
+    "type": "assistant",
+    "uuid": "d969dfe8-016e-47c6-bf31-40ab3dae6b2b",
+    "timestamp": "2026-09-02T01:11:53.772Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "d969dfe8-016e-47c6-bf31-40ab3dae6b2b",
+    "isSidechain": false,
+    "promptId": "6375293b-e6cf-40cf-b728-62808fa96f4a",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": [
+        {
+          "tool_use_id": "toolu_01WmGs1jqcY6ssv8s5bASrN3",
+          "type": "tool_result",
+          "content": "################ PROMPT DIFF ################\ndiff --git a/src/llm_pipeline/prompts.py b/src/llm_pipeline/prompts.py\nindex 0821722..d1aa323 100644\n--- a/src/llm_pipeline/prompts.py\n+++ b/src/llm_pipeline/prompts.py\n@@ -12,7 +12,12 @@ When a user shares their experience modifying a recipe, you need to:\n 2. Understand why they made those changes\n 3. Convert their modifications into structured edit operations\n \n-You must output valid JSON that matches the ModificationObject schema.\n+A review often describes SEVERAL discrete modifications. \"I added an egg and\n+halved the sugar\" is two: one addition and one quantity adjustment. Each gets its\n+own entry, with its own category and its own reasoning. Do not merge them, and do\n+not stop after the first.\n+\n+You must output valid JSON: an object with a \"modifications\" array.\n \n Categories:\n - \"ingredient_substitution\": Replacing one ingredient with another\n@@ -195,7 +200,11 @@ Now extract from this review:\n def build_simple_prompt(\n     review_text: str, title: str, ingredients: list, instructions: list\n ) -> str:\n-    \"\"\"Build a simple prompt without examples for faster processing.\"\"\"\n+    \"\"\"Build the extraction prompt.\n+\n+    Asks for every discrete modification separately. A review describing four\n+    numbered tweaks must come back as four entries, not one.\n+    \"\"\"\n     return f\"\"\"{SYSTEM_PROMPT}\n \n Original Recipe:\n@@ -205,19 +214,40 @@ Instructions: {instructions}\n \n User Review: \"{review_text}\"\n \n-Extract the recipe modifications from this review. The user has made changes to improve the recipe.\n+Extract EVERY discrete modification the reviewer actually made. Separate them:\n+one entry per change, each with its own category and its own reasoning.\n+\n+Worked example. The review \"I added an egg and halved the sugar because they were\n+too sweet\" contains TWO discrete modifications, so it returns two entries: an\n+\"addition\" for the egg, and a \"quantity_adjustment\" for the sugar. Returning one\n+entry would lose a change the reviewer made.\n+\n+Rules:\n+- One entry per discrete change. Four numbered tweaks means four entries.\n+- Only changes the reviewer actually made. A preference they did not act on\n+  (\"I would prefer more apple\"), something they plan for next time (\"next time I\n+  will use fresh ginger\"), or advice offered to other cooks is NOT a\n+  modification. If the reviewer describes no change they made, return an empty\n+  list.\n+- Do not invent an amount the reviewer did not give. If they say \"extra soy\n+  sauce\" with no quantity, describe the change without fabricating a number.\n+- Copy `find` text verbatim from the recipe above so it can be located.\n \n Output a JSON object with this structure:\n {{\n-    \"modification_type\": \"quantity_adjustment|ingredient_substitution|technique_change|addition|removal\",\n-    \"reasoning\": \"Brief explanation of why this modification improves the recipe\",\n-    \"edits\": [\n+    \"modifications\": [\n         {{\n-            \"target\": \"ingredients|instructions\",\n-            \"operation\": \"replace|add_after|remove\",\n-            \"find\": \"exact text to find\",\n-            \"replace\": \"replacement text (for replace operations)\",\n-            \"add\": \"text to add (for add_after operations)\"\n+            \"modification_type\": \"quantity_adjustment|ingredient_substitution|technique_change|addition|removal\",\n+            \"reasoning\": \"Why this specific change improves the recipe\",\n+            \"edits\": [\n+                {{\n+                    \"target\": \"ingredients|instructions\",\n+                    \"operation\": \"replace|add_after|remove\",\n+                    \"find\": \"exact text to find, copied from the recipe\",\n+                    \"replace\": \"replacement text (for replace operations)\",\n+                    \"add\": \"text to add (for add_after operations)\"\n+                }}\n+            ]\n         }}\n     ]\n }}\n\n################ TEST STUB DIFF ################\ndiff --git a/tests/test_selection.py b/tests/test_selection.py\nindex 8cbb4db..ad2f8c5 100644\n--- a/tests/test_selection.py\n+++ b/tests/test_selection.py\n@@ -60,7 +60,8 @@ def canned(review_text):\n \n def build(outdir):\n     p = LLMAnalysisPipeline(output_dir=outdir)\n-    p.tweak_extractor.extract_modification = lambda review, recipe, **kw: canned(review.text)\n+    mods = lambda review, recipe, **kw: [m for m in [canned(review.text)] if m]\n+    p.tweak_extractor.extract_modifications = mods\n     return p\n \n \ndiff --git a/tests/test_truthfulness.py b/tests/test_truthfulness.py\nindex 3f1dea3..fe4f176 100644\n--- a/tests/test_truthfulness.py\n+++ b/tests/test_truthfulness.py\n@@ -98,7 +98,7 @@ class TestNoPublishWhenNothingApplied(unittest.TestCase):\n     def _pipeline_with(self, modification, outdir):\n         \"\"\"Every tweak yields the same modification, so the whole run turns on it.\"\"\"\n         p = LLMAnalysisPipeline(output_dir=outdir)\n-        p.tweak_extractor.extract_modification = lambda review, recipe, **kw: modification\n+        p.tweak_extractor.extract_modifications = lambda review, recipe, **kw: [modification]\n         return p\n \n     def test_a_modification_whose_edits_all_miss_does_not_publish(self):",
+          "is_error": false
+        }
+      ]
+    },
+    "uuid": "589584ed-74ce-4aff-9811-e610352ab4d4",
+    "timestamp": "2026-09-02T01:11:53.824Z",
+    "toolUseResult": {
+      "stdout": "################ PROMPT DIFF ################\ndiff --git a/src/llm_pipeline/prompts.py b/src/llm_pipeline/prompts.py\nindex 0821722..d1aa323 100644\n--- a/src/llm_pipeline/prompts.py\n+++ b/src/llm_pipeline/prompts.py\n@@ -12,7 +12,12 @@ When a user shares their experience modifying a recipe, you need to:\n 2. Understand why they made those changes\n 3. Convert their modifications into structured edit operations\n \n-You must output valid JSON that matches the ModificationObject schema.\n+A review often describes SEVERAL discrete modifications. \"I added an egg and\n+halved the sugar\" is two: one addition and one quantity adjustment. Each gets its\n+own entry, with its own category and its own reasoning. Do not merge them, and do\n+not stop after the first.\n+\n+You must output valid JSON: an object with a \"modifications\" array.\n \n Categories:\n - \"ingredient_substitution\": Replacing one ingredient with another\n@@ -195,7 +200,11 @@ Now extract from this review:\n def build_simple_prompt(\n     review_text: str, title: str, ingredients: list, instructions: list\n ) -> str:\n-    \"\"\"Build a simple prompt without examples for faster processing.\"\"\"\n+    \"\"\"Build the extraction prompt.\n+\n+    Asks for every discrete modification separately. A review describing four\n+    numbered tweaks must come back as four entries, not one.\n+    \"\"\"\n     return f\"\"\"{SYSTEM_PROMPT}\n \n Original Recipe:\n@@ -205,19 +214,40 @@ Instructions: {instructions}\n \n User Review: \"{review_text}\"\n \n-Extract the recipe modifications from this review. The user has made changes to improve the recipe.\n+Extract EVERY discrete modification the reviewer actually made. Separate them:\n+one entry per change, each with its own category and its own reasoning.\n+\n+Worked example. The review \"I added an egg and halved the sugar because they were\n+too sweet\" contains TWO discrete modifications, so it returns two entries: an\n+\"addition\" for the egg, and a \"quantity_adjustment\" for the sugar. Returning one\n+entry would lose a change the reviewer made.\n+\n+Rules:\n+- One entry per discrete change. Four numbered tweaks means four entries.\n+- Only changes the reviewer actually made. A preference they did not act on\n+  (\"I would prefer more apple\"), something they plan for next time (\"next time I\n+  will use fresh ginger\"), or advice offered to other cooks is NOT a\n+  modification. If the reviewer describes no change they made, return an empty\n+  list.\n+- Do not invent an amount the reviewer did not give. If they say \"extra soy\n+  sauce\" with no quantity, describe the change without fabricating a number.\n+- Copy `find` text verbatim from the recipe above so it can be located.\n \n Output a JSON object with this structure:\n {{\n-    \"modification_type\": \"quantity_adjustment|ingredient_substitution|technique_change|addition|removal\",\n-    \"reasoning\": \"Brief explanation of why this modification improves the recipe\",\n-    \"edits\": [\n+    \"modifications\": [\n         {{\n-            \"target\": \"ingredients|instructions\",\n-            \"operation\": \"replace|add_after|remove\",\n-            \"find\": \"exact text to find\",\n-            \"replace\": \"replacement text (for replace operations)\",\n-            \"add\": \"text to add (for add_after operations)\"\n+            \"modification_type\": \"quantity_adjustment|ingredient_substitution|technique_change|addition|removal\",\n+            \"reasoning\": \"Why this specific change improves the recipe\",\n+            \"edits\": [\n+                {{\n+                    \"target\": \"ingredients|instructions\",\n+                    \"operation\": \"replace|add_after|remove\",\n+                    \"find\": \"exact text to find, copied from the recipe\",\n+                    \"replace\": \"replacement text (for replace operations)\",\n+                    \"add\": \"text to add (for add_after operations)\"\n+                }}\n+            ]\n         }}\n     ]\n }}\n\n################ TEST STUB DIFF ################\ndiff --git a/tests/test_selection.py b/tests/test_selection.py\nindex 8cbb4db..ad2f8c5 100644\n--- a/tests/test_selection.py\n+++ b/tests/test_selection.py\n@@ -60,7 +60,8 @@ def canned(review_text):\n \n def build(outdir):\n     p = LLMAnalysisPipeline(output_dir=outdir)\n-    p.tweak_extractor.extract_modification = lambda review, recipe, **kw: canned(review.text)\n+    mods = lambda review, recipe, **kw: [m for m in [canned(review.text)] if m]\n+    p.tweak_extractor.extract_modifications = mods\n     return p\n \n \ndiff --git a/tests/test_truthfulness.py b/tests/test_truthfulness.py\nindex 3f1dea3..fe4f176 100644\n--- a/tests/test_truthfulness.py\n+++ b/tests/test_truthfulness.py\n@@ -98,7 +98,7 @@ class TestNoPublishWhenNothingApplied(unittest.TestCase):\n     def _pipeline_with(self, modification, outdir):\n         \"\"\"Every tweak yields the same modification, so the whole run turns on it.\"\"\"\n         p = LLMAnalysisPipeline(output_dir=outdir)\n-        p.tweak_extractor.extract_modification = lambda review, recipe, **kw: modification\n+        p.tweak_extractor.extract_modifications = lambda review, recipe, **kw: [modification]\n         return p\n \n     def test_a_modification_whose_edits_all_miss_does_not_publish(self):",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "noOutputExpected": false
+    },
+    "sourceToolAssistantUUID": "d969dfe8-016e-47c6-bf31-40ab3dae6b2b",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "parentUuid": "589584ed-74ce-4aff-9811-e610352ab4d4",
+    "isSidechain": false,
+    "attachment": {
+      "type": "total_tokens_reminder",
+      "text": "<total_tokens>14981730 tokens left</total_tokens>"
+    },
+    "type": "attachment",
+    "uuid": "8a7a30e0-9f93-453d-ac01-2d0c405faca5",
+    "timestamp": "2026-09-02T01:11:53.827Z",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
+  },
+  {
+    "type": "last-prompt",
+    "lastPrompt": "Now F2, the one the brief actually hints at. ModificationObject holds one modification_type and one reasoning, so \"I added an egg and halved the sugar\" loses everything after the first change. Six of…",
+    "leafUuid": "8a7a30e0-9f93-453d-ac01-2d0c405faca5",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "type": "atis-latch",
+    "atis": "",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968"
+  },
+  {
+    "parentUuid": "8a7a30e0-9f93-453d-ac01-2d0c405faca5",
+    "isSidechain": false,
+    "message": {
+      "model": "claude-opus-5",
+      "id": "msg_011CediubtV36jrjwmUKnZwf",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_01LmZBFLKdJtbJFod2fwrbTa",
+          "name": "Bash",
+          "input": {
+            "command": "cd /home/user/casper-recipe-pipeline\npython3 scripts/export_transcript.py 2>&1 | tail -2\n.venv/bin/python -c \"\nimport re, pathlib\npats={'sk':r'\\bsk-[A-Za-z0-9_-]{20,}','pem':r'-----BEGIN [A-Z ]*PRIVATE KEY-----','email':r'\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b'}\nprint('leak check:', 'CLEAN' if not any(re.search(v,p.read_text(errors='replace')) for p in pathlib.Path('trajectory').glob('*') for v in pats.values()) else 'HIT')\n\"\ngit add -A\ngit commit -q -F - <<'MSG'\nfeat(extraction): extract all discrete modifications per review\n\nModificationObject held one modification_type and one reasoning, so\n\"I added an egg and halved the sugar\" lost everything after the first\nchange. Six of the twelve golden fixtures span more than one category, so\nhalf the corpus was structurally unrepresentable at any model quality.\n\nThe extractor now returns a list. One review yields one\nModificationObject per discrete modification, each with its own category,\nits own reasoning and its own edits, and each is attributed separately in\nthe output under the same source_tweak_id. The output shape is unchanged:\nmodifications_applied was already a list on EnhancedRecipe.\n\nThe prompt states the rule in the brief's own terms and carries the\nexclusion rules the golden set encodes, so preferences, future intentions\nand advice to others are not extracted, and the model is told not to\ninvent an amount the reviewer never gave. max_tokens raised to 2000,\nsince a five-modification review did not fit in 1000.\n\nThe response parser accepts a bare single object as well as the list.\nEarlier prompts produced that shape and a model will occasionally still\nanswer that way; treating it as a one-element list is cheaper than a\nretry and loses nothing.\n\nValidated through the whole pipeline on fixture 10813-t2, the worst case\nin the corpus, four numbered tweaks across five discrete modifications:\n\n  modifications recorded from that review   1 -> 5\n  categories surviving                      1 -> 4\n  distinct rationales                       1 -> 5\n  instruction-level change applied         no -> yes\n\nLive extraction accuracy is unvalidated. Everything measured here is the\nplumbing, verified with stubs: given a response containing five discrete\nmodifications, all five survive extraction, application, attribution and\nserialisation. Whether a real model returns five for that review is a\nprompt-quality question, and a prompt change must be rerun against the\ngolden set ten times and reported as a pass rate. The account has no API\ncredits, so that rerun has not happened. The writeup says so explicitly.\n\nCo-Authored-By: Claude Opus 5 <[REDACTED-EMAIL]>\nClaude-Session: https://claude.ai/code/session_01KAmWceHupGNmbNRxaHghpN\nMSG\ngit push -u origin main 2>&1 | tail -2\necho\ngit log --oneline -4 | sed 's/^/  /'\necho \"  working tree: $(git status --porcelain | wc -l) uncommitted\"",
+            "description": "Regenerate export, commit and push F2"
+          },
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ],
+      "stop_reason": "tool_use",
+      "stop_sequence": null,
+      "stop_details": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 2134,
+        "cache_read_input_tokens": 451356,
+        "output_tokens": 1173,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 2134,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "not_available",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 1173,
+            "cache_read_input_tokens": 451356,
+            "cache_creation_input_tokens": 2134,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 2134
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard"
+      },
+      "diagnostics": null
+    },
+    "apiBlockIndex": 0,
+    "requestId": "req_011Cediua6LMoE8oviVEu8qm",
+    "type": "assistant",
+    "uuid": "5e993aca-9b95-4731-9ecd-62ceb3c16996",
+    "timestamp": "2026-09-02T01:12:08.912Z",
+    "effort": "xhigh",
+    "userType": "external",
+    "entrypoint": "remote_desktop",
+    "cwd": "/home/user/casper-recipe-pipeline",
+    "sessionId": "80af422b-0560-5694-af18-e04269f1c968",
+    "version": "2.1.258",
+    "gitBranch": "main"
   }
 ]

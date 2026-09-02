@@ -60,7 +60,8 @@ def canned(review_text):
 
 def build(outdir):
     p = LLMAnalysisPipeline(output_dir=outdir)
-    p.tweak_extractor.extract_modification = lambda review, recipe, **kw: canned(review.text)
+    mods = lambda review, recipe, **kw: [m for m in [canned(review.text)] if m]
+    p.tweak_extractor.extract_modifications = mods
     return p
 
 

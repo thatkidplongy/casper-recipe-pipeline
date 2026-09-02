@@ -98,7 +98,7 @@ class TestNoPublishWhenNothingApplied(unittest.TestCase):
     def _pipeline_with(self, modification, outdir):
         """Every tweak yields the same modification, so the whole run turns on it."""
         p = LLMAnalysisPipeline(output_dir=outdir)
-        p.tweak_extractor.extract_modification = lambda review, recipe, **kw: modification
+        p.tweak_extractor.extract_modifications = lambda review, recipe, **kw: [modification]
         return p
 
     def test_a_modification_whose_edits_all_miss_does_not_publish(self):

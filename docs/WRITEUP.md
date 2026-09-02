@@ -28,7 +28,7 @@ timestamps.
 3. **Built a measurement instrument.** Hand-labelled the 12 AllRecipes featured
    tweaks into a golden set of 28 discrete modifications, and wrote a harness
    that scores extraction against it over repeated runs.
-4. **Fixed the two highest-value defects**, test-first, once the diagnosis said
+4. **Fixed the three highest-value defects**, test-first, once the diagnosis said
    which ones mattered. See *What I fixed* below.
 
 Diagnosis came before any fix on purpose. With this many interacting defects,
@@ -118,6 +118,9 @@ the near-miss it returns `is_safe=True` with only a warning.
 ---
 
 ## Finding 2: half the corpus cannot be represented, at any model quality
+
+> **The schema ceiling is removed. Live extraction accuracy is unvalidated.**
+> Details in *What I fixed*. The diagnosis below describes the behaviour as found.
 
 The brief's own cue is right. *"I added an egg and halved the sugar"* is two
 discrete modifications, and reviews like that are the norm rather than the edge
@@ -399,23 +402,56 @@ WARNING  Tweak 19117-t2 changed nothing (1 edits, none matched); not recorded
 That is the shape the product needed all along. More community tweaks reach the
 recipe, every one of them is real, and each is attributable to its source.
 
+### `<pending>` Every discrete modification survives
+
+The extractor returns a list. One review yields one `ModificationObject` per
+discrete modification, each with its own category, its own reasoning and its own
+edits, and each is attributed separately in the output under the same
+`source_tweak_id`.
+
+Validated through the whole pipeline on fixture `10813-t2`, the worst case in the
+corpus:
+
+| | Before | After |
+| --- | --- | --- |
+| Modifications recorded from that review | 1 | **5** |
+| Categories surviving | 1 | **4** |
+| Distinct rationales | 1 | **5** |
+| Instruction-level change reaching the recipe | no | yes |
+
+```
+10813-t2  quantity_adjustment   Halving the white sugar shifts the ratio toward brown
+10813-t2  quantity_adjustment   More brown sugar gives a chewier, more flavourful cookie
+10813-t2  removal               Omitting the water reduces spread
+10813-t2  addition              Cream of tartar helps the cookies hold their shape
+10813-t2  technique_change      Chilling the dough stops it spreading when baked
+```
+
+The prompt now states the rule the brief hints at, in the brief's own terms: "I
+added an egg and halved the sugar" is two modifications, not one. It also carries
+the exclusion rules the golden set encodes, so preferences, future intentions and
+advice to others are not extracted, and it instructs the model not to invent an
+amount the reviewer never gave.
+
+The response parser accepts a bare single object as well as the list, because
+earlier prompts produced that shape and a model will occasionally still answer
+that way. Treating it as a one-element list is cheaper than a retry and loses
+nothing.
+
+> **Live extraction accuracy is unvalidated.** Everything above is the plumbing,
+> verified with stubs: given a response containing five discrete modifications,
+> all five survive extraction, application, attribution and serialisation. What
+> is NOT measured is whether a real model actually returns five for that review.
+> That is a prompt change, and by the standard this repository is built on a
+> prompt change is a behaviour change that must be rerun against the golden set
+> ten times and reported as a pass rate, never as "it worked". **The account has
+> no API credits, so that rerun has not happened.** The golden set and harness
+> are built and tested, so the measurement is one funded run away:
+> `uv run python scripts/run_golden_set.py --runs 10`. Until then, treat the
+> schema ceiling as removed and the extraction quality as unknown.
+
 ### What these fixes do not touch
 
-- The **schema ceiling** in Finding 2, which is deliberately deferred. One review
-  still yields one `modification_type` and one `reasoning`, so six of twelve
-  tweaks remain unrepresentable.
-
-  The reason for deferring it is a process rule rather than a scheduling
-  accident. Splitting one review into several modification objects requires
-  changing the extraction prompt, and a prompt change is a behaviour change: it
-  has to be rerun against the golden set ten times and reported as a pass rate,
-  never as "it worked". **The account has no API credits, so that rerun cannot
-  happen.** Shipping a prompt change I could not measure would contradict the
-  standard this repository is built on, and it would be exactly the kind of
-  unverified confidence this document criticises everywhere else.
-
-  The golden set and the harness are built and tested, so the measurement is one
-  funded run away. That is the right place to stop.
 - **Vote data** still does not exist. Rank order is now the featured-tweak list
   order, which is honest and explicit but is not a vote count. Finding 3's
   product question is unresolved.
@@ -431,9 +467,10 @@ recipe, every one of them is real, and each is attributable to its source.
    zero applied edits.~~ **Done, `46512a7`.** What remains under this heading:
    catch typed API errors and stop on the fatal ones instead of retrying a
    billing failure for an hour.
-2. **Change the unit from review to modification.** *N* modification objects per
-   review, each with its own type and rationale. Unblocks the per-line
-   explanation the product promises.
+2. ~~Change the unit from review to modification.~~ **Done, plumbing validated
+   with stubs.** What remains is the measurement: run the golden set ten times
+   against a funded account and report the pass rate, which is the only thing
+   that shows whether a real model returns every modification.
 3. ~~Make selection deterministic and explainable.~~ **Done, `7c579d8`.** Every
    featured tweak is applied in rank order and attributed by id. What remains is
    the product question: decide honestly what "highest voted" can mean given
