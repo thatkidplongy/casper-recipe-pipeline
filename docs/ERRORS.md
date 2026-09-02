@@ -155,3 +155,43 @@ its output until the end, the question is not whether it will be interrupted but
 what will remain when it is. Partial evidence is evidence; discarding it because
 something later failed is the same failure to distinguish states as everything
 else in this file.
+
+## An evidence log attributed one review's model output to another
+
+**Attempts** — (1) Read the first real run log and noticed two raw responses
+looked familiar. (2) Compared all twelve and found four were byte-identical
+copies of another fixture's response. (3) Traced it to the capture, not the run.
+
+**What worked** — clearing `last_raw_output` at the start of every call.
+The attribute was only overwritten on success, and the harness captured it in a
+`finally` block, so a failed extraction recorded whatever the *previous* fixture
+had returned, under the failed fixture's name. Every mislabelled entry
+corresponded to a `FAILED` row. The log also claimed the responses came "from
+the first run", which stopped being true once failed calls contributed nothing,
+so entries are now labelled with the run they came from.
+
+**Signal for next time** — this is the project's own thesis inside its evidence
+artifact. A field that is only written on success, and read unconditionally,
+reports stale data as current with no way to tell. The dangerous part was not the
+bug but its plausibility: four wrong attributions in a committed file that was
+about to be presented as proof. When a value is cached on an object across calls,
+clear it at entry, not at exit; the failure path is the one that skips the exit.
+
+## A generation failure was classified as a bad request
+
+**Attempts** — (1) Treated HTTP 400 as permanently fatal, on the reasoning that a
+malformed request will never succeed on retry. (2) A live run lost 11 of 36
+extractions to `400 json_validate_failed` with no retries. (3) Noticed the same
+fixture succeeded on other runs, which a genuinely bad request could not do.
+
+**What worked** — separating the provider's error *code* from the HTTP status.
+`json_validate_failed` means the model failed to emit valid JSON, not that the
+request was wrong, so it is retried. Genuine bad requests and auth failures are
+still not. One failure named the real cause directly, "max completion tokens
+reached before generating a valid document", which was `max_tokens` at 2000
+being too small for the five-modification fixture; the cap is now 4000.
+
+**Signal for next time** — a status code is a category, not a diagnosis. The same
+400 covered "you sent nonsense" and "I could not finish generating", which need
+opposite handling. When a class of error is being treated as permanent, check
+whether the same input ever succeeds; if it does, the classification is wrong.

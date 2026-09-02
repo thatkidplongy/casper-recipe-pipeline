@@ -195,6 +195,87 @@ class TestMalformedEntriesDoNotDiscardTheWholeExtraction(unittest.TestCase):
             ex.extract_modifications(review(), recipe(), max_retries=0)
 
 
+class TestRawOutputIsNeverAttributedToTheWrongReview(unittest.TestCase):
+    """last_raw_output survived a failed call, so a failing fixture recorded the
+    previous fixture's response under its own name. Four of twelve entries in a
+    committed evidence log were another review's output."""
+
+    def test_a_failed_call_leaves_no_stale_response(self):
+        ex = TweakExtractor()
+        good = json.dumps({"modifications": []})
+        def ok(**kwargs):
+            return types.SimpleNamespace(choices=[types.SimpleNamespace(
+                message=types.SimpleNamespace(content=good))])
+        ex.client.chat.completions.create = ok
+        ex.extract_modifications(review(), recipe())
+        self.assertEqual(ex.last_raw_output, good)
+
+        ex.client.chat.completions.create = Counting(lambda: status_error(400))
+        with self.assertRaises(ExtractionError):
+            ex.extract_modifications(review(), recipe(), max_retries=0)
+        self.assertIsNone(ex.last_raw_output,
+                          "a failed call must not leave the previous response in place")
+
+    def test_each_call_starts_from_a_clean_slate(self):
+        ex = TweakExtractor()
+        ex.last_raw_output = "left over from somewhere else"
+        ex.client.chat.completions.create = Counting(lambda: status_error(401))
+        with self.assertRaises(ExtractionError):
+            ex.extract_modifications(review(), recipe(), max_retries=0)
+        self.assertIsNone(ex.last_raw_output)
+
+
+class TestGenerationFailuresAreRetried(unittest.TestCase):
+    """Groq returns 400 json_validate_failed when the model fails to emit valid
+    JSON. That is a generation failure, not a bad request: the same fixture
+    succeeded on other runs. Treating it as permanent cost 11 of 36 extractions."""
+
+    def _json_failed(self, message="Failed to validate JSON."):
+        body = {"error": {"message": message, "code": "json_validate_failed",
+                          "type": "invalid_request_error"}}
+        request = httpx.Request("POST", "https://example.test/v1/chat/completions")
+        response = httpx.Response(400, request=request, json=body)
+        return APIStatusError("json failed", response=response, body=body)
+
+    def test_json_validate_failed_is_retried(self):
+        ex = TweakExtractor()
+        calls = {"n": 0}
+        def fail_then_ok(**kwargs):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise self._json_failed()
+            return types.SimpleNamespace(choices=[types.SimpleNamespace(
+                message=types.SimpleNamespace(content=json.dumps({"modifications": []})))])
+        ex.client.chat.completions.create = fail_then_ok
+        self.assertEqual(ex.extract_modifications(review(), recipe(), max_retries=2), [])
+        self.assertEqual(calls["n"], 2, "a generation failure deserves another attempt")
+
+    def test_a_genuine_bad_request_is_still_not_retried(self):
+        ex = TweakExtractor()
+        counter = Counting(lambda: status_error(400, {"error": {"code": "invalid_request"}}))
+        ex.client.chat.completions.create = counter
+        with self.assertRaises(ExtractionError):
+            ex.extract_modifications(review(), recipe(), max_retries=2)
+        self.assertEqual(counter.calls, 1, "a malformed request will never succeed")
+
+    def test_a_401_is_still_not_retried(self):
+        ex = TweakExtractor()
+        counter = Counting(lambda: status_error(401))
+        ex.client.chat.completions.create = counter
+        with self.assertRaises(ExtractionError):
+            ex.extract_modifications(review(), recipe(), max_retries=2)
+        self.assertEqual(counter.calls, 1)
+
+
+class TestOutputBudgetFitsTheHardestFixture(unittest.TestCase):
+    """10813-t2 failed with 'max completion tokens reached before generating a
+    valid document'. Five discrete modifications did not fit in 2000 tokens."""
+
+    def test_max_tokens_leaves_room_for_a_five_modification_response(self):
+        from llm_pipeline.tweak_extractor import MAX_OUTPUT_TOKENS
+        self.assertGreaterEqual(MAX_OUTPUT_TOKENS, 4000)
+
+
 class TestAFailureIsNeverAnEmptyAnswer(unittest.TestCase):
     def test_a_failed_call_raises_rather_than_returning_empty(self):
         ex = TweakExtractor()

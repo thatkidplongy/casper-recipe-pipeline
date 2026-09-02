@@ -331,6 +331,29 @@ class TestCompletedRunsSurviveAnAbort(unittest.TestCase):
         self.assertNotIn("incomplete", log.lower())
 
 
+class TestRawResponsesAreLabelledWithTheirRun(unittest.TestCase):
+    """A failed call records no response, so the entry for a fixture may come
+    from run 2 or 3. Claiming "from the first run" would be false."""
+
+    def test_the_run_number_is_stated(self):
+        meta = {"mode": "LIVE", "model": "m", "endpoint": "e", "commit": "c",
+                "started_at": "t", "runs": 3, "fixtures": 1, "dirty": False,
+                "completed_runs": 3, "aborted": None}
+        results = [[score_fixture(fixture("a", mods=[mod("m1", "x")]), [])]]
+        log = render_run_log(meta, results, [], {"a": (2, '{"modifications": []}')})
+        self.assertIn("run 2", log,
+                      "the log must say which run each response came from")
+
+    def test_a_plain_string_still_renders(self):
+        """Backward compatibility with the older sink shape."""
+        meta = {"mode": "LIVE", "model": "m", "endpoint": "e", "commit": "c",
+                "started_at": "t", "runs": 1, "fixtures": 1, "dirty": False,
+                "completed_runs": 1, "aborted": None}
+        results = [[score_fixture(fixture("a", mods=[mod("m1", "x")]), [])]]
+        log = render_run_log(meta, results, [], {"a": '{"modifications": []}'})
+        self.assertIn("modifications", log)
+
+
 class TestTerminalOutputIsWatchable(unittest.TestCase):
     """Raw model responses are captured in the log file. Dumping them to stdout
     as well buries the progress lines a viewer is trying to follow."""

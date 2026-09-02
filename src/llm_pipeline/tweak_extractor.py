@@ -37,6 +37,13 @@ FATAL_STATUSES = frozenset({400, 401, 403, 404, 422})
 
 # Error codes that are permanent despite arriving on a retryable status. An
 # exhausted balance returns 429, which looks like a rate limit and is not one.
+# Codes that arrive on an otherwise fatal status but describe a failed
+# generation rather than a bad request. The model failed to emit valid JSON;
+# asking again can succeed, and in practice does.
+RETRYABLE_CODES = frozenset({
+    "json_validate_failed",
+})
+
 FATAL_CODES = frozenset({
     "insufficient_quota",
     "credit_balance_exhausted",
@@ -47,6 +54,11 @@ FATAL_CODES = frozenset({
 # Seconds before a single request is abandoned. The SDK default is a 600 second
 # read timeout, which turns one unlucky request into a ten minute stall.
 DEFAULT_TIMEOUT_SECONDS = 60.0
+
+# Room for the hardest fixture. 10813-t2 decomposes into five discrete
+# modifications and failed at 2000 tokens with "max completion tokens reached
+# before generating a valid document".
+MAX_OUTPUT_TOKENS = 4000
 
 # How many times a single review may wait out a rate limit. Waiting is not a
 # failed attempt at extraction, so it has its own budget; without a cap a
@@ -114,16 +126,25 @@ def _resolve_timeout() -> float:
     return value if value > 0 else DEFAULT_TIMEOUT_SECONDS
 
 
-def _is_fatal(error: APIStatusError) -> bool:
-    """Is this error permanent, so that retrying cannot help?"""
-    if error.status_code in FATAL_STATUSES:
-        return True
+def _error_code(error: APIStatusError):
+    """The provider's error code, if it supplied one."""
     body = getattr(error, "body", None)
     if isinstance(body, dict):
         detail = body.get("error", body)
-        if isinstance(detail, dict) and detail.get("code") in FATAL_CODES:
-            return True
-    return False
+        if isinstance(detail, dict):
+            return detail.get("code")
+    return None
+
+
+def _is_fatal(error: APIStatusError) -> bool:
+    """Is this error permanent, so that retrying cannot help?"""
+    code = _error_code(error)
+    if code in RETRYABLE_CODES:
+        # A failed generation on a 4xx. The request was fine; the model was not.
+        return False
+    if error.status_code in FATAL_STATUSES:
+        return True
+    return code in FATAL_CODES
 
 
 # The model the README documents. Kept here so code and docs cannot drift: a
@@ -219,6 +240,11 @@ class TweakExtractor:
             One ModificationObject per discrete modification, in the order the
             model returned them. Empty list if none, or if extraction failed.
         """
+        # Cleared up front so a failed call cannot leave the previous review's
+        # response in place. A caller recording this per fixture would otherwise
+        # attribute one review's output to another.
+        self.last_raw_output = None
+
         if not review.has_modification:
             logger.warning("Review has no modification flag set")
             return []
@@ -242,7 +268,7 @@ class TweakExtractor:
                     messages=[{"role": "user", "content": prompt}],
                     response_format={"type": "json_object"},
                     temperature=0.1,  # Low temperature for consistent extractions
-                    max_tokens=2000,  # A multi-modification review needs headroom
+                    max_tokens=MAX_OUTPUT_TOKENS,
                 )
 
                 raw_output = response.choices[0].message.content

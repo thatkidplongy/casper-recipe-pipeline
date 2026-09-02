@@ -218,8 +218,14 @@ def live_extractor(model, raw_sink=None):
         try:
             mods = ex.extract_modifications(review, recipe)
         finally:
+            # last_raw_output is cleared at the start of every call, so a failed
+            # call contributes nothing and cannot borrow the previous fixture's
+            # response. setdefault keeps the earliest successful one.
             if raw_sink is not None and ex.last_raw_output:
-                raw_sink.setdefault(fixture["tweak_id"], ex.last_raw_output)
+                raw_sink.setdefault(
+                    fixture["tweak_id"],
+                    (getattr(live_extractor, "current_run", 1), ex.last_raw_output),
+                )
         return [e for mod in mods for e in _edits_of(mod)]
 
     return run
@@ -396,10 +402,17 @@ def render_run_log(meta, runs, errors, raw_outputs):
 
     if raw_outputs:
         lines += ["## Raw model responses", "",
-                  "Verbatim, from the first run. A summary is a claim about a "
+                  "Verbatim, from the first run in which the call succeeded. A "
+                  "failed call records nothing, so a fixture that failed early "
+                  "is shown from a later run. A summary is a claim about a "
                   "response; this is the response.", ""]
-        for tid, raw in raw_outputs.items():
-            lines += [f"### `{tid}`", "", "```json", raw.strip(), "```", ""]
+        for tid, entry in raw_outputs.items():
+            if isinstance(entry, tuple):
+                run_no, raw = entry
+                heading = f"### `{tid}` (run {run_no})"
+            else:
+                run_no, raw, heading = None, entry, f"### `{tid}`"
+            lines += [heading, "", "```json", str(raw).strip(), "```", ""]
 
     return redact("\n".join(lines)) + "\n"
 
@@ -460,6 +473,8 @@ def main(argv=None):
     all_errors = []
     aborted = None
     for n in range(1, args.runs + 1):
+        live_extractor.current_run = n
+
         def progress(r, _n=n):
             if r["failed"]:
                 mark = "FAILED"
