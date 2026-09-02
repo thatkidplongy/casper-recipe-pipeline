@@ -8,6 +8,7 @@ ModificationObject instances.
 
 import json
 import os
+import re
 import time
 from typing import Optional
 
@@ -46,6 +47,52 @@ FATAL_CODES = frozenset({
 # Seconds before a single request is abandoned. The SDK default is a 600 second
 # read timeout, which turns one unlucky request into a ten minute stall.
 DEFAULT_TIMEOUT_SECONDS = 60.0
+
+# How many times a single review may wait out a rate limit. Waiting is not a
+# failed attempt at extraction, so it has its own budget; without a cap a
+# throttled account would hang forever.
+MAX_RATE_LIMIT_WAITS = 8
+
+# Never sleep longer than this for one rate limit. A wait longer than a minute
+# means the limit is a daily cap rather than a burst, and the run should end.
+MAX_RATE_LIMIT_WAIT_SECONDS = 65.0
+
+_RETRY_AFTER_IN_MESSAGE = re.compile(r"try again in ([0-9]*\.?[0-9]+)\s*s", re.I)
+
+
+def retry_after_seconds(error: APIStatusError):
+    """How long the API asked us to wait, or None if it did not say.
+
+    Prefers the Retry-After header. Falls back to the wait stated in the error
+    message, which is where Groq puts it. Guessing shorter than the stated wait
+    guarantees the retry is rejected too.
+    """
+    response = getattr(error, "response", None)
+    header = None
+    if response is not None:
+        try:
+            header = response.headers.get("retry-after")
+        except Exception:
+            header = None
+    if header:
+        try:
+            return float(header)
+        except (TypeError, ValueError):
+            pass
+
+    body = getattr(error, "body", None)
+    text = ""
+    if isinstance(body, dict):
+        detail = body.get("error", body)
+        if isinstance(detail, dict):
+            text = str(detail.get("message", ""))
+    match = _RETRY_AFTER_IN_MESSAGE.search(text or str(error))
+    return float(match.group(1)) if match else None
+
+
+def _is_rate_limit(error: APIStatusError) -> bool:
+    """A throttle we can wait out, as opposed to an exhausted balance."""
+    return error.status_code == 429 and not _is_fatal(error)
 
 
 def _resolve_timeout() -> float:
@@ -185,7 +232,9 @@ class TweakExtractor:
         )
 
         last_error = None
-        for attempt in range(max_retries + 1):
+        rate_limit_waits = 0
+        attempt = 0
+        while attempt <= max_retries:
             raw_output = None
             try:
                 response = self.client.chat.completions.create(
@@ -214,6 +263,25 @@ class TweakExtractor:
                 return modifications
 
             except APIStatusError as e:
+                if _is_rate_limit(e):
+                    wait = retry_after_seconds(e)
+                    rate_limit_waits += 1
+                    if wait is None or wait > MAX_RATE_LIMIT_WAIT_SECONDS \
+                            or rate_limit_waits > MAX_RATE_LIMIT_WAITS:
+                        raise ExtractionError(
+                            f"rate limited and unable to wait it out "
+                            f"({rate_limit_waits} wait(s), last asked for {wait}s): {e}"
+                        ) from e
+                    # Waiting out a throttle is not a failed extraction attempt,
+                    # so it does not consume the retry budget. A tenth of a
+                    # second of slack absorbs clock skew.
+                    logger.info(
+                        f"Rate limited; waiting {wait:.1f}s as instructed "
+                        f"(wait {rate_limit_waits}/{MAX_RATE_LIMIT_WAITS})"
+                    )
+                    time.sleep(wait + 0.1)
+                    continue
+
                 if _is_fatal(e):
                     # Permanent. Retrying a missing model or a bad key wastes
                     # time and tells us nothing new, which is exactly what the
@@ -240,6 +308,7 @@ class TweakExtractor:
                 backoff = 2**attempt
                 logger.debug(f"Retrying in {backoff}s")
                 time.sleep(backoff)
+            attempt += 1
 
         # Every attempt failed. This is not an empty extraction: the answer is
         # unknown, and the caller must be able to tell the difference.
@@ -255,12 +324,39 @@ class TweakExtractor:
         Earlier versions of this prompt returned one modification per review, and
         a model will still occasionally answer in that shape. Treating it as a
         one-element list is cheaper than a retry and loses nothing.
+
+        Entries that fail validation are skipped rather than discarding the
+        response. A model returned a stray empty string inside an otherwise
+        correct array, and rejecting the whole thing lost two good modifications
+        because of one bad element. Skipping is logged, and a response whose
+        every entry is invalid still raises.
         """
-        if "modifications" in payload:
-            return ExtractionResult(**payload).modifications
-        if "modification_type" in payload:
+        if "modifications" not in payload and "modification_type" in payload:
             return [ModificationObject(**payload)]
-        return ExtractionResult(**payload).modifications
+
+        entries = payload.get("modifications", [])
+        if not isinstance(entries, list):
+            raise ValidationError.from_exception_data("ExtractionResult", [])
+
+        modifications, skipped = [], 0
+        for entry in entries:
+            if not isinstance(entry, dict):
+                skipped += 1
+                logger.warning(f"Skipping non-object entry in modifications: {entry!r}")
+                continue
+            try:
+                modifications.append(ModificationObject(**entry))
+            except ValidationError as e:
+                skipped += 1
+                logger.warning(f"Skipping malformed modification: {e.error_count()} error(s)")
+
+        if skipped and not modifications:
+            raise ValidationError.from_exception_data("ExtractionResult", [])
+        if skipped:
+            logger.warning(
+                f"Kept {len(modifications)} modification(s), skipped {skipped} malformed"
+            )
+        return modifications
 
     def extract_all_modifications(
         self, reviews: list[Review], recipe: Recipe, max_retries: int = 2
