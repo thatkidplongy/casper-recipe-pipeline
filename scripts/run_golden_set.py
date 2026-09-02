@@ -115,8 +115,12 @@ def score_fixture(fixture, edits, failed=False):
     }
 
 
-def run_fixtures(fixtures, recipes, extract):
+def run_fixtures(fixtures, recipes, extract, on_result=None):
     """Score every fixture once, and refuse to report a run that wholly failed.
+
+    Args:
+        on_result: called with each fixture's result as it completes, so a long
+            run reports progress instead of looking like a hang.
 
     Returns:
         (results, errors) where errors is a list of (tweak_id, message)
@@ -130,10 +134,14 @@ def run_fixtures(fixtures, recipes, extract):
     for fixture in fixtures:
         try:
             edits = extract(fixture, recipes.get(fixture["recipe_id"], {}))
-            results.append(score_fixture(fixture, edits))
+            result = score_fixture(fixture, edits)
         except Exception as exc:
             errors.append((fixture["tweak_id"], f"{type(exc).__name__}: {exc}"))
-            results.append(score_fixture(fixture, [], failed=True))
+            result = score_fixture(fixture, [], failed=True)
+
+        results.append(result)
+        if on_result:
+            on_result(result)
 
     if errors and len(errors) == len(fixtures):
         first = errors[0]
@@ -279,8 +287,20 @@ def main(argv=None):
     runs = []
     all_errors = []
     for n in range(1, args.runs + 1):
+        def progress(r, _n=n):
+            if r["failed"]:
+                mark = "FAILED"
+            elif r["is_zero_tweak"]:
+                mark = "ok, returned nothing" if r["zero_tweak_correct"] else \
+                       f"INVENTED {r['spurious']} edit(s)"
+            else:
+                mark = f"{r['exact_found']}/{r['exact_expected']} found"
+                if r["spurious"]:
+                    mark += f", {r['spurious']} spurious"
+            print(f"    run {_n:>2} {r['tweak_id']:<12} {mark}", flush=True)
+
         try:
-            results, errors = run_fixtures(fixtures, recipes, extract)
+            results, errors = run_fixtures(fixtures, recipes, extract, on_result=progress)
         except AllCallsFailed as exc:
             print(f"\n  run {n}: ABORTED. {exc}")
             print("\nNo score is reported. Every extraction failed, so there is\n"

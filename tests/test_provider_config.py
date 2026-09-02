@@ -102,6 +102,32 @@ class TestTheReportedEndpointIsTheRealOne(unittest.TestCase):
             self.assertIn("api.openai.com", TweakExtractor().endpoint)
 
 
+class TestRetriesAreNotNestedAndRequestsCannotHang(unittest.TestCase):
+    """The extractor retried three times and the SDK retried three times inside
+    each attempt: nine requests per review. With the SDK's default 600 second
+    read timeout, one fixture could occupy 90 minutes. That is finding six of
+    the audit, one layer deeper, in code written to fix finding six."""
+
+    def test_the_sdk_does_not_retry_underneath_us(self):
+        self.assertEqual(TweakExtractor().client.max_retries, 0,
+                         "this class owns the retry loop; the SDK must not add its own")
+
+    def test_requests_cannot_hang_for_ten_minutes(self):
+        timeout = TweakExtractor().client.timeout
+        read = getattr(timeout, "read", timeout)
+        self.assertLessEqual(read, 120, "a request must fail fast enough to be diagnosable")
+
+    def test_the_timeout_is_configurable(self):
+        with env(LLM_TIMEOUT="12"):
+            timeout = TweakExtractor().client.timeout
+            self.assertEqual(getattr(timeout, "read", timeout), 12.0)
+
+    def test_a_bad_timeout_value_falls_back_rather_than_crashing(self):
+        with env(LLM_TIMEOUT="not-a-number"):
+            timeout = TweakExtractor().client.timeout
+            self.assertLessEqual(getattr(timeout, "read", timeout), 120)
+
+
 class TestApiKeyResolution(unittest.TestCase):
     def test_a_provider_neutral_key_variable_is_accepted(self):
         with env(LLM_API_KEY="gsk_" + "x" * 44, OPENAI_API_KEY=None):

@@ -43,6 +43,29 @@ FATAL_CODES = frozenset({
     "model_not_found",
 })
 
+# Seconds before a single request is abandoned. The SDK default is a 600 second
+# read timeout, which turns one unlucky request into a ten minute stall.
+DEFAULT_TIMEOUT_SECONDS = 60.0
+
+
+def _resolve_timeout() -> float:
+    """Per-request timeout in seconds, from LLM_TIMEOUT or the default.
+
+    A malformed value falls back rather than raising: a bad timeout should not
+    stop the pipeline from running.
+    """
+    raw = os.getenv("LLM_TIMEOUT")
+    if not raw:
+        return DEFAULT_TIMEOUT_SECONDS
+    try:
+        value = float(raw)
+    except ValueError:
+        logger.warning(
+            f"LLM_TIMEOUT={raw!r} is not a number; using {DEFAULT_TIMEOUT_SECONDS}s"
+        )
+        return DEFAULT_TIMEOUT_SECONDS
+    return value if value > 0 else DEFAULT_TIMEOUT_SECONDS
+
 
 def _is_fatal(error: APIStatusError) -> bool:
     """Is this error permanent, so that retrying cannot help?"""
@@ -94,7 +117,15 @@ class TweakExtractor:
             api_key or os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY")
         )
 
-        client_kwargs = {"api_key": resolved_key}
+        client_kwargs = {
+            "api_key": resolved_key,
+            "timeout": _resolve_timeout(),
+            # This class runs its own retry loop with backoff and with a check
+            # for permanent errors. Leaving the SDK's default of 2 retries in
+            # place nests three attempts inside each of ours: nine requests per
+            # review, each able to hang until the timeout.
+            "max_retries": 0,
+        }
         if resolved_base_url:
             client_kwargs["base_url"] = resolved_base_url
 
@@ -105,7 +136,8 @@ class TweakExtractor:
         # value can claim "OpenAI default" while requests go elsewhere.
         logger.info(
             f"Initialized TweakExtractor with model: {self.model} "
-            f"(endpoint: {self.endpoint})"
+            f"(endpoint: {self.endpoint}, "
+            f"timeout: {client_kwargs['timeout']}s, sdk retries: 0)"
         )
 
     @property

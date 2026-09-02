@@ -180,6 +180,29 @@ class TestAFailedRunMustNotScoreItself(unittest.TestCase):
         self.assertEqual(agg["failed"], 0)
 
 
+class TestProgressIsVisible(unittest.TestCase):
+    """A run of 120 extractions with no output until the end is
+    indistinguishable from a hang. That is the same missing distinction."""
+
+    def test_each_fixture_reports_as_it_completes(self):
+        seen = []
+        fixtures = [fixture("a", mods=[mod("m1", "1 cup white sugar")]),
+                    fixture("b", mods=[mod("m1", "2 eggs")])]
+        run_fixtures(fixtures, {"r": {}}, lambda fx, rc: [],
+                     on_result=lambda r: seen.append(r["tweak_id"]))
+        self.assertEqual(seen, ["a", "b"], "progress must arrive per fixture, in order")
+
+    def test_a_failure_is_reported_as_it_happens(self):
+        seen = []
+        fixtures = [fixture("a"), fixture("b", mods=[mod("m1", "2 eggs")])]
+        def half(fx, rc):
+            if fx["tweak_id"] == "a":
+                raise RuntimeError("boom")
+            return []
+        run_fixtures(fixtures, {"r": {}}, half, on_result=lambda r: seen.append(r["failed"]))
+        self.assertEqual(seen, [True, False])
+
+
 class TestTheHarnessCallsAMethodThatExists(unittest.TestCase):
     """live_extractor called extract_modification after it was renamed to
     extract_modifications. Attribute lookup on a live object fails only at call
