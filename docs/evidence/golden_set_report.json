@@ -1,64 +1,19 @@
 {
   "mode": "LIVE openai/gpt-oss-20b @ https://api.groq.com/openai/v1/",
-  "runs": 3,
+  "runs": 5,
   "summary": {
     "runs": 3,
-    "failed": 11,
+    "failed": 0,
     "exact_expected": 60,
-    "exact_found": 30,
-    "recall": 0.5,
+    "exact_found": 51,
+    "recall": 0.85,
     "underspec_expected": 24,
-    "underspec_found": 10,
-    "spurious": 13,
+    "underspec_found": 15,
+    "spurious": 19,
     "zero_tweaks": 6,
-    "zero_tweaks_correct": 4
+    "zero_tweaks_correct": 3
   },
-  "errors": [
-    {
-      "tweak_id": "10813-t2",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to generate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': 'max completion tokens reached before generating a valid document'}}"
-    },
-    {
-      "tweak_id": "10813-t4",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "10813-t2",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "144299-t1",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "19117-t1",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "77935-t1",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "77935-t4",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "77935-t5",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "10813-t2",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "10813-t3",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    },
-    {
-      "tweak_id": "77935-t3",
-      "error": "ExtractionError: permanent API error 400, not retrying: Error code: 400 - {'error': {'message': \"Failed to validate JSON. Please adjust your prompt. See 'failed_generation' for more details.\", 'type': 'invalid_request_error', 'code': 'json_validate_failed', 'failed_generation': ''}}"
-    }
-  ],
+  "errors": [],
   "per_run": [
     [
       {
@@ -77,29 +32,17 @@
       },
       {
         "tweak_id": "10813-t2",
-        "failed": true,
+        "failed": false,
         "exact_expected": 5,
-        "exact_found": 0,
+        "exact_found": 3,
         "underspec_expected": 0,
         "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
+        "spurious": 2,
+        "spurious_finds": [
+          "1 teaspoon baking soda",
+          "Stir in flour, chocolate chips, and walnuts."
+        ],
         "missed": [
-          {
-            "id": "m1",
-            "intent": "Halve the white sugar.",
-            "anchor": "1 cup white sugar"
-          },
-          {
-            "id": "m2",
-            "intent": "Raise the brown sugar to one and a half cups.",
-            "anchor": "1 cup packed brown sugar"
-          },
-          {
-            "id": "m3",
-            "intent": "Omit the hot water.",
-            "anchor": "2 teaspoons hot water"
-          },
           {
             "id": "m4",
             "intent": "Add a teaspoon of cream of tartar so the cookies hold their shape.",
@@ -113,7 +56,7 @@
         ],
         "is_zero_tweak": false,
         "zero_tweak_correct": null,
-        "edits_returned": 0
+        "edits_returned": 5
       },
       {
         "tweak_id": "10813-t3",
@@ -131,24 +74,16 @@
       },
       {
         "tweak_id": "10813-t4",
-        "failed": true,
+        "failed": false,
         "exact_expected": 3,
-        "exact_found": 0,
+        "exact_found": 2,
         "underspec_expected": 0,
         "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
+        "spurious": 1,
+        "spurious_finds": [
+          "3 cups all-purpose flour"
+        ],
         "missed": [
-          {
-            "id": "m1",
-            "intent": "Halve the brown sugar.",
-            "anchor": "1 cup packed brown sugar"
-          },
-          {
-            "id": "m2",
-            "intent": "Use half a cup less flour.",
-            "anchor": "3 cups all-purpose flour"
-          },
           {
             "id": "m3",
             "intent": "Add a dash of cinnamon.",
@@ -157,7 +92,7 @@
         ],
         "is_zero_tweak": false,
         "zero_tweak_correct": null,
-        "edits_returned": 0
+        "edits_returned": 3
       },
       {
         "tweak_id": "144299-t1",
@@ -166,14 +101,213 @@
         "exact_found": 1,
         "underspec_expected": 2,
         "underspec_found": 2,
-        "spurious": 1,
+        "spurious": 0,
+        "spurious_finds": [],
+        "missed": [],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 3
+      },
+      {
+        "tweak_id": "19117-t1",
+        "failed": false,
+        "exact_expected": 0,
+        "exact_found": 0,
+        "underspec_expected": 1,
+        "underspec_found": 0,
+        "spurious": 2,
         "spurious_finds": [
-          "2 cups dashi soup"
+          "Combine confectioners' sugar, 1/4 cup shortening, 1/4 teaspoon cinnamon, and nutmeg in a medium bowl. Beat until frosting is light and creamy. Beat in evaporated milk 1 tablespoon at a time until desired spreading consistency is reached. Spread over top of cooled cake.",
+          "2 cups apple - peeled, cored, and chopped"
         ],
         "missed": [],
         "is_zero_tweak": false,
         "zero_tweak_correct": null,
-        "edits_returned": 4
+        "edits_returned": 2
+      },
+      {
+        "tweak_id": "19117-t2",
+        "failed": false,
+        "exact_expected": 0,
+        "exact_found": 0,
+        "underspec_expected": 0,
+        "underspec_found": 0,
+        "spurious": 0,
+        "spurious_finds": [],
+        "missed": [],
+        "is_zero_tweak": true,
+        "zero_tweak_correct": true,
+        "edits_returned": 0
+      },
+      {
+        "tweak_id": "77935-t1",
+        "failed": false,
+        "exact_expected": 1,
+        "exact_found": 1,
+        "underspec_expected": 3,
+        "underspec_found": 1,
+        "spurious": 1,
+        "spurious_finds": [
+          "1.5 cups half-and-half (or whole milk)"
+        ],
+        "missed": [],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 3
+      },
+      {
+        "tweak_id": "77935-t2",
+        "failed": false,
+        "exact_expected": 0,
+        "exact_found": 0,
+        "underspec_expected": 0,
+        "underspec_found": 0,
+        "spurious": 1,
+        "spurious_finds": [
+          "1.5 teaspoons ground ginger"
+        ],
+        "missed": [],
+        "is_zero_tweak": true,
+        "zero_tweak_correct": false,
+        "edits_returned": 1
+      },
+      {
+        "tweak_id": "77935-t3",
+        "failed": false,
+        "exact_expected": 2,
+        "exact_found": 2,
+        "underspec_expected": 0,
+        "underspec_found": 0,
+        "spurious": 0,
+        "spurious_finds": [],
+        "missed": [],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 2
+      },
+      {
+        "tweak_id": "77935-t4",
+        "failed": false,
+        "exact_expected": 2,
+        "exact_found": 2,
+        "underspec_expected": 0,
+        "underspec_found": 0,
+        "spurious": 0,
+        "spurious_finds": [],
+        "missed": [],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 2
+      },
+      {
+        "tweak_id": "77935-t5",
+        "failed": false,
+        "exact_expected": 1,
+        "exact_found": 1,
+        "underspec_expected": 2,
+        "underspec_found": 2,
+        "spurious": 0,
+        "spurious_finds": [],
+        "missed": [],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 3
+      }
+    ],
+    [
+      {
+        "tweak_id": "10813-t1",
+        "failed": false,
+        "exact_expected": 2,
+        "exact_found": 1,
+        "underspec_expected": 0,
+        "underspec_found": 0,
+        "spurious": 1,
+        "spurious_finds": [
+          "Beat in eggs, one at a time, then stir in vanilla."
+        ],
+        "missed": [
+          {
+            "id": "m1",
+            "intent": "Add an extra egg yolk to keep the cookie chewy.",
+            "anchor": "2 eggs"
+          }
+        ],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 2
+      },
+      {
+        "tweak_id": "10813-t2",
+        "failed": false,
+        "exact_expected": 5,
+        "exact_found": 4,
+        "underspec_expected": 0,
+        "underspec_found": 0,
+        "spurious": 1,
+        "spurious_finds": [
+          "Add to batter along with salt."
+        ],
+        "missed": [
+          {
+            "id": "m4",
+            "intent": "Add a teaspoon of cream of tartar so the cookies hold their shape.",
+            "anchor": "0.5 teaspoon salt"
+          }
+        ],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 5
+      },
+      {
+        "tweak_id": "10813-t3",
+        "failed": false,
+        "exact_expected": 3,
+        "exact_found": 3,
+        "underspec_expected": 0,
+        "underspec_found": 0,
+        "spurious": 0,
+        "spurious_finds": [],
+        "missed": [],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 3
+      },
+      {
+        "tweak_id": "10813-t4",
+        "failed": false,
+        "exact_expected": 3,
+        "exact_found": 2,
+        "underspec_expected": 0,
+        "underspec_found": 0,
+        "spurious": 1,
+        "spurious_finds": [
+          "Stir in flour, chocolate chips, and walnuts."
+        ],
+        "missed": [
+          {
+            "id": "m3",
+            "intent": "Add a dash of cinnamon.",
+            "anchor": "2 teaspoons vanilla extract"
+          }
+        ],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 3
+      },
+      {
+        "tweak_id": "144299-t1",
+        "failed": false,
+        "exact_expected": 1,
+        "exact_found": 1,
+        "underspec_expected": 2,
+        "underspec_found": 2,
+        "spurious": 0,
+        "spurious_finds": [],
+        "missed": [],
+        "is_zero_tweak": false,
+        "zero_tweak_correct": null,
+        "edits_returned": 3
       },
       {
         "tweak_id": "19117-t1",
@@ -298,29 +432,16 @@
       },
       {
         "tweak_id": "10813-t2",
-        "failed": true,
+        "failed": false,
         "exact_expected": 5,
-        "exact_found": 0,
+        "exact_found": 3,
         "underspec_expected": 0,
         "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
+        "spurious": 1,
+        "spurious_finds": [
+          "Dissolve baking soda in hot water. Add to batter along with salt."
+        ],
         "missed": [
-          {
-            "id": "m1",
-            "intent": "Halve the white sugar.",
-            "anchor": "1 cup white sugar"
-          },
-          {
-            "id": "m2",
-            "intent": "Raise the brown sugar to one and a half cups.",
-            "anchor": "1 cup packed brown sugar"
-          },
-          {
-            "id": "m3",
-            "intent": "Omit the hot water.",
-            "anchor": "2 teaspoons hot water"
-          },
           {
             "id": "m4",
             "intent": "Add a teaspoon of cream of tartar so the cookies hold their shape.",
@@ -334,7 +455,7 @@
         ],
         "is_zero_tweak": false,
         "zero_tweak_correct": null,
-        "edits_returned": 0
+        "edits_returned": 4
       },
       {
         "tweak_id": "10813-t3",
@@ -374,272 +495,17 @@
       },
       {
         "tweak_id": "144299-t1",
-        "failed": true,
-        "exact_expected": 1,
-        "exact_found": 0,
-        "underspec_expected": 2,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [
-          {
-            "id": "m1",
-            "intent": "Raise the beef to roughly one pound; a quarter pound cannot serve four.",
-            "anchor": "0.25 pound sirloin steak, thinly sliced"
-          }
-        ],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 0
-      },
-      {
-        "tweak_id": "19117-t1",
-        "failed": true,
-        "exact_expected": 0,
-        "exact_found": 0,
-        "underspec_expected": 1,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 0
-      },
-      {
-        "tweak_id": "19117-t2",
-        "failed": false,
-        "exact_expected": 0,
-        "exact_found": 0,
-        "underspec_expected": 0,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [],
-        "is_zero_tweak": true,
-        "zero_tweak_correct": true,
-        "edits_returned": 0
-      },
-      {
-        "tweak_id": "77935-t1",
-        "failed": true,
-        "exact_expected": 1,
-        "exact_found": 0,
-        "underspec_expected": 3,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [
-          {
-            "id": "m1",
-            "intent": "Use canned yams in place of raw sweet potatoes.",
-            "anchor": "1.5 pounds peeled raw sweet potatoes, cut into 1-inch chunks"
-          }
-        ],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 0
-      },
-      {
-        "tweak_id": "77935-t2",
-        "failed": false,
-        "exact_expected": 0,
-        "exact_found": 0,
-        "underspec_expected": 0,
-        "underspec_found": 0,
-        "spurious": 1,
-        "spurious_finds": [
-          "1.5 teaspoons ground ginger"
-        ],
-        "missed": [],
-        "is_zero_tweak": true,
-        "zero_tweak_correct": false,
-        "edits_returned": 1
-      },
-      {
-        "tweak_id": "77935-t3",
-        "failed": false,
-        "exact_expected": 2,
-        "exact_found": 2,
-        "underspec_expected": 0,
-        "underspec_found": 0,
-        "spurious": 1,
-        "spurious_finds": [
-          "1 large sweet potato, cut into 1-inch chunks"
-        ],
-        "missed": [],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 3
-      },
-      {
-        "tweak_id": "77935-t4",
-        "failed": true,
-        "exact_expected": 2,
-        "exact_found": 0,
-        "underspec_expected": 0,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [
-          {
-            "id": "m1",
-            "intent": "Use fresh grated ginger in place of ground.",
-            "anchor": "1.5 teaspoons ground ginger"
-          },
-          {
-            "id": "m2",
-            "intent": "Use 2% milk in place of half-and-half.",
-            "anchor": "1.5 cups half-and-half (or whole milk)"
-          }
-        ],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 0
-      },
-      {
-        "tweak_id": "77935-t5",
-        "failed": true,
-        "exact_expected": 1,
-        "exact_found": 0,
-        "underspec_expected": 2,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [
-          {
-            "id": "m3",
-            "intent": "Use heavy cream in place of half-and-half.",
-            "anchor": "1.5 cups half-and-half (or whole milk)"
-          }
-        ],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 0
-      }
-    ],
-    [
-      {
-        "tweak_id": "10813-t1",
-        "failed": false,
-        "exact_expected": 2,
-        "exact_found": 2,
-        "underspec_expected": 0,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 2
-      },
-      {
-        "tweak_id": "10813-t2",
-        "failed": true,
-        "exact_expected": 5,
-        "exact_found": 0,
-        "underspec_expected": 0,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [
-          {
-            "id": "m1",
-            "intent": "Halve the white sugar.",
-            "anchor": "1 cup white sugar"
-          },
-          {
-            "id": "m2",
-            "intent": "Raise the brown sugar to one and a half cups.",
-            "anchor": "1 cup packed brown sugar"
-          },
-          {
-            "id": "m3",
-            "intent": "Omit the hot water.",
-            "anchor": "2 teaspoons hot water"
-          },
-          {
-            "id": "m4",
-            "intent": "Add a teaspoon of cream of tartar so the cookies hold their shape.",
-            "anchor": "0.5 teaspoon salt"
-          },
-          {
-            "id": "m5",
-            "intent": "Refrigerate the dough at least an hour before scooping and baking.",
-            "anchor": "Drop spoonfuls of dough 2 inches apart onto ungreased baking sheets."
-          }
-        ],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 0
-      },
-      {
-        "tweak_id": "10813-t3",
-        "failed": true,
-        "exact_expected": 3,
-        "exact_found": 0,
-        "underspec_expected": 0,
-        "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
-        "missed": [
-          {
-            "id": "m1",
-            "intent": "Double the salt to lift a bland cookie.",
-            "anchor": "0.5 teaspoon salt"
-          },
-          {
-            "id": "m2",
-            "intent": "Omit the walnuts.",
-            "anchor": "1 cup chopped walnuts"
-          },
-          {
-            "id": "m3",
-            "intent": "Press the dough down slightly before baking.",
-            "anchor": "Drop spoonfuls of dough 2 inches apart onto ungreased baking sheets."
-          }
-        ],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 0
-      },
-      {
-        "tweak_id": "10813-t4",
-        "failed": false,
-        "exact_expected": 3,
-        "exact_found": 2,
-        "underspec_expected": 0,
-        "underspec_found": 0,
-        "spurious": 1,
-        "spurious_finds": [
-          "1 cup chopped walnuts"
-        ],
-        "missed": [
-          {
-            "id": "m3",
-            "intent": "Add a dash of cinnamon.",
-            "anchor": "2 teaspoons vanilla extract"
-          }
-        ],
-        "is_zero_tweak": false,
-        "zero_tweak_correct": null,
-        "edits_returned": 3
-      },
-      {
-        "tweak_id": "144299-t1",
         "failed": false,
         "exact_expected": 1,
         "exact_found": 1,
         "underspec_expected": 2,
         "underspec_found": 2,
-        "spurious": 1,
-        "spurious_finds": [
-          "2 cups dashi soup"
-        ],
+        "spurious": 0,
+        "spurious_finds": [],
         "missed": [],
         "is_zero_tweak": false,
         "zero_tweak_correct": null,
-        "edits_returned": 4
+        "edits_returned": 3
       },
       {
         "tweak_id": "19117-t1",
@@ -648,15 +514,14 @@
         "exact_found": 0,
         "underspec_expected": 1,
         "underspec_found": 0,
-        "spurious": 2,
+        "spurious": 1,
         "spurious_finds": [
-          "Combine confectioners&#39; sugar, 1/4 cup shortening, 1/4 teaspoon cinnamon, and nutmeg in a medium bowl. Beat until frosting is light and creamy. Beat in evaporated milk 1 tablespoon at a time until desired spreading consistency is reached. Spread over top of cooled cake.",
-          "2 cups apple - peeled, cored, and chopped"
+          "Combine confectioners' sugar, 1/4 cup shortening, 1/4 teaspoon cinnamon, and nutmeg in a medium bowl. Beat until frosting is light and creamy. Beat in evaporated milk 1 tablespoon at a time until desired spreading consistency is reached. Spread over top of cooled cake."
         ],
         "missed": [],
         "is_zero_tweak": false,
         "zero_tweak_correct": null,
-        "edits_returned": 2
+        "edits_returned": 1
       },
       {
         "tweak_id": "19117-t2",
@@ -681,7 +546,7 @@
         "underspec_found": 1,
         "spurious": 1,
         "spurious_finds": [
-          "Salt and freshly ground pepper, to taste"
+          "Add sweet potatoes, then onion; saute, stirring very little at first, then more frequently, until vegetables start to turn golden brown, 7 to 8 minutes."
         ],
         "missed": [],
         "is_zero_tweak": false,
@@ -695,37 +560,28 @@
         "exact_found": 0,
         "underspec_expected": 0,
         "underspec_found": 0,
-        "spurious": 0,
-        "spurious_finds": [],
+        "spurious": 1,
+        "spurious_finds": [
+          "1.5 teaspoons ground ginger"
+        ],
         "missed": [],
         "is_zero_tweak": true,
-        "zero_tweak_correct": true,
-        "edits_returned": 0
+        "zero_tweak_correct": false,
+        "edits_returned": 1
       },
       {
         "tweak_id": "77935-t3",
-        "failed": true,
+        "failed": false,
         "exact_expected": 2,
-        "exact_found": 0,
+        "exact_found": 2,
         "underspec_expected": 0,
         "underspec_found": 0,
         "spurious": 0,
         "spurious_finds": [],
-        "missed": [
-          {
-            "id": "m1",
-            "intent": "Use one large sweet potato plus three white potatoes.",
-            "anchor": "1.5 pounds peeled raw sweet potatoes, cut into 1-inch chunks"
-          },
-          {
-            "id": "m2",
-            "intent": "Use 2% milk in place of half-and-half.",
-            "anchor": "1.5 cups half-and-half (or whole milk)"
-          }
-        ],
+        "missed": [],
         "is_zero_tweak": false,
         "zero_tweak_correct": null,
-        "edits_returned": 0
+        "edits_returned": 2
       },
       {
         "tweak_id": "77935-t4",
