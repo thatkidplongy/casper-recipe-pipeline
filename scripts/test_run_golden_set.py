@@ -7,7 +7,9 @@ import sys, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from run_golden_set import matches_anchor, score_fixture, aggregate, per_fixture_line
+from run_golden_set import (matches_anchor, score_fixture, aggregate,
+                            per_fixture_line, run_fixtures, AllCallsFailed,
+                            live_extractor)
 
 
 def fixture(tweak_id="t", mods=(), excluded=()):
@@ -123,6 +125,83 @@ class TestPerFixtureReporting(unittest.TestCase):
         line = per_fixture_line("z", {"e": 0, "f": 0, "sp": 2, "z": True, "zc": 1, "zn": 3})
         self.assertIn("1/3", line)
         self.assertIn("2 invented", line)
+
+
+class TestAFailedRunMustNotScoreItself(unittest.TestCase):
+    """The harness had the defect it was built to measure.
+
+    Every call raised, every fixture scored as "the model returned nothing", and
+    the run reported recall 0% with zero-tweaks correct 2/2. It credited itself
+    for the two fixtures that expect nothing, because a total failure looks
+    exactly like a correct empty answer.
+    """
+
+    def _fixtures(self):
+        return [
+            fixture("a", mods=[mod("m1", "1 cup white sugar")]),
+            fixture("z", excluded=[{"quote": "next time", "reason": "future_intent"}]),
+        ]
+
+    def test_a_run_where_every_call_failed_aborts(self):
+        def boom(fx, recipe):
+            raise RuntimeError("404 model not found")
+        with self.assertRaises(AllCallsFailed) as caught:
+            run_fixtures(self._fixtures(), {"r": {}}, boom)
+        self.assertIn("404", str(caught.exception), "the abort must carry the real cause")
+
+    def test_a_zero_tweak_is_not_credited_when_the_call_failed(self):
+        """Returning nothing because the API errored is not a correct answer."""
+        r = score_fixture(fixture("z", excluded=[{"quote": "x", "reason": "future_intent"}]),
+                          [], failed=True)
+        self.assertTrue(r["failed"])
+        self.assertFalse(r["zero_tweak_correct"],
+                         "a failed call must not score as correctly returning nothing")
+
+    def test_a_zero_tweak_is_still_credited_on_a_real_empty_answer(self):
+        r = score_fixture(fixture("z", excluded=[{"quote": "x", "reason": "future_intent"}]), [])
+        self.assertFalse(r["failed"])
+        self.assertTrue(r["zero_tweak_correct"])
+
+    def test_partial_failure_is_counted_and_reported(self):
+        calls = {"n": 0}
+        def flaky(fx, recipe):
+            calls["n"] += 1
+            if calls["n"] == 1:
+                raise RuntimeError("boom")
+            return []
+        results, errors = run_fixtures(self._fixtures(), {"r": {}}, flaky)
+        self.assertEqual(len(errors), 1)
+        self.assertEqual(sum(1 for r in results if r["failed"]), 1)
+
+    def test_aggregate_surfaces_failures(self):
+        results, _ = run_fixtures(self._fixtures(), {"r": {}}, lambda fx, rc: [])
+        agg = aggregate([results])
+        self.assertIn("failed", agg)
+        self.assertEqual(agg["failed"], 0)
+
+
+class TestTheHarnessCallsAMethodThatExists(unittest.TestCase):
+    """live_extractor called extract_modification after it was renamed to
+    extract_modifications. Attribute lookup on a live object fails only at call
+    time, and the harness swallowed the AttributeError as an empty answer."""
+
+    def test_every_extractor_method_the_harness_calls_is_defined(self):
+        """Read both files as text. No imports, so this runs with no
+        dependencies installed and cannot itself fail open."""
+        import re
+        from pathlib import Path
+
+        here = Path(__file__).resolve().parent
+        harness = (here / "run_golden_set.py").read_text()
+        extractor = (here.parent / "src" / "llm_pipeline" / "tweak_extractor.py").read_text()
+
+        defined = set(re.findall(r"^\s*def (\w+)\(", extractor, re.M))
+        called = set(re.findall(r"\bex\.(\w+)\(", harness))
+        self.assertTrue(called, "expected the harness to call the extractor")
+        missing = called - defined
+        self.assertEqual(missing, set(),
+                         f"harness calls TweakExtractor.{missing}, not defined in "
+                         f"tweak_extractor.py; attribute lookup fails only at call time")
 
 
 if __name__ == "__main__":

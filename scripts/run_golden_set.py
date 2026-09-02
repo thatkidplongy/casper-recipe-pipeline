@@ -52,8 +52,24 @@ def matches_anchor(edit, anchor, target):
     return SequenceMatcher(None, find, a).ratio() >= ANCHOR_THRESHOLD
 
 
-def score_fixture(fixture, edits):
-    """Score one fixture against the edits an extraction produced."""
+class AllCallsFailed(RuntimeError):
+    """Every extraction in a run raised. The run has no result to report.
+
+    Without this the harness scored a total outage as a set of empty answers,
+    which credited the two zero-modification fixtures for being "correct" and
+    reported a recall figure that described nothing.
+    """
+
+
+def score_fixture(fixture, edits, failed=False):
+    """Score one fixture against the edits an extraction produced.
+
+    Args:
+        fixture: The golden-set entry
+        edits: Edits the extraction returned
+        failed: True when the extraction call raised. An empty result from a
+            failed call is not an answer, so it is never credited.
+    """
     expected = fixture["expected_modifications"]
     exact = [m for m in expected if m["specificity"] == "exact"]
     under = [m for m in expected if m["specificity"] != "exact"]
@@ -83,6 +99,7 @@ def score_fixture(fixture, edits):
 
     return {
         "tweak_id": fixture["tweak_id"],
+        "failed": failed,
         "exact_expected": len(exact),
         "exact_found": exact_found,
         "underspec_expected": len(under),
@@ -91,9 +108,41 @@ def score_fixture(fixture, edits):
         "spurious_finds": [e.get("find") for e in spurious_edits],
         "missed": missed,
         "is_zero_tweak": is_zero,
-        "zero_tweak_correct": (len(edits) == 0) if is_zero else None,
+        # A failed call returning nothing is not the same as a model correctly
+        # declining to extract. Crediting it is how a total outage scored 2/2.
+        "zero_tweak_correct": (len(edits) == 0 and not failed) if is_zero else None,
         "edits_returned": len(edits),
     }
+
+
+def run_fixtures(fixtures, recipes, extract):
+    """Score every fixture once, and refuse to report a run that wholly failed.
+
+    Returns:
+        (results, errors) where errors is a list of (tweak_id, message)
+
+    Raises:
+        AllCallsFailed: when every extraction raised. A run in which nothing
+            succeeded is an error, not a score of zero.
+    """
+    results, errors = [], []
+
+    for fixture in fixtures:
+        try:
+            edits = extract(fixture, recipes.get(fixture["recipe_id"], {}))
+            results.append(score_fixture(fixture, edits))
+        except Exception as exc:
+            errors.append((fixture["tweak_id"], f"{type(exc).__name__}: {exc}"))
+            results.append(score_fixture(fixture, [], failed=True))
+
+    if errors and len(errors) == len(fixtures):
+        first = errors[0]
+        raise AllCallsFailed(
+            f"all {len(fixtures)} extractions failed; first was "
+            f"{first[0]}: {first[1]}"
+        )
+
+    return results, errors
 
 
 def aggregate(runs):
@@ -106,6 +155,7 @@ def aggregate(runs):
     zero = [r for r in flat if r["is_zero_tweak"]]
     return {
         "runs": len(runs),
+        "failed": sum(1 for r in flat if r.get("failed")),
         "exact_expected": ee,
         "exact_found": ef,
         "recall": (ef / ee) if ee else 0.0,
@@ -143,7 +193,10 @@ def live_extractor(model):
         )
         review = Review(text=fixture["review_text"], rating=fixture["review_rating"],
                         has_modification=True)
-        return _edits_of(ex.extract_modification(review, recipe))
+        # extract_modifications returns a list, one entry per discrete
+        # modification, so the edits of all of them are flattened here.
+        return [e for mod in ex.extract_modifications(review, recipe)
+                for e in _edits_of(mod)]
 
     return run
 
@@ -223,21 +276,25 @@ def main(argv=None):
     print(f"mode: {mode}   fixtures: {len(fixtures)}   runs: {args.runs}\n")
 
     runs = []
+    all_errors = []
     for n in range(1, args.runs + 1):
-        results = []
-        for fx in fixtures:
-            try:
-                edits = extract(fx, recipes[fx["recipe_id"]])
-            except Exception as exc:                      # extraction failure is a data point
-                print(f"  run {n} {fx['tweak_id']}: extraction failed: {exc}")
-                edits = []
-            results.append(score_fixture(fx, edits))
+        try:
+            results, errors = run_fixtures(fixtures, recipes, extract)
+        except AllCallsFailed as exc:
+            print(f"\n  run {n}: ABORTED. {exc}")
+            print("\nNo score is reported. Every extraction failed, so there is\n"
+                  "nothing to measure. Fix the cause and rerun.")
+            return 2
+
         runs.append(results)
+        all_errors.extend((n, tid, msg) for tid, msg in errors)
         a = aggregate([results])
+        suffix = f"  FAILED CALLS {a['failed']}" if a["failed"] else ""
         print(f"  run {n:>2}: recall {a['recall']:.0%}  "
               f"({a['exact_found']}/{a['exact_expected']})  "
               f"spurious {a['spurious']}  "
-              f"zero-tweaks correct {a['zero_tweaks_correct']}/{a['zero_tweaks']}")
+              f"zero-tweaks correct {a['zero_tweaks_correct']}/{a['zero_tweaks']}"
+              f"{suffix}")
 
     agg = aggregate(runs)
     print("\n" + "=" * 62)
@@ -246,7 +303,13 @@ def main(argv=None):
     print(f"  underspecified recovered   {agg['underspec_found']}/{agg['underspec_expected']}  (not required)")
     print(f"  spurious edits             {agg['spurious']}")
     print(f"  zero-tweaks correct        {agg['zero_tweaks_correct']}/{agg['zero_tweaks']}")
+    print(f"  failed extractions         {agg['failed']}")
     print("=" * 62)
+    if agg["failed"]:
+        print("  DEGRADED RUN. Some extractions failed, so recall understates the\n"
+              "  model and the figures above are not a clean measurement.")
+        for n, tid, msg in all_errors[:5]:
+            print(f"    run {n} {tid}: {msg}")
     if args.stub:
         print("  STUB RUN. Every number here is a ceiling, not a measurement.")
 
@@ -264,10 +327,11 @@ def main(argv=None):
     out = REPO / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(
-        {"mode": mode, "runs": args.runs,
-         "summary": agg, "per_run": runs}, indent=2) + "\n", encoding="utf-8")
+        {"mode": mode, "runs": args.runs, "summary": agg,
+         "errors": [{"run": n, "tweak_id": t, "error": m} for n, t, m in all_errors],
+         "per_run": runs}, indent=2) + "\n", encoding="utf-8")
     print(f"\nreport: {out.relative_to(REPO)}")
-    return 0
+    return 1 if agg["failed"] else 0
 
 
 if __name__ == "__main__":

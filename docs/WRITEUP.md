@@ -64,6 +64,67 @@ The first two are set out here. The third arrived by accident while trying to
 measure the model, and is the clearest proof that the problem is structural
 rather than a modelling shortfall: no prompt change affects it at all.
 
+### The same defect, in the tool I built to measure it
+
+The strongest illustration in this document is not in the pipeline. It is in my
+own evaluation harness, and I did not put it there deliberately.
+
+The first live run of the golden set reported this:
+
+```
+run  1: recall 0%  (0/20)  spurious 0  zero-tweaks correct 2/2
+```
+
+Every single call had failed. The harness scored it anyway, and **credited itself
+2 out of 2 on the two fixtures that expect no modifications** — because a total
+outage returns nothing, and nothing is exactly what those two fixtures expect. A
+complete failure was indistinguishable from partial success, and the one number
+that looked healthy was the one measuring fabrication.
+
+Two causes, both instances of the pattern this document is about.
+
+1. **`extract_modifications` returned `[]` for two different things**: the model
+   correctly finding no modification, and every request erroring. The caller had
+   no way to tell them apart, so the harness treated an outage as a set of
+   correct empty answers. This is the identical conflation the pipeline makes when
+   it publishes an unchanged recipe as enhanced.
+2. **The harness called `extract_modification`, which no longer exists.** I had
+   renamed it to `extract_modifications` two commits earlier, updated the test
+   stubs, and missed the harness. Attribute lookup on a live object fails only at
+   call time, so nothing broke at import. The `except Exception` around the call
+   swallowed the `AttributeError` and recorded an empty answer. I had already
+   written this exact lesson into `docs/ERRORS.md` and then failed to apply it to
+   my own tool one commit later.
+
+Both are fixed. `extract_modifications` now raises `ExtractionError` when no
+valid extraction could be obtained, and returns `[]` only when the model genuinely
+extracted nothing. Permanent API errors, a 404 for a missing model or a 401 for a
+bad key, are no longer retried at all. A run in which every extraction fails now
+aborts, prints the underlying cause, reports no score and exits non-zero:
+
+```
+run 1: ABORTED. all 12 extractions failed; first was 10813-t1:
+       ExtractionError: no valid extraction after 3 attempt(s)
+
+No score is reported. Every extraction failed, so there is
+nothing to measure. Fix the cause and rerun.
+```
+
+A partial failure is reported as a degraded run rather than a clean measurement,
+and the failed fixtures are named. Zero-modification fixtures are never credited
+when the call errored.
+
+**Why this belongs in the writeup rather than being quietly fixed.** The
+temptation with a bug in your own tooling is to fix it and say nothing. But it is
+evidence, and it is better evidence than anything I found by reading the
+pipeline. It shows the failure mode is not a junior engineer's oversight in one
+codebase. It is what happens by default whenever a system reports a result
+without distinguishing "this is the answer" from "I never got an answer". I
+diagnosed exactly that defect, wrote it up as the headline finding, built a tool
+to measure it, and reproduced it in the tool. A measurement instrument that
+cannot fail loudly is worth less than no instrument, because it produces numbers
+you will believe.
+
 ### It invents changes nobody made
 
 One review in the corpus reads, in full:

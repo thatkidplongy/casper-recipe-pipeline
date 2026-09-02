@@ -8,14 +8,53 @@ ModificationObject instances.
 
 import json
 import os
+import time
 from typing import Optional
 
 from loguru import logger
-from openai import OpenAI
+from openai import APIStatusError, OpenAI
 from pydantic import ValidationError
 
 from .models import ExtractionResult, ModificationObject, Recipe, Review
 from .prompts import build_simple_prompt
+
+
+class ExtractionError(RuntimeError):
+    """No valid extraction could be obtained for a review.
+
+    Distinct from an empty extraction. An empty list means the model read the
+    review and correctly found no modification the reviewer actually made. This
+    exception means the answer is unknown: the request failed, or no response
+    could be parsed. Collapsing the two is how a total API outage scored as a
+    set of correct empty answers.
+    """
+
+
+# HTTP statuses that will never succeed on retry: a missing model, a bad key, a
+# malformed request. Retrying them burns time and quota for no chance of success.
+FATAL_STATUSES = frozenset({400, 401, 403, 404, 422})
+
+# Error codes that are permanent despite arriving on a retryable status. An
+# exhausted balance returns 429, which looks like a rate limit and is not one.
+FATAL_CODES = frozenset({
+    "insufficient_quota",
+    "credit_balance_exhausted",
+    "invalid_api_key",
+    "model_not_found",
+})
+
+
+def _is_fatal(error: APIStatusError) -> bool:
+    """Is this error permanent, so that retrying cannot help?"""
+    if error.status_code in FATAL_STATUSES:
+        return True
+    body = getattr(error, "body", None)
+    if isinstance(body, dict):
+        detail = body.get("error", body)
+        if isinstance(detail, dict) and detail.get("code") in FATAL_CODES:
+            return True
+    return False
+
 
 # The model the README documents. Kept here so code and docs cannot drift: a
 # test asserts this string appears in README.md.
@@ -100,8 +139,9 @@ class TweakExtractor:
             "Extracting modifications from review: {}...".format(review.text[:100])
         )
 
-        raw_output = None
+        last_error = None
         for attempt in range(max_retries + 1):
+            raw_output = None
             try:
                 response = self.client.chat.completions.create(
                     model=self.model,
@@ -115,7 +155,8 @@ class TweakExtractor:
                 logger.debug(f"LLM raw output: {raw_output}")
 
                 if not raw_output:
-                    logger.warning(f"Attempt {attempt + 1}: Empty response from LLM")
+                    last_error = "empty response from the model"
+                    logger.warning(f"Attempt {attempt + 1}: {last_error}")
                     continue
 
                 modifications = self._parse(json.loads(raw_output))
@@ -126,22 +167,40 @@ class TweakExtractor:
                 )
                 return modifications
 
+            except APIStatusError as e:
+                if _is_fatal(e):
+                    # Permanent. Retrying a missing model or a bad key wastes
+                    # time and tells us nothing new, which is exactly what the
+                    # original code did nine times per review.
+                    raise ExtractionError(
+                        f"permanent API error {e.status_code}, not retrying: {e}"
+                    ) from e
+                last_error = f"API error {e.status_code}: {e}"
+                logger.warning(f"Attempt {attempt + 1}: {last_error}")
+
             except json.JSONDecodeError as e:
-                logger.warning(f"Attempt {attempt + 1}: Failed to parse JSON: {e}")
-                if attempt == max_retries:
-                    logger.error(f"Max retries reached. Raw output: {raw_output}")
+                last_error = f"response was not valid JSON: {e}"
+                logger.warning(f"Attempt {attempt + 1}: {last_error}")
 
             except ValidationError as e:
-                logger.warning(f"Attempt {attempt + 1}: Validation error: {e}")
-                if attempt == max_retries:
-                    logger.error(f"Max retries reached. Raw output: {raw_output}")
+                last_error = f"response did not match the schema: {e}"
+                logger.warning(f"Attempt {attempt + 1}: {last_error}")
 
-            except Exception as e:
-                logger.error(f"Attempt {attempt + 1}: Unexpected error: {e}")
-                if attempt == max_retries:
-                    return []
+            except Exception as e:  # transport errors, timeouts, anything else
+                last_error = f"{type(e).__name__}: {e}"
+                logger.warning(f"Attempt {attempt + 1}: {last_error}")
 
-        return []
+            if attempt < max_retries:
+                backoff = 2**attempt
+                logger.debug(f"Retrying in {backoff}s")
+                time.sleep(backoff)
+
+        # Every attempt failed. This is not an empty extraction: the answer is
+        # unknown, and the caller must be able to tell the difference.
+        raise ExtractionError(
+            f"no valid extraction after {max_retries + 1} attempt(s); "
+            f"last failure was {last_error}"
+        )
 
     @staticmethod
     def _parse(payload: dict) -> list[ModificationObject]:
@@ -158,7 +217,7 @@ class TweakExtractor:
         return ExtractionResult(**payload).modifications
 
     def extract_all_modifications(
-        self, reviews: list[Review], recipe: Recipe
+        self, reviews: list[Review], recipe: Recipe, max_retries: int = 2
     ) -> list[tuple[ModificationObject, Review]]:
         """Extract a modification from every review, in the order given.
 
@@ -185,7 +244,17 @@ class TweakExtractor:
         extracted = []
         for review in candidates:
             label = review.tweak_id or review.text[:40]
-            modifications = self.extract_modifications(review, recipe)
+            try:
+                modifications = self.extract_modifications(
+                    review, recipe, max_retries=max_retries
+                )
+            except ExtractionError as e:
+                # Recipe-level resilience: one unanswerable review must not
+                # discard the rest of the community's tweaks. Logged as an
+                # error, not a warning, because it is not "no modifications".
+                logger.error(f"Tweak {label}: extraction failed, skipping. {e}")
+                continue
+
             if modifications:
                 extracted.extend((mod, review) for mod in modifications)
                 logger.info(
