@@ -1,0 +1,423 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Golden set: the discrete modifications a careful cook would apply from each AllRecipes featured tweak. Hand-labelled. Scope is the 12 featured tweaks, which are byte-identical to the 12 reviews flagged has_modification.",
+  "specificity_values": {
+    "exact": "The reviewer gave a concrete amount or a named substitute, so a precise edit is derivable.",
+    "underspecified": "The change was made but no amount or name was given, so no precise edit is derivable. Scoring must not penalise an extractor for declining to invent one."
+  },
+  "exclusion_reasons": {
+    "future_intent": "Stated as something the reviewer will do next time, not something they did.",
+    "stated_preference_not_applied": "A preference the reviewer explicitly did not act on.",
+    "advice_to_others_not_applied": "Advice offered to other cooks; the reviewer did not make this change.",
+    "speculation_not_attempted": "Speculation about an alternative the reviewer did not try.",
+    "no_change_from_original": "Describes the recipe's existing value; applying it is a no-op."
+  },
+  "fixtures": [
+    {
+      "tweak_id": "10813-t1",
+      "recipe_id": "10813",
+      "recipe_title": "Best Chocolate Chip Cookies",
+      "review_rating": 5,
+      "review_text": "I used an ice cream scoop, that made 16 big cookies. I did add an additional egg yolk to help keep the cookie chewy.They turned out fantastic.",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "addition",
+          "target": "ingredients",
+          "intent": "Add an extra egg yolk to keep the cookie chewy.",
+          "anchor": "2 eggs",
+          "specificity": "exact"
+        },
+        {
+          "id": "m2",
+          "type": "technique_change",
+          "target": "instructions",
+          "intent": "Portion the dough with an ice cream scoop instead of spoonfuls.",
+          "anchor": "Drop spoonfuls of dough 2 inches apart onto ungreased baking sheets.",
+          "specificity": "exact"
+        }
+      ],
+      "excluded": [],
+      "labeller_note": "Scooping changes yield from 48 cookies to 16. The recipe's servings field is not updated by the pipeline, so the enhanced recipe would state 48."
+    },
+    {
+      "tweak_id": "10813-t2",
+      "recipe_id": "10813",
+      "recipe_title": "Best Chocolate Chip Cookies",
+      "review_rating": 5,
+      "review_text": "These are awesome cookies. I followed the advice of others by making the following tweaks: (1) I used a half cup of sugar and one-and-a-half cups of brown sugar; (2) I omitted the water; (3) I added a teaspoon of cream of tartar to the batter; (4) I refrigerated the batter for at least an hour before scooping and baking. The cookies retained their shape and didn't spread when baked. I think the cream of tartar made a difference, and the cookies did not come out too cakey either! This recipe is going in my \"favorites\" cookbook.",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Halve the white sugar.",
+          "anchor": "1 cup white sugar",
+          "specificity": "exact"
+        },
+        {
+          "id": "m2",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Raise the brown sugar to one and a half cups.",
+          "anchor": "1 cup packed brown sugar",
+          "specificity": "exact"
+        },
+        {
+          "id": "m3",
+          "type": "removal",
+          "target": "ingredients",
+          "intent": "Omit the hot water.",
+          "anchor": "2 teaspoons hot water",
+          "specificity": "exact"
+        },
+        {
+          "id": "m4",
+          "type": "addition",
+          "target": "ingredients",
+          "intent": "Add a teaspoon of cream of tartar so the cookies hold their shape.",
+          "anchor": "0.5 teaspoon salt",
+          "specificity": "exact"
+        },
+        {
+          "id": "m5",
+          "type": "technique_change",
+          "target": "instructions",
+          "intent": "Refrigerate the dough at least an hour before scooping and baking.",
+          "anchor": "Drop spoonfuls of dough 2 inches apart onto ungreased baking sheets.",
+          "specificity": "exact"
+        }
+      ],
+      "excluded": [],
+      "labeller_note": "Five discrete modifications in one review, the hardest case in the set. 'a half cup of sugar' means white sugar, resolvable only from the contrast with brown sugar in the same clause. Removing the hot water orphans the instruction step 'Dissolve baking soda in hot water', which no edit here repairs."
+    },
+    {
+      "tweak_id": "10813-t3",
+      "recipe_id": "10813",
+      "recipe_title": "Best Chocolate Chip Cookies",
+      "review_rating": 3,
+      "review_text": "The first batch that I made was a bit bland. But I did love that they weren't flat! They are a nice thick, chewy cookie. The second batch I used 1 tsp. of salt instead of 1/2 tsp. and omitted the nuts. This was better, but still not quite as flavorful at the traditional Tollhouse cookie recipe. I found that if I pressed them down slightly before baking that worked the best.If I were to rate this recipe on look and texture, it would be a 5. But the flavor falls a bit flat for me. I may keep trying to see how I can make it taste better, but maintain the aesthetic.",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Double the salt to lift a bland cookie.",
+          "anchor": "0.5 teaspoon salt",
+          "specificity": "exact"
+        },
+        {
+          "id": "m2",
+          "type": "removal",
+          "target": "ingredients",
+          "intent": "Omit the walnuts.",
+          "anchor": "1 cup chopped walnuts",
+          "specificity": "exact"
+        },
+        {
+          "id": "m3",
+          "type": "technique_change",
+          "target": "instructions",
+          "intent": "Press the dough down slightly before baking.",
+          "anchor": "Drop spoonfuls of dough 2 inches apart onto ungreased baking sheets.",
+          "specificity": "exact"
+        }
+      ],
+      "excluded": [
+        {
+          "quote": "I may keep trying to see how I can make it taste better",
+          "reason": "future_intent"
+        }
+      ],
+      "labeller_note": "Three stars. The reviewer applied these and still concluded 'the flavor falls a bit flat for me'. A ranking signal that ignores reviewer satisfaction will publish this."
+    },
+    {
+      "tweak_id": "10813-t4",
+      "recipe_id": "10813",
+      "recipe_title": "Best Chocolate Chip Cookies",
+      "review_rating": 5,
+      "review_text": "I just made these and 😍😋!!!! Changes- used a whole cup of white sugar and 1/2 c of brown (because it's what I had) and 1/2 c less flour after reading some other reviews, and added a tiny dash of cinnamon. They are phenomenal! Crispy edges and gooey center. My husband works from home and he can't stop coming out of his office and trying them!!!! HUGE hit and will be my go to. Thank you!!",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Halve the brown sugar.",
+          "anchor": "1 cup packed brown sugar",
+          "specificity": "exact"
+        },
+        {
+          "id": "m2",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Use half a cup less flour.",
+          "anchor": "3 cups all-purpose flour",
+          "specificity": "exact"
+        },
+        {
+          "id": "m3",
+          "type": "addition",
+          "target": "ingredients",
+          "intent": "Add a dash of cinnamon.",
+          "anchor": "2 teaspoons vanilla extract",
+          "specificity": "exact"
+        }
+      ],
+      "excluded": [
+        {
+          "quote": "used a whole cup of white sugar",
+          "reason": "no_change_from_original"
+        }
+      ],
+      "labeller_note": "Trap case. 'a whole cup of white sugar' is the recipe's existing amount. The reviewer is describing a change relative to other reviewers' advice to halve it, not relative to the recipe. An extractor that reads it as an edit produces a replace of '1 cup white sugar' with itself."
+    },
+    {
+      "tweak_id": "144299-t1",
+      "recipe_id": "144299",
+      "recipe_title": "Nikujaga (Japanese-Style Meat and Potatoes)",
+      "review_rating": 4,
+      "review_text": "Overall it was pretty good but the measurements were way off. HAS to be a typo. 1/4lb of meat to serve 4??? I used a lil over 1lb and it even then it was swimming in the broth. After following the recipe, i added extra soy and sugar only because i thought the flavor was a little on the lite side. Overall good.** If you cant find dashi, beef broth/stock works just fine. My japanese mom happen to have some so i was able to get some from her.",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Raise the beef to roughly one pound; a quarter pound cannot serve four.",
+          "anchor": "0.25 pound sirloin steak, thinly sliced",
+          "specificity": "exact"
+        },
+        {
+          "id": "m2",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Add more soy sauce; the flavour is thin as written.",
+          "anchor": "0.25 cup soy sauce",
+          "specificity": "underspecified"
+        },
+        {
+          "id": "m3",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Add more sugar; the flavour is thin as written.",
+          "anchor": "1 tablespoon white sugar",
+          "specificity": "underspecified"
+        }
+      ],
+      "excluded": [
+        {
+          "quote": "If you cant find dashi, beef broth/stock works just fine",
+          "reason": "advice_to_others_not_applied"
+        }
+      ],
+      "labeller_note": "The dashi line is advice for readers who lack an ingredient. The reviewer states they used real dashi from their mother, so it is not a change they made. Two of the three modifications give no amount, so no exact edit is derivable."
+    },
+    {
+      "tweak_id": "19117-t1",
+      "recipe_id": "19117",
+      "recipe_title": "Spicy Apple Cake",
+      "review_rating": 5,
+      "review_text": "Mmmm, this cake was so good. I made it exactly as directed except I used a different frosting only because I had some leftover from another cake. The next time I make this I will add one more cup of apples because more is better right?!",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "ingredient_substitution",
+          "target": "ingredients",
+          "intent": "Use a different frosting from the one in the recipe.",
+          "anchor": null,
+          "specificity": "underspecified"
+        }
+      ],
+      "excluded": [
+        {
+          "quote": "The next time I make this I will add one more cup of apples",
+          "reason": "future_intent"
+        }
+      ],
+      "labeller_note": "The frosting swap was made but never named, so no concrete edit exists. The apple line is explicit future intent. This review is why the pipeline publishes an unchanged Spicy Apple Cake as 'Community Enhanced' in half of all runs."
+    },
+    {
+      "tweak_id": "19117-t2",
+      "recipe_id": "19117",
+      "recipe_title": "Spicy Apple Cake",
+      "review_rating": 5,
+      "review_text": "Will make this one again! (maybe for Thanksgiving dessert) I would prefer some more apple chunks in it, but that is just my preference. This cake is sweet and delicious.",
+      "expected_modifications": [],
+      "excluded": [
+        {
+          "quote": "I would prefer some more apple chunks in it, but that is just my preference",
+          "reason": "stated_preference_not_applied"
+        },
+        {
+          "quote": "Will make this one again",
+          "reason": "future_intent"
+        }
+      ],
+      "labeller_note": "Zero modifications. The reviewer explicitly frames the apple comment as personal preference and describes no change. A pure false positive of the has_modification regex, caught by the '(more|less|extra)' pattern."
+    },
+    {
+      "tweak_id": "77935-t1",
+      "recipe_id": "77935",
+      "recipe_title": "Creamy Sweet Potato With Ginger Soup",
+      "review_rating": 5,
+      "review_text": "I made this with canned yams. I added roasted Brussels Sprouts and peppers. I drizzled heavy cream at the end. Loved the contrast of the roasted greens to the sweet and spicy. Turned out amazing!",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "ingredient_substitution",
+          "target": "ingredients",
+          "intent": "Use canned yams in place of raw sweet potatoes.",
+          "anchor": "1.5 pounds peeled raw sweet potatoes, cut into 1-inch chunks",
+          "specificity": "exact"
+        },
+        {
+          "id": "m2",
+          "type": "addition",
+          "target": "ingredients",
+          "intent": "Add roasted Brussels sprouts for contrast against the sweet and spicy.",
+          "anchor": null,
+          "specificity": "underspecified"
+        },
+        {
+          "id": "m3",
+          "type": "addition",
+          "target": "ingredients",
+          "intent": "Add roasted peppers for contrast against the sweet and spicy.",
+          "anchor": null,
+          "specificity": "underspecified"
+        },
+        {
+          "id": "m4",
+          "type": "addition",
+          "target": "instructions",
+          "intent": "Drizzle heavy cream over the soup at the end.",
+          "anchor": "Return to pan (or a soup pot); add enough half-and-half so the mixture is souplike, yet thick enough to float garnish. Taste, and add salt and pepper if needed. Heat through, ladle into bowls, garnish and serve.",
+          "specificity": "underspecified"
+        }
+      ],
+      "excluded": [],
+      "labeller_note": "Sprouts and peppers are two distinct ingredients, not one. The committed sample output merges them into a single line and drops the yams and the cream entirely, capturing one of four. Canned yams are pre-cooked, so the seven to eight minute saute of raw chunks no longer applies; no edit here repairs that."
+    },
+    {
+      "tweak_id": "77935-t2",
+      "recipe_id": "77935",
+      "recipe_title": "Creamy Sweet Potato With Ginger Soup",
+      "review_rating": 5,
+      "review_text": "It was amazing!! The portion is only enough for 2-3 people. Very good as is but when I make it again I will use fresh ginger to give it more of a ginger flavour.",
+      "expected_modifications": [],
+      "excluded": [
+        {
+          "quote": "when I make it again I will use fresh ginger",
+          "reason": "future_intent"
+        }
+      ],
+      "labeller_note": "Zero modifications. 'Very good as is' states plainly that nothing was changed. The committed sample output in data/enhanced applies this anyway, substituting fresh ginger for ground and presenting it to the user as a community-tested modification."
+    },
+    {
+      "tweak_id": "77935-t3",
+      "recipe_id": "77935",
+      "recipe_title": "Creamy Sweet Potato With Ginger Soup",
+      "review_rating": 5,
+      "review_text": "I had one large sweet potato that needed to be used, and 3 white potatoes, so I used those to make this soup. I also substituted 2% milk instead of half-and-half or whole milk. It turned out delicious! I highly recommend it. Thanks for sharing the recipe.",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "ingredient_substitution",
+          "target": "ingredients",
+          "intent": "Use one large sweet potato plus three white potatoes.",
+          "anchor": "1.5 pounds peeled raw sweet potatoes, cut into 1-inch chunks",
+          "specificity": "exact"
+        },
+        {
+          "id": "m2",
+          "type": "ingredient_substitution",
+          "target": "ingredients",
+          "intent": "Use 2% milk in place of half-and-half.",
+          "anchor": "1.5 cups half-and-half (or whole milk)",
+          "specificity": "exact"
+        }
+      ],
+      "excluded": [],
+      "labeller_note": "The potato swap is driven by using up what was on hand, not by improving the recipe. A platform applying the highest voted improvement should weigh intent, which nothing in the schema records."
+    },
+    {
+      "tweak_id": "77935-t4",
+      "recipe_id": "77935",
+      "recipe_title": "Creamy Sweet Potato With Ginger Soup",
+      "review_rating": 4,
+      "review_text": "Def has a kick! Very thick.. Even w 2% milk- will use more broth next time. Used fresh grated ginger. Hearty and yummy!",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "ingredient_substitution",
+          "target": "ingredients",
+          "intent": "Use fresh grated ginger in place of ground.",
+          "anchor": "1.5 teaspoons ground ginger",
+          "specificity": "exact"
+        },
+        {
+          "id": "m2",
+          "type": "ingredient_substitution",
+          "target": "ingredients",
+          "intent": "Use 2% milk in place of half-and-half.",
+          "anchor": "1.5 cups half-and-half (or whole milk)",
+          "specificity": "exact",
+          "known_hard": true
+        }
+      ],
+      "excluded": [
+        {
+          "quote": "will use more broth next time",
+          "reason": "future_intent"
+        }
+      ],
+      "labeller_note": "The milk substitution is implied, not stated. 'Even w 2% milk' presupposes it was used. A careful reader catches it; a literal extractor looking for 'I used' will not."
+    },
+    {
+      "tweak_id": "77935-t5",
+      "recipe_id": "77935",
+      "recipe_title": "Creamy Sweet Potato With Ginger Soup",
+      "review_rating": 4,
+      "review_text": "Great soup! The vegetables caramelize beautifully with this method (though I think it would also work fine in the oven, which would take longer but keep my hands free for other things). I added extra cayenne pepper, lots of black pepper, and used heavy cream instead of 1/2 & 1/2; otherwise followed as written. I didn't find it at all too sweet - these are sweet potatoes, after all. Thanks for the recipe!",
+      "expected_modifications": [
+        {
+          "id": "m1",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Increase the cayenne.",
+          "anchor": "0.125 teaspoon cayenne pepper",
+          "specificity": "underspecified"
+        },
+        {
+          "id": "m2",
+          "type": "quantity_adjustment",
+          "target": "ingredients",
+          "intent": "Add a generous amount of black pepper.",
+          "anchor": "Salt and freshly ground pepper, to taste",
+          "specificity": "underspecified"
+        },
+        {
+          "id": "m3",
+          "type": "ingredient_substitution",
+          "target": "ingredients",
+          "intent": "Use heavy cream in place of half-and-half.",
+          "anchor": "1.5 cups half-and-half (or whole milk)",
+          "specificity": "exact"
+        }
+      ],
+      "excluded": [
+        {
+          "quote": "I think it would also work fine in the oven",
+          "reason": "speculation_not_attempted"
+        }
+      ],
+      "labeller_note": "'otherwise followed as written' bounds the change set explicitly. The oven remark is speculation the reviewer did not try. The black pepper increase targets a 'to taste' line that carries no measurable amount."
+    }
+  ],
+  "status": "draft-reviewed",
+  "known_hard_cases": {
+    "77935-t4.m2": "The 2% milk substitution is implied, not stated. 'Even w 2% milk' presupposes it was used in place of half-and-half. A literal extractor scanning for 'I used' misses it. Counted as expected: the cook did substitute, so a product that misses it is wrong.",
+    "10813-t4.excluded": "'a whole cup of white sugar' is the recipe's existing amount. The reviewer describes a change relative to other reviewers' advice, not to the recipe. Extracting it yields a replace of a line with itself.",
+    "19117-t2": "Zero modifications. Pure stated preference. Correct only if the extractor returns nothing.",
+    "77935-t2": "Zero modifications. 'Very good as is' plus future intent. The shipped pipeline applied a change to this review anyway; see docs/pipeline-audit.md."
+  }
+}
