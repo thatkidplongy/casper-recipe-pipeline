@@ -49,7 +49,9 @@ logs/
 scratchpad.md
 test_output/
 scratch.py
-claude.md
+# CLAUDE.md is a tracked project file holding the engineering standards.
+# The former 'claude.md' entry here swallowed it on case-insensitive
+# filesystems, where git matches ignore patterns without regard to case.
 memory-bank/
 .claude/
 

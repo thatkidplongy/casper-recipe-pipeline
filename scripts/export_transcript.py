@@ -24,6 +24,7 @@ import sys
 from pathlib import Path
 
 PLACEHOLDER = "[REDACTED-API-KEY]"
+EMAIL_PLACEHOLDER = "[REDACTED-EMAIL]"
 
 # Ordered most specific first: a private key block must be collapsed before its
 # base64 body is picked at by a narrower rule.
@@ -61,6 +62,10 @@ _PATTERNS = [
     re.compile(r"(?i)\bBearer\s+[A-Za-z0-9._~+/=-]{20,}"),
 ]
 
+# Email addresses. Environment output and git identity drag personal
+# addresses into a transcript that is committed and read by others.
+_EMAIL = re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")
+
 # Assignments such as OPENAI_API_KEY=... or "api_key": "...". The name is kept
 # because it is not secret and it tells a reviewer what was scrubbed.
 _ASSIGNMENT = re.compile(
@@ -89,7 +94,8 @@ def redact(text):
     def _hide_value(match):
         return f"{match.group('name')}{match.group('sep')}{PLACEHOLDER}"
 
-    return _ASSIGNMENT.sub(_hide_value, text)
+    text = _ASSIGNMENT.sub(_hide_value, text)
+    return _EMAIL.sub(EMAIL_PLACEHOLDER, text)
 
 
 def redact_tree(node):

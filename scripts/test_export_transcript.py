@@ -97,6 +97,13 @@ class TestRedactsCredentials(unittest.TestCase):
         self.assertNotIn("z" * 44, out)
         self.assertIn("OPENAI_API_KEY", out, "the variable name is not a secret and aids review")
 
+    def test_email_addresses_are_redacted(self):
+        """Environment output drags personal addresses into the transcript."""
+        out = redact("CLAUDE_CODE_USER_EMAIL=someone@example.com and more text")
+        self.assertNotIn("someone@example.com", out)
+        self.assertIn("[REDACTED-EMAIL]", out)
+        self.assertIn("and more text", out, "surrounding prose must survive")
+
     def test_quoted_json_secret_field(self):
         self.assert_scrubbed(
             "s3cr3tV4lu3_thatIsLongEnough1234",
