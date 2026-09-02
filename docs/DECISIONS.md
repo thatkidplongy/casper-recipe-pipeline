@@ -47,3 +47,35 @@ example when re-exporting an old transcript. `--transcript` overrides both.
 **Rejected** — *hardcoding the path*: breaks for every other user and machine.
 *Newest file only*: silently exports the wrong session when two are open, which
 is the failure mode most likely to go unnoticed.
+
+## Selection must become deterministic and ranked before any launch
+
+**What** — random review selection is treated as a launch blocker, not a
+refinement. No enhanced recipe ships to a user until selection is deterministic,
+ranked, and recorded in the output.
+
+**Why** — `extract_single_modification` calls `random.choice` with no seed
+(`tweak_extractor.py:136`). On the chocolate chip cookie recipe, four reviews
+carry `has_modification`, so each is chosen roughly a quarter of the time. Three
+consecutive real runs produced three different published recipes from the same
+input.
+
+One of those four is a **3-star review** from a reviewer who found the result
+bland and never fully satisfied: *"still not quite as flavorful ... the flavor
+falls a bit flat for me."* It is selected about 25% of the time. So a platform
+whose entire premise is applying the *highest voted community-tested*
+modification publishes the least satisfied reviewer's version of the recipe on
+roughly one run in four, presents it as a community improvement, and records
+nothing about why that review was chosen.
+
+Nothing in the output identifies which of the four was used or what the
+alternatives were, so the result is neither reproducible nor explainable. The
+line-level diff the product promises cannot be trusted while the line it
+explains changes between runs.
+
+**Rejected** — *Seed the RNG*: makes runs reproducible but still picks
+arbitrarily, and a fixed seed disguises the problem rather than fixing it.
+*Take the highest rated review*: ratings cluster hard at 5, so it is close to
+arbitrary too, and rating measures the original recipe rather than the tweak.
+*Ship it and rank later*: the citation shown to the user is the product, so
+publishing an unexplainable one spends the trust the feature depends on.
