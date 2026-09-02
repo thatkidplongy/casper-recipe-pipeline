@@ -115,3 +115,29 @@ change-record bug but not the silent zero-change publish, which only appears
 when Step 2 and Step 3 run together. *Wait for an API key*: blocks all
 diagnosis on an environment problem, and the deterministic defects do not need
 a model to demonstrate.
+
+## Featured-tweak list order is the ranking, and every tweak is applied
+
+**What** — selection reads the scraped `featured_tweaks` list and applies every
+entry in list order, rank 1 first. Each applied modification records its
+`source_tweak_id` and `source_tweak_rank` in the output. Recipes with no
+featured tweaks fall back to flagged reviews in file order.
+
+**Why** — the brief asks for the highest voted tweak and the data has no vote
+count, so any ranking claim would be a fiction. AllRecipes' own featured-tweak
+ordering is the only ranking signal the scrape captured, and it was being thrown
+away in favour of `random.choice` over all flagged reviews. Using it verbatim is
+defensible, reproducible, and honest about what it is. Applying all of them
+rather than one removes the choice that was causing the damage: a quarter of runs
+were publishing the 3-star reviewer's version with nothing recording why.
+
+Recording the tweak id matters as much as the ordering. It turns rank into a
+product decision that can be argued about and changed, rather than an accident
+invisible in the output.
+
+**Rejected** — *Seed the RNG*: reproducible but still arbitrary, and a fixed seed
+disguises the problem. *Rank by star rating*: ratings cluster at 5, and a rating
+measures the original recipe rather than the tweak. *Apply only rank 1*:
+deterministic, but discards eleven of twelve community tweaks and keeps the
+product dependent on a ranking signal that does not exist. *Wait for real vote
+data*: blocks a correctness fix on a scraper change that is out of scope.

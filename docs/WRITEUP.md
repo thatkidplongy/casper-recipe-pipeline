@@ -15,7 +15,11 @@ None of that is fixable by improving the prompt.
 
 ## What I did
 
-Four hours, roughly in thirds.
+The guideline was four hours. **I went past it to land the two fixes.** The
+diagnosis, the golden set and the harness fit inside the window; the fixes did
+not, and stopping with a diagnosis and no repaired code seemed the worse
+outcome. Recording it here rather than leaving it to be noticed in the commit
+timestamps.
 
 1. **Read the pipeline end to end** and mapped every assumption the code makes
    that the brief does not support. Findings in `docs/pipeline-audit.md`.
@@ -24,13 +28,19 @@ Four hours, roughly in thirds.
 3. **Built a measurement instrument.** Hand-labelled the 12 AllRecipes featured
    tweaks into a golden set of 28 discrete modifications, and wrote a harness
    that scores extraction against it over repeated runs.
+4. **Fixed the two highest-value defects**, test-first, once the diagnosis said
+   which ones mattered. See *What I fixed* below.
 
-I deliberately did not fix anything. With this many interacting defects, the
-first job is knowing which ones matter.
+Diagnosis came before any fix on purpose. With this many interacting defects,
+knowing which ones matter is the whole job; two of them turned out to be a few
+lines each.
 
 ---
 
 ## Finding 1: the system cannot tell "nothing to do" from "something is broken", and it always reports the first
+
+> **Faces 1 and 2 are fixed.** Face 3, the API error handling, is not. Details in
+> *What I fixed*. The diagnosis below describes the behaviour as found.
 
 This is the whole story. Everything else in this document is downstream of it.
 
@@ -143,6 +153,9 @@ apply them already exists, unused, in `apply_modifications_batch`.
 ---
 
 ## Finding 3: "highest voted" does not exist in the data
+
+> **The random selection is fixed. The missing vote data is not, and cannot be
+> from inside this repository.** Details in *What I fixed*.
 
 The product premise is applying the *highest voted community-tested*
 modification. There is no vote, helpful, or upvote count on any review in
@@ -311,19 +324,120 @@ already shipped in `data/enhanced/` is reproduced with a count against it.
 
 ---
 
+## What I fixed
+
+Two changes, both test-first, both validatable offline with no API key.
+
+### `46512a7` Never report a change that did not happen
+
+`RecipeModifier.apply_edit` now records a replace only when the text actually
+differs, and logs a warning naming the similarity score when it does not.
+`process_single_recipe` refuses to publish when no edit applied, rather than
+producing an unchanged recipe titled "(Community Enhanced)".
+
+Measured over the same eight-run sweep:
+
+| | Before | After this fix |
+| --- | --- | --- |
+| Apple cake zero-change publishes | 4 of 8 | 0 |
+| Cookie false change records | 2 | 0 |
+| Changes claimed vs actually made | 66 / 64 | 54 / 54 |
+| **Recipes published per run** | **4.00** | **3.38** |
+
+**Published output dropped, and that is the fix working.** Unchanged recipes now
+fail loudly instead of shipping. Apple cake went from publishing every run to
+publishing half of them, and the soup lost one run in eight to the same guard.
+A platform that ships fewer recipes but tells the truth about all of them is
+strictly better than one that fills the gap with fabrications.
+
+### `7c579d8` Deterministic, complete, attributable selection
+
+`random.choice` is gone. The pipeline reads the scraped `featured_tweaks` list,
+the ranking signal that existed in the data and was never read, and applies
+every entry in that order. Each modification records `source_tweak_id` and
+`source_tweak_rank`, so the output says which tweak produced which change.
+
+| | Before | After |
+| --- | --- | --- |
+| Tweaks applied per run | 1 of 4, at random | 4 of 4, always |
+| Changes per run, cookies | 1 to 4 | 9 |
+| Three runs byte-identical | no | yes, `created_at` aside |
+| 3-star tweak included | 25% of runs | every run, and named |
+
+**A third source of nondeterminism surfaced only at the end**, and it is the
+most instructive thing in this section. After the selection fix, all ten unit
+tests passed and three real runs still produced different files.
+`enhancement_summary.change_types` was built with `list(set(...))`, and Python
+randomises string hashing per process, so set iteration order varies between
+runs. The unit tests compared ingredients and tweak ids, not the summary, so
+they were green over a live defect. Only whole-artifact comparison across
+separate processes caught it.
+
+The lesson generalises: **a determinism test that checks selected fields is not
+a determinism test.**
+
+### The two fixes together
+
+Applying every tweak instead of one recovers the output that the first fix gave
+up, without weakening it:
+
+| | Original | After `46512a7` | After both |
+| --- | --- | --- | --- |
+| Recipes published per run | 4.00 | 3.38 | 4.00 |
+| Changes actually applied per run | 8.0 | 6.8 | **18.0** |
+| False change records | 2 | 0 | 0 |
+| Runs byte-identical | no | no | yes |
+
+The recovery is legitimate rather than a relaxed guard. The guard still fires,
+it just no longer discards a whole recipe when one tweak misses. Apple cake now
+publishes with its rank 1 tweak applied while rank 2 is dropped and logged:
+
+```
+WARNING  Tweak 19117-t2 changed nothing (1 edits, none matched); not recorded
+```
+
+That is the shape the product needed all along. More community tweaks reach the
+recipe, every one of them is real, and each is attributable to its source.
+
+### What these fixes do not touch
+
+- The **schema ceiling** in Finding 2, which is deliberately deferred. One review
+  still yields one `modification_type` and one `reasoning`, so six of twelve
+  tweaks remain unrepresentable.
+
+  The reason for deferring it is a process rule rather than a scheduling
+  accident. Splitting one review into several modification objects requires
+  changing the extraction prompt, and a prompt change is a behaviour change: it
+  has to be rerun against the golden set ten times and reported as a pass rate,
+  never as "it worked". **The account has no API credits, so that rerun cannot
+  happen.** Shipping a prompt change I could not measure would contradict the
+  standard this repository is built on, and it would be exactly the kind of
+  unverified confidence this document criticises everywhere else.
+
+  The golden set and the harness are built and tested, so the measurement is one
+  funded run away. That is the right place to stop.
+- **Vote data** still does not exist. Rank order is now the featured-tweak list
+  order, which is honest and explicit but is not a vote count. Finding 3's
+  product question is unresolved.
+- **API error handling.** A permanent billing failure is still retried up to
+  nine times and still returns `None`, indistinguishable from an empty corpus.
+- **Instruction-level matching.** `technique_change` remains unreachable.
+
+---
+
 ## What I would do next, in order
 
-1. **Make failure loud.** Never emit a change record for text that did not
-   change; never publish with zero applied edits; catch typed API errors and
-   stop on the fatal ones instead of retrying a billing failure for an hour.
-   Converts every silent failure in this document into a visible one. Smallest
-   change, largest gain.
+1. ~~Never emit a change record for text that did not change; never publish with
+   zero applied edits.~~ **Done, `46512a7`.** What remains under this heading:
+   catch typed API errors and stop on the fatal ones instead of retrying a
+   billing failure for an hour.
 2. **Change the unit from review to modification.** *N* modification objects per
    review, each with its own type and rationale. Unblocks the per-line
    explanation the product promises.
-3. **Make selection deterministic and explainable.** Record the candidate set,
-   the criterion and the choice in the output. Decide honestly what "highest
-   voted" can mean given data that has no votes.
+3. ~~Make selection deterministic and explainable.~~ **Done, `7c579d8`.** Every
+   featured tweak is applied in rank order and attributed by id. What remains is
+   the product question: decide honestly what "highest voted" can mean given
+   data that has no votes.
 4. **Replace whole-string fuzzy matching** with anchoring that understands
    quantities and units, and match within a line rather than across a list.
    Currently every instruction-level edit is unreachable, which kills
