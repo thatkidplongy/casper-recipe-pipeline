@@ -100,10 +100,18 @@ class TweakExtractor:
 
         self.client = OpenAI(**client_kwargs)
 
+        # Report the client's own base_url rather than re-deriving it from the
+        # environment. The SDK reads OPENAI_BASE_URL by itself, so a derived
+        # value can claim "OpenAI default" while requests go elsewhere.
         logger.info(
             f"Initialized TweakExtractor with model: {self.model} "
-            f"(endpoint: {resolved_base_url or 'OpenAI default'})"
+            f"(endpoint: {self.endpoint})"
         )
+
+    @property
+    def endpoint(self) -> str:
+        """The endpoint requests actually go to, as the client sees it."""
+        return str(self.client.base_url)
 
     def extract_modifications(
         self,

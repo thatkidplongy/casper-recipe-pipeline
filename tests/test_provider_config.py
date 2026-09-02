@@ -77,6 +77,31 @@ class TestEndpointIsConfigurable(unittest.TestCase):
             self.assertIn("api.openai.com", str(TweakExtractor().client.base_url))
 
 
+class TestTheReportedEndpointIsTheRealOne(unittest.TestCase):
+    """The log line and the report header derived the endpoint from LLM_BASE_URL
+    instead of asking the client. With OPENAI_BASE_URL set, which the SDK reads
+    on its own, they claimed "OpenAI default" while requests went to Groq. A
+    provenance field that can disagree with reality is worse than absent."""
+
+    def test_openai_base_url_is_reported(self):
+        with env(OPENAI_BASE_URL="https://api.groq.com/openai/v1", LLM_BASE_URL=None):
+            self.assertIn("api.groq.com", TweakExtractor().endpoint)
+
+    def test_llm_base_url_is_reported(self):
+        with env(LLM_BASE_URL="https://api.groq.com/openai/v1", OPENAI_BASE_URL=None):
+            self.assertIn("api.groq.com", TweakExtractor().endpoint)
+
+    def test_the_reported_endpoint_matches_the_client(self):
+        with env(OPENAI_BASE_URL="https://elsewhere.example/v1", LLM_BASE_URL=None):
+            ex = TweakExtractor()
+            self.assertEqual(ex.endpoint, str(ex.client.base_url),
+                             "the reported endpoint must come from the client, not from env")
+
+    def test_the_default_endpoint_is_named_honestly(self):
+        with env(OPENAI_BASE_URL=None, LLM_BASE_URL=None):
+            self.assertIn("api.openai.com", TweakExtractor().endpoint)
+
+
 class TestApiKeyResolution(unittest.TestCase):
     def test_a_provider_neutral_key_variable_is_accepted(self):
         with env(LLM_API_KEY="gsk_" + "x" * 44, OPENAI_API_KEY=None):

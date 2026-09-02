@@ -185,6 +185,7 @@ def live_extractor(model):
     from llm_pipeline.models import Recipe, Review
 
     ex = TweakExtractor(model=model)
+    live_extractor.resolved = (ex.model, ex.endpoint)
 
     def run(fixture, recipe_data):
         recipe = Recipe(
@@ -269,10 +270,10 @@ def main(argv=None):
     if args.stub:
         mode = "STUB (control, not a measurement)"
     else:
-        from llm_pipeline.tweak_extractor import DEFAULT_MODEL
-        resolved = args.model or os.getenv("LLM_MODEL") or DEFAULT_MODEL
-        endpoint = os.getenv("LLM_BASE_URL") or "OpenAI default"
-        mode = f"LIVE {resolved} @ {endpoint}"
+        # Taken from the client itself, so the report cannot claim one endpoint
+        # while requests went to another.
+        resolved_model, resolved_endpoint = live_extractor.resolved
+        mode = f"LIVE {resolved_model} @ {resolved_endpoint}"
     print(f"mode: {mode}   fixtures: {len(fixtures)}   runs: {args.runs}\n")
 
     runs = []
