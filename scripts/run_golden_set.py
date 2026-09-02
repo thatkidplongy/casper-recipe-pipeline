@@ -298,9 +298,21 @@ def render_run_log(meta, runs, errors, raw_outputs):
         f"| Model | `{meta['model']}` |",
         f"| Endpoint | {meta['endpoint']} |",
         f"| Fixtures | {meta['fixtures']} |",
-        f"| Runs | {meta['runs']} |",
+        f"| Runs requested | {meta['runs']} |",
+        f"| Runs completed | {meta.get('completed_runs', len(runs))} |",
         "",
     ]
+    completed = meta.get("completed_runs", len(runs))
+    if meta.get("aborted"):
+        lines += [
+            f"> **INCOMPLETE: {completed} of {meta['runs']} runs completed.** "
+            f"The remainder was abandoned: {meta['aborted']}",
+            ">",
+            "> The figures below describe only the completed runs. Treat them as "
+            "provisional: fewer repetitions show less variance than the standard "
+            "asks for.",
+            "",
+        ]
     if meta.get("dirty"):
         lines += ["> **The working tree had uncommitted changes when this ran.** "
                   "The commit above does not fully describe the code that produced "
@@ -404,6 +416,7 @@ def main(argv=None):
 
     runs = []
     all_errors = []
+    aborted = None
     for n in range(1, args.runs + 1):
         def progress(r, _n=n):
             if r["failed"]:
@@ -421,9 +434,15 @@ def main(argv=None):
             results, errors = run_fixtures(fixtures, recipes, extract, on_result=progress)
         except AllCallsFailed as exc:
             print(f"\n  run {n}: ABORTED. {exc}")
-            print("\nNo score is reported. Every extraction failed, so there is\n"
-                  "nothing to measure. Fix the cause and rerun.")
-            return 2
+            aborted = f"run {n}: {exc}"
+            if runs:
+                # Earlier runs completed. Discarding them because a later run
+                # failed would destroy a measurement that actually happened.
+                print(f"\n  {len(runs)} earlier run(s) completed and are being kept.")
+            else:
+                print("\nNo score is reported. Every extraction failed, so there is\n"
+                      "nothing to measure. Fix the cause and rerun.")
+            break
 
         runs.append(results)
         all_errors.extend((tid, msg) for tid, msg in errors)
@@ -435,8 +454,13 @@ def main(argv=None):
               f"zero-tweaks correct {a['zero_tweaks_correct']}/{a['zero_tweaks']}"
               f"{suffix}")
 
+    if not runs:
+        return 2
+
     agg = aggregate(runs)
     print("\n" + "=" * 62)
+    if aborted:
+        print(f"  INCOMPLETE: {len(runs)} of {args.runs} runs completed")
     print(f"  runs                       {agg['runs']}")
     print(f"  recall on exact mods       {agg['recall']:.1%}  ({agg['exact_found']}/{agg['exact_expected']})")
     print(f"  underspecified recovered   {agg['underspec_found']}/{agg['underspec_expected']}  (not required)")
@@ -478,6 +502,8 @@ def main(argv=None):
         "commit": _git("rev-parse", "--short", "HEAD") or "unknown",
         "started_at": started_at,
         "runs": args.runs,
+        "completed_runs": len(runs),
+        "aborted": aborted,
         "fixtures": len(fixtures),
         "dirty": bool(_git("status", "--porcelain")),
     }
@@ -489,6 +515,8 @@ def main(argv=None):
                         encoding="utf-8")
     print(f"run log: {display_path(log_path)}")
 
+    if aborted:
+        return 2
     return 1 if agg["failed"] else 0
 
 

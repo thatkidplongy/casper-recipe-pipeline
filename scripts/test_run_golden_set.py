@@ -292,5 +292,43 @@ class TestPathsOutsideTheRepoDoNotCrash(unittest.TestCase):
         self.assertIn("elsewhere", out, "an outside path must still be printable")
 
 
+class TestCompletedRunsSurviveAnAbort(unittest.TestCase):
+    """Run 1 completed, run 2 hit a daily token cap, and the abort returned
+    before writing anything. A completed measurement was destroyed by a later
+    failure. Partial evidence is evidence."""
+
+    def test_the_log_renders_from_the_runs_that_did_complete(self):
+        meta = {"mode": "LIVE m @ e", "model": "m", "endpoint": "e", "commit": "c",
+                "started_at": "t", "runs": 2, "fixtures": 1, "dirty": False,
+                "completed_runs": 1, "aborted": "run 2: rate limit reached"}
+        results = [[score_fixture(fixture("a", mods=[mod("m1", "1 cup white sugar")]),
+                                  [edit("1 cup white sugar")])]]
+        log = render_run_log(meta, results, [], {})
+        self.assertIn("| 1 | `a` | 1/1 |", log,
+                      "the completed run's result must survive the later abort")
+        self.assertIn("rate limit reached", log, "the abort cause must be recorded")
+
+    def test_the_log_says_it_is_incomplete(self):
+        meta = {"mode": "LIVE", "model": "m", "endpoint": "e", "commit": "c",
+                "started_at": "t", "runs": 10, "fixtures": 1, "dirty": False,
+                "completed_runs": 1, "aborted": "cap"}
+        log = render_run_log(meta,
+                             [[score_fixture(fixture("a", mods=[mod("m1", "x")]), [])]],
+                             [], {})
+        low = log.lower()
+        self.assertIn("incomplete", low,
+                      "a run of 1 reported as 10 would overstate the measurement")
+        self.assertIn("1 of 10", low)
+
+    def test_a_complete_run_is_not_labelled_incomplete(self):
+        meta = {"mode": "LIVE", "model": "m", "endpoint": "e", "commit": "c",
+                "started_at": "t", "runs": 1, "fixtures": 1, "dirty": False,
+                "completed_runs": 1, "aborted": None}
+        log = render_run_log(meta,
+                             [[score_fixture(fixture("a", mods=[mod("m1", "x")]), [])]],
+                             [], {})
+        self.assertNotIn("incomplete", log.lower())
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
