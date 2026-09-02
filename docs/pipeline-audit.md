@@ -34,6 +34,75 @@ Three findings decide this:
 
 ---
 
+## 1a. The headline finding: the output is untruthful in both directions
+
+Two defects, verified against the committed artifacts and against real runs, that
+together describe the product's core problem. The system's only job is to tell a
+user which community suggestion was applied and why. It gets that wrong in both
+possible directions.
+
+### It fabricates changes nobody suggested
+
+Fixture `77935-t2` is this review, in full:
+
+> It was amazing!! The portion is only enough for 2-3 people. **Very good as is**
+> but **when I make it again I will use fresh ginger** to give it more of a
+> ginger flavour.
+
+The reviewer states plainly that they changed nothing and describes an intention
+for next time. The correct extraction is empty.
+
+The committed output at `data/enhanced/enhanced_77935_creamy-sweet-potato-with-ginge.json`
+applies it anyway. It substitutes fresh ginger for ground, records the change,
+cites this reviewer as the source, and states the improvement as fact:
+
+```json
+{
+  "modification_type": "ingredient_substitution",
+  "reasoning": "Using fresh ginger enhances the ginger flavor in the soup.",
+  "changes_made": [{ "type": "ingredient",
+                     "from_text": "1.5 teaspoons ground ginger",
+                     "to_text": "1.5 teaspoons fresh ginger",
+                     "operation": "replace" }]
+}
+```
+
+Nobody made that change. The platform invented a community-tested modification
+from a review whose entire point was that the recipe needed no modification.
+
+### It claims changes it never made
+
+The mirror image, reproduced across eight full runs. In four of eight, Spicy
+Apple Cake is published with ingredients and instructions **byte-identical to the
+original**, titled "Spicy Apple Cake (Community Enhanced)", with:
+
+| Field | Value |
+| --- | --- |
+| `total_changes` | 0 |
+| `changes_made` | `[]` |
+| `change_types` | `["quantity_adjustment"]` |
+| `expected_impact` | `"More apple chunks."` |
+
+The citation names a reviewer who wrote that more apple is *"just my preference"*
+and made no change. The stated impact describes an improvement present nowhere in
+the file. The cause is a paraphrased `find` of "2 cups apple" scoring 0.53
+against `2 cups apple - peeled, cored, and chopped`, under the 0.6 threshold, so
+the only edit was dropped and Step 3 built the record regardless.
+
+### Why they are one finding
+
+A user cannot tell any of these apart from a correct result. There is no field
+that distinguishes *applied*, *attempted and missed*, and *invented*. The
+line-level diff the product promises is the feature, and in both cases it renders
+a confident, well-formatted explanation of something that did not happen.
+
+Fixing this is not a modelling problem. Refusing to emit a `ChangeRecord` when
+the text did not change, and refusing to publish when zero edits applied, turns
+both into loud failures. Both are small changes in `recipe_modifier.py` and
+`pipeline.py`. Everything else in this audit is secondary to them.
+
+---
+
 ## 2. Module map
 
 | Module | Responsibility | State |
