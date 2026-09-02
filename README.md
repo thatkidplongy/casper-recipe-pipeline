@@ -148,8 +148,8 @@ See `docs/WRITEUP.md` for findings and `docs/pipeline-audit.md` for the full aud
 | `docs/DECISIONS.md` | Every significant decision as What / Why / Rejected |
 | `docs/ERRORS.md` | Approaches that cost more than two attempts, and what finally worked |
 | `docs/evidence/` | Golden set run logs with raw model responses, and reproduction scripts |
-| `trajectory/*.md` | **The agent conversation, readable.** Start here for the transcript. |
-| `trajectory/*.json` | The same session as raw records, for completeness rather than reading |
+| `trajectory/agent-conversation.md` | **The agent conversation, readable.** Start here for the transcript. |
+| `trajectory/agent-conversation.json` | The same session as raw records, for completeness rather than reading |
 
 The Markdown transcript is the one to open. The JSON preserves every record
 including harness bookkeeping, which is 46% of the records and interrupts

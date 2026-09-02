@@ -23,6 +23,10 @@ import re
 import sys
 from pathlib import Path
 
+# The trajectory is a deliverable, so it gets a name that says what it is
+# rather than the session UUID. Stable, so a re-export replaces it.
+DEFAULT_BASENAME = "agent-conversation"
+
 PLACEHOLDER = "[REDACTED-API-KEY]"
 EMAIL_PLACEHOLDER = "[REDACTED-EMAIL]"
 
@@ -276,6 +280,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--transcript", help="Path to the session .jsonl file")
     parser.add_argument("--out-dir", default="trajectory", help="Output directory")
+    parser.add_argument("--name", default=DEFAULT_BASENAME,
+                        help=f"basename for the output files (default {DEFAULT_BASENAME})")
     parser.add_argument(
         "--max-chars",
         type=int,
@@ -299,8 +305,8 @@ def main(argv=None):
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    json_path = out_dir / f"{session_id}.json"
-    md_path = out_dir / f"{session_id}.md"
+    json_path = out_dir / f"{args.name}.json"
+    md_path = out_dir / f"{args.name}.md"
 
     json_path.write_text(
         json.dumps(safe_records, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"

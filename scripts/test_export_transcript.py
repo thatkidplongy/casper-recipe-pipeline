@@ -311,5 +311,21 @@ class TestScanSharesTheRedactorsPatterns(unittest.TestCase):
         self.assertEqual(len(hits), 1)
 
 
+class TestOutputNaming(unittest.TestCase):
+    """A file named after a session UUID tells a reviewer nothing. The
+    trajectory is a deliverable and should be named like one."""
+
+    def test_the_default_basename_is_descriptive(self):
+        from export_transcript import DEFAULT_BASENAME
+        self.assertNotRegex(DEFAULT_BASENAME, r"^[0-9a-f-]{36}$")
+        self.assertIn("conversation", DEFAULT_BASENAME)
+
+    def test_rerunning_overwrites_rather_than_accumulating(self):
+        """A stable name means a re-export replaces the file instead of
+        leaving one stale artifact per run."""
+        from export_transcript import DEFAULT_BASENAME
+        self.assertNotIn("{", DEFAULT_BASENAME)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
