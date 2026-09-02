@@ -15,11 +15,10 @@ None of that is fixable by improving the prompt.
 
 ## What I did
 
-The guideline was four hours. **I went past it to land the two fixes.** The
-diagnosis, the golden set and the harness fit inside the window; the fixes did
-not, and stopping with a diagnosis and no repaired code seemed the worse
-outcome. Recording it here rather than leaving it to be noticed in the commit
-timestamps.
+**3 hours 25 minutes**, from the first commit to the last, against a four hour
+guideline. Roughly half went to diagnosis before any code changed, which is the
+decision the rest of this document rests on: with six interacting defects,
+knowing which two matter is worth more than fixing the first one found.
 
 1. **Read the pipeline end to end** and mapped every assumption the code makes
    that the brief does not support. Findings in `docs/pipeline-audit.md`.
