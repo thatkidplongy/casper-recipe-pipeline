@@ -79,3 +79,39 @@ arbitrarily, and a fixed seed disguises the problem rather than fixing it.
 arbitrary too, and rating measures the original recipe rather than the tweak.
 *Ship it and rank later*: the citation shown to the user is the product, so
 publishing an unexplainable one spends the trust the feature depends on.
+
+## Diagnosis runs stub the extraction step
+
+**What** — for diagnosing pipeline defects, the single OpenAI HTTP call is
+replaced with canned extractions written against the actual review text and the
+actual ingredient lines. Selection, response parsing, Pydantic validation, edit
+application, attribution and file writing all run as production code. The stub
+is diagnosis only; the phase 2 baseline runs against the real model.
+
+**Why** — it separates two failure sources that otherwise blur together. Given a
+reasonable extraction, does the pipeline handle it correctly? That question has
+a definite answer, and the answer turned out to be no in three distinct ways: a
+change record emitted for a replace that altered nothing, an instruction edit
+dropped silently below the similarity threshold, and a published recipe
+identical to the original still labelled "Community Enhanced" with a citation
+and a stated impact. Every one of those is deterministic and fixable with
+certainty. Mixed with model variance they would read as flakiness and get
+explained away.
+
+**The live failure rate will be higher than these numbers, not lower.** The stub
+holds extraction quality constant at "competent". A real model adds its own
+variance on top: paraphrased `find` strings that miss the anchor, dropped
+modifications from multi-tweak reviews, and off-enum values that fail
+validation and discard the review entirely. Both paraphrased finds that caused
+failures in these runs are exactly what a real model emits, and the sample
+outputs already committed to the repository show it happening. Treat the stubbed
+figures as a floor.
+
+**Rejected** — *Run live for diagnosis*: the honest-looking option, but random
+review selection plus temperature means two runs differ for reasons that have
+nothing to do with the defect under investigation, so a deterministic bug looks
+like a flake and survives. *Unit-test the modifier in isolation*: catches the
+change-record bug but not the silent zero-change publish, which only appears
+when Step 2 and Step 3 run together. *Wait for an API key*: blocks all
+diagnosis on an environment problem, and the deterministic defects do not need
+a model to demonstrate.
