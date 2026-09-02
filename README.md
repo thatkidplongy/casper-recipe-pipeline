@@ -139,6 +139,34 @@ reproducible.
 
 See `docs/WRITEUP.md` for findings and `docs/pipeline-audit.md` for the full audit.
 
+## Where to start
+
+| File | What it is |
+| --- | --- |
+| `docs/WRITEUP.md` | The findings, the fixes, the measured results. **Read this first.** |
+| `docs/pipeline-audit.md` | The original read-only audit, written before anything was changed |
+| `docs/DECISIONS.md` | Every significant decision as What / Why / Rejected |
+| `docs/ERRORS.md` | Approaches that cost more than two attempts, and what finally worked |
+| `docs/evidence/` | Golden set run logs with raw model responses, and reproduction scripts |
+| `trajectory/*.md` | **The agent conversation, readable.** Start here for the transcript. |
+| `trajectory/*.json` | The same session as raw records, for completeness rather than reading |
+
+The Markdown transcript is the one to open. The JSON preserves every record
+including harness bookkeeping, which is 46% of the records and interrupts
+reading; both are committed so nothing is hidden, but they serve different
+purposes.
+
+## Tests
+
+```bash
+for f in tests/test_*.py; do uv run python "$f"; done
+for f in scripts/test_*.py; do python3 "$f"; done
+```
+
+142 tests, no test framework dependency: the pipeline tests need the project's
+own dependencies, the script tests deliberately run on the standard library
+alone so they work before anything is installed.
+
 ## Development
 
 ```bash
