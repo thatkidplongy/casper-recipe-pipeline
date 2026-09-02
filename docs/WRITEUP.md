@@ -37,6 +37,45 @@ lines each.
 
 ---
 
+## Assumptions
+
+Stated up front, because several of them shape every number in this document and
+a reader should be able to reject one and know what it costs.
+
+- **The featured-tweak list order is the ranking.** The product premise is
+  "highest voted", and no vote count exists anywhere in the scraped data. The
+  order AllRecipes returns featured tweaks in is the only ranking signal
+  captured, so it is used verbatim and labelled as what it is. If real vote data
+  exists on the site, Finding 3 becomes a scraper fix rather than a product
+  question.
+- **The 12 featured tweaks are the corpus.** They turned out to be
+  byte-identical to the 12 reviews flagged `has_modification`, so scoping to them
+  loses nothing and matches the brief's framing.
+- **My hand labels are ground truth.** All 28 expected modifications and 9
+  exclusions in `golden_tweaks.json` are my reading of the reviews, reviewed and
+  approved before anything was built on them. A different labeller would draw
+  some lines differently, particularly on `10813-t4`, where "a whole cup of white
+  sugar" is the recipe's existing amount and I treat it as no modification.
+- **A change made without a stated amount is not a miss.** Eight of the 28 are
+  marked `underspecified`. A model that declines to invent a quantity the
+  reviewer never gave is behaving correctly, so these are reported separately and
+  never counted against recall.
+- **Diagnosis stubs the model; measurement does not.** Pipeline defects were
+  found with the single LLM call replaced by canned extractions, so deterministic
+  bugs could be separated from model variance. Every stubbed figure is a floor.
+  The 85% recall is a live measurement with nothing stubbed.
+- **The scraper and any UI are out of scope**, by instruction. Findings there are
+  recorded as future work, not fixed.
+- **Model and provider are a configuration choice, not a finding.** The measured
+  numbers are `openai/gpt-oss-20b` through Groq, chosen because it was available
+  within a free-tier budget. A larger model would likely score higher; the point
+  of the harness is that re-measuring is one command.
+- **Three runs, not ten.** The standard this repository sets asks for ten. The
+  provider's daily token cap makes ten impossible in a day. The figures are
+  provisional and say so.
+
+---
+
 ## Finding 1: the system cannot tell "nothing to do" from "something is broken", and it always reports the first
 
 > **Faces 1 and 2 are fixed.** Face 3, the API error handling, is not. Details in
@@ -577,7 +616,7 @@ nothing.
 
 ---
 
-## What I would do next, in order
+## Future improvements, in order
 
 1. ~~Never emit a change record for text that did not change; never publish with
    zero applied edits.~~ **Done, `46512a7`.** What remains under this heading:
@@ -628,6 +667,9 @@ modifications and validation failures on top. The `--stub` control in the
 harness is the opposite, a **ceiling** by construction.
 
 The reasoning behind that choice, and the alternatives rejected, are in
-`docs/DECISIONS.md`. Approaches that cost more than two attempts are in
-`docs/ERRORS.md`. Reproduction scripts for every claim above are in
-`docs/evidence/`.
+`docs/DECISIONS.md`, as What / Why / Rejected. **Challenges overcome**, meaning
+any approach that cost more than two attempts and what finally worked, are in
+`docs/ERRORS.md`; that file is the honest record of this project's dead ends,
+including two defects I introduced in the tooling built to measure the defects.
+Reproduction scripts and the raw measurement artifacts for every claim above are
+in `docs/evidence/`.
